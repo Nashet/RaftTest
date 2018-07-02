@@ -22,15 +22,15 @@ GameObject:
   - component: {fileID: 33832987292514222}
   - component: {fileID: 23423719928309832}
   - component: {fileID: 65835024466676974}
-  - component: {fileID: 114127969460562258}
   - component: {fileID: 54886967599358934}
+  - component: {fileID: 114957920958709408}
   m_Layer: 2
   m_Name: Foundation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4847657629037436
 Transform:
   m_ObjectHideFlags: 1
@@ -39,7 +39,7 @@ Transform:
   m_GameObject: {fileID: 1967263169009654}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.25, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -113,7 +113,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114127969460562258
+--- !u!114 &114957920958709408
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -124,3 +124,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d6f415a50cf42243bd7ec9b67a9f735, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buildingDenial: {fileID: 2100000, guid: 74aceaa260cf03c47b195161846769d2, type: 2}
+  canBePlaced: 1

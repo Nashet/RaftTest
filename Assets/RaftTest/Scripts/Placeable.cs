@@ -5,13 +5,16 @@ using UnityEngine;
 //public interface IPlaceable
 //{
 //}
+/// <summary>
+/// Represents block which can be placed in world
+/// </summary>
 public class Placeable// : IPlaceable
 {
     private bool edgeOnlyPlacable;
-    public GameObject gameObject;
+    public GameObject gameObject;   
     public Placeable(bool edgeOnlyPlacable, GameObject prefab)
     {
-        gameObject = prefab;
+        this.gameObject = prefab;
         this.edgeOnlyPlacable = edgeOnlyPlacable;
     }
 }
