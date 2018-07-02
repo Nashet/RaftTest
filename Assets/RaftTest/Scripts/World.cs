@@ -12,16 +12,22 @@ public class World : MonoBehaviour
 
     [SerializeField] private Material material;
 
+    /// <summary>
+    /// holds data about every cell in world
+    /// </summary>
     [SerializeField] private Placeable[,,] map;
-
+    
     /// <summary>
     /// Empty block
     /// </summary>
     public Placeable Air { get; private set; }
+
+    // allows static access
     public static World Get { get; private set; }
     // Use this for initialization
     void Start()
     {
+       
         Get = this;
 
         map = new Placeable[xSize, zSize, ySize];
@@ -69,7 +75,8 @@ public class World : MonoBehaviour
             map[coordinats.x, coordinats.z, coordinats.y] = block;
             var newBlock = Object.Instantiate(block.gameObject);
 
-            newBlock.layer = 0;
+            newBlock.layer = 0; // placed block wouldn't be ignored by raycast
+            newBlock.transform.parent = this.transform;
         }
     }
     public bool CanBePlaced(Placeable blockToPlace)

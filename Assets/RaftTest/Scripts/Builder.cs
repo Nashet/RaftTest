@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
 /// <summary>
-/// Extends standard Unity class
+/// Allows FPS to build blocks
 /// </summary>
-public class Character : FirstPersonController
+public class Builder : MonoBehaviour
 {
     /// <summary>Minimal block size, default is 1, in Unity units</summary>
     [SerializeField] private int blockSize;
@@ -28,10 +28,10 @@ public class Character : FirstPersonController
    
     // Update is called once per frame
     void Update()
-    {
-        base.Update();
+    {        
         if (holds != null)
         {
+            // updates holding block position
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
             {
@@ -46,15 +46,15 @@ public class Character : FirstPersonController
 
             //if (EventSystem.current.IsPointerOverGameObject())
             //    return null;// -3; //hovering over UI
+            // updates holding block color 
             if (World.Get.CanBePlaced(holds))
-            {
-                
+            {                
                 if (Input.GetMouseButtonUp(0))
                     World.Get.PlaceBlock(holds);
-                if (holds.gameObject == Manager.Get.block1.gameObject)
-                    holds.renderer.material = Manager.Get.originalMat1;//  originalColor;
+                if (holds.gameObject == GManager.Get.block1.gameObject)
+                    holds.renderer.material = GManager.Get.originalMat1;//  originalColor;
                 else
-                    holds.renderer.material = Manager.Get.originalMat2;//  originalColor;
+                    holds.renderer.material = GManager.Get.originalMat2;//  originalColor;
             }
             else
             {
@@ -63,11 +63,12 @@ public class Character : FirstPersonController
 
             }
         }
+        // selects block 
         if (Input.GetKeyUp(KeyCode.F1))
-            TakeInHand(Manager.Get.block1);
+            TakeInHand(GManager.Get.block1);
         else
         if (Input.GetKeyUp(KeyCode.F2))
-            TakeInHand(Manager.Get.block2);
+            TakeInHand(GManager.Get.block2);
         else
         if (Input.GetKeyUp(KeyCode.F3))
             TakeInHand(null);
