@@ -16,7 +16,7 @@ public class Manager : MonoBehaviour {
 	void Start () {
         thisObject = this;
         // could be read from a config file
-        block1 = new Placeable(true, prefab1);
-        block2 = new Placeable(false, prefab2);
+        block1 = new Placeable(false, prefab1);
+        block2 = new Placeable(true, prefab2);
     }	
 }

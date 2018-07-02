@@ -10,27 +10,22 @@ public class Character : FirstPersonController
 {
     /// <summary>Minimal block size, default is 1, in Unity units</summary>
     [SerializeField] private int blockSize;
-    [SerializeField] Placeable holds;
-    [SerializeField] private Camera camera;
+    [SerializeField] Placeable holds;   
     private Material building;
+    [SerializeField] private Material buildingDenialMaterial;
     void TakeInHand(Placeable placeable)
     {
         if (holds != null)
         {
-            holds.gameObject.SetActive(false);            
+            holds.gameObject.SetActive(false);
         }
         holds = placeable;
         if (holds != null)
         {
-            holds.gameObject.SetActive(true);            
+            holds.gameObject.SetActive(true);
         }
     }
-    void PlaceBlock()
-    {
-        var newBlock = Object.Instantiate(holds.gameObject);
-        Destroy(newBlock.GetComponent<PlacingController>());// 
-        newBlock.layer = 0;
-    }
+   
     // Update is called once per frame
     void Update()
     {
@@ -38,7 +33,7 @@ public class Character : FirstPersonController
         if (holds != null)
         {
             RaycastHit hit;
-            if (Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out hit))
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
             {
                 var placingPosition = hit.point;
                 placingPosition.y += blockSize / 2f; // adding half of standard height
@@ -47,12 +42,26 @@ public class Character : FirstPersonController
                 placingPosition.z = (int)placingPosition.z / blockSize;
                 holds.gameObject.transform.position = placingPosition;
             }
+
+
             //if (EventSystem.current.IsPointerOverGameObject())
             //    return null;// -3; //hovering over UI
-            if (Input.GetMouseButtonUp(0))
-                if (holds.gameObject.GetComponent<PlacingController>().canBePlaced)
-                    PlaceBlock();
+            if (World.Get.CanBePlaced(holds))
+            {
+                
+                if (Input.GetMouseButtonUp(0))
+                    World.Get.PlaceBlock(holds);
+                if (holds.gameObject == Manager.Get.block1.gameObject)
+                    holds.renderer.material = Manager.Get.originalMat1;//  originalColor;
+                else
+                    holds.renderer.material = Manager.Get.originalMat2;//  originalColor;
+            }
+            else
+            {
+                holds.renderer.material = buildingDenialMaterial;
+                
 
+            }
         }
         if (Input.GetKeyUp(KeyCode.F1))
             TakeInHand(Manager.Get.block1);

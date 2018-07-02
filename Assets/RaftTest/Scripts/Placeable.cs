@@ -10,11 +10,28 @@ using UnityEngine;
 /// </summary>
 public class Placeable// : IPlaceable
 {
-    private bool edgeOnlyPlacable;
-    public GameObject gameObject;   
-    public Placeable(bool edgeOnlyPlacable, GameObject prefab)
+    public bool allowsMultipleObjectsInCell;
+    public GameObject gameObject;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>    
+    public Placeable(bool allowsMultipleObjectsInCell, GameObject prefab)
     {
         this.gameObject = prefab;
-        this.edgeOnlyPlacable = edgeOnlyPlacable;
+        this.allowsMultipleObjectsInCell = allowsMultipleObjectsInCell;
+        if (gameObject != null)
+            renderer = gameObject.GetComponent<MeshRenderer>();
     }
+
+    public Vector3Int GetCoordinats()
+    {
+        int x = (int)gameObject.transform.position.x;
+        int y = (int)gameObject.transform.position.z;
+        int z = (int)gameObject.transform.position.y;
+        return new Vector3Int(x, z, y);
+    }
+
+
+    public MeshRenderer renderer { get; private set; }
 }
