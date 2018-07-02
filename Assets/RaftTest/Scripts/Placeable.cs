@@ -26,9 +26,9 @@ public class Placeable// : IPlaceable
 
     public Vector3Int GetCoordinats()
     {
-        int x = (int)gameObject.transform.position.x;
-        int y = (int)gameObject.transform.position.z;
-        int z = (int)gameObject.transform.position.y;
+        int x = (int)gameObject.transform.position.x * World.Get.blockSize;
+        int y = (int)gameObject.transform.position.z * World.Get.blockSize;
+        int z = (int)gameObject.transform.position.y * World.Get.blockSize;
         return new Vector3Int(x, z, y);
     }
 

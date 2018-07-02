@@ -12,11 +12,13 @@ public class World : MonoBehaviour
 
     [SerializeField] private Material material;
 
+    /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
+    public int blockSize;
     /// <summary>
     /// holds data about every cell in world
     /// </summary>
     [SerializeField] private Placeable[,,] map;
-    
+
     /// <summary>
     /// Empty block
     /// </summary>
@@ -27,7 +29,7 @@ public class World : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-       
+
         Get = this;
 
         map = new Placeable[xSize, zSize, ySize];
@@ -35,12 +37,14 @@ public class World : MonoBehaviour
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
-                
-                    map[x, z, y] = Air;//Manager.Get.block1; //
 
+                    map[x, z, y] = Air;
 
         GameObject plane = new GameObject("Plane");
         plane.transform.parent = this.transform;
+
+        // move plane away from 0,0
+        plane.transform.position = new Vector3(xSize / 2f - blockSize / 2f, 0f, zSize / 2f - blockSize / 2f);
         MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = CreateMesh(xSize, zSize);
         MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
@@ -85,7 +89,7 @@ public class World : MonoBehaviour
         var cell = GetCell(coordinats.x, coordinats.z, coordinats.y);
         if (cell == null)
             return false; // wrong index
-        else 
+        else
         {
             if (cell == Air)
             {
@@ -122,10 +126,10 @@ public class World : MonoBehaviour
         Mesh m = new Mesh();
         m.name = "ScriptedMesh";
         m.vertices = new Vector3[] {
-         new Vector3(-width, 0.01f, height),
-         new Vector3(width, 0.01f, height),
-         new Vector3(width, 0.01f, -height),
-         new Vector3(-width, 0.01f, -height),
+         new Vector3(-width / 2f *blockSize, 0.00f, height/ 2f*blockSize),
+         new Vector3(width/ 2f*blockSize, 0.00f, height/ 2f*blockSize),
+         new Vector3(width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
+         new Vector3(-width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
      };
         m.uv = new Vector2[] {
          new Vector2 (0, 0),

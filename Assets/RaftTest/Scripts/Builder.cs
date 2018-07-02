@@ -8,9 +8,8 @@ using UnityStandardAssets.Characters.FirstPerson;
 /// </summary>
 public class Builder : MonoBehaviour
 {
-    /// <summary>Minimal block size, default is 1, in Unity units</summary>
-    [SerializeField] private int blockSize;
-    [SerializeField] Placeable holds;   
+
+    [SerializeField] Placeable holds;
     private Material building;
     [SerializeField] private Material buildingDenialMaterial;
     void TakeInHand(Placeable placeable)
@@ -25,10 +24,10 @@ public class Builder : MonoBehaviour
             holds.gameObject.SetActive(true);
         }
     }
-   
+
     // Update is called once per frame
     void Update()
-    {        
+    {
         if (holds != null)
         {
             // updates holding block position
@@ -36,11 +35,13 @@ public class Builder : MonoBehaviour
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
             {
                 var placingPosition = hit.point;
-                placingPosition.y += blockSize / 2f; // adding half of standard height
-                placingPosition.x = (int)placingPosition.x / blockSize;
-                placingPosition.y = (int)placingPosition.y / blockSize;
-                placingPosition.z = (int)placingPosition.z / blockSize;
+
+                placingPosition.x = (int)placingPosition.x * World.Get.blockSize;
+                placingPosition.y = (int)placingPosition.y * World.Get.blockSize;
+                placingPosition.z = (int)placingPosition.z * World.Get.blockSize;
+                placingPosition.y += World.Get.blockSize / 2f; // adding half of standard height
                 holds.gameObject.transform.position = placingPosition;
+                //Debug.Log("Looking at (x,z,y)" + coordinats.x + " " + coordinats.z + " " + coordinats.y);
             }
 
 
@@ -48,7 +49,7 @@ public class Builder : MonoBehaviour
             //    return null;// -3; //hovering over UI
             // updates holding block color 
             if (World.Get.CanBePlaced(holds))
-            {                
+            {
                 if (Input.GetMouseButtonUp(0))
                     World.Get.PlaceBlock(holds);
                 if (holds.gameObject == GManager.Get.block1.gameObject)
@@ -59,7 +60,6 @@ public class Builder : MonoBehaviour
             else
             {
                 holds.renderer.material = buildingDenialMaterial;
-                
 
             }
         }
