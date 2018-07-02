@@ -39,10 +39,11 @@ public class Builder : MonoBehaviour
             {
                 var placingPosition = hit.point;
 
+                placingPosition.y += World.Get.blockSize / 2f; // adding half of standard height
                 placingPosition.x = (int)placingPosition.x * World.Get.blockSize;
                 placingPosition.y = (int)placingPosition.y * World.Get.blockSize;
                 placingPosition.z = (int)placingPosition.z * World.Get.blockSize;
-                placingPosition.y += World.Get.blockSize / 2f; // adding half of standard height
+                
                 holds.gameObject.transform.position = placingPosition;
                 //Debug.Log("Looking at (x,z,y)" + coordinats.x + " " + coordinats.z + " " + coordinats.y);
             }
