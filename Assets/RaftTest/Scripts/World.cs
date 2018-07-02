@@ -10,10 +10,11 @@ public class World : MonoBehaviour
 
     [SerializeField] private int xSize, zSize, ySize; // y is a height
 
-    [SerializeField] private Material material;
+    [SerializeField] private Material planeMaterial;
 
     /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
     public int blockSize;
+
     /// <summary>
     /// holds data about every cell in world
     /// </summary>
@@ -26,6 +27,7 @@ public class World : MonoBehaviour
 
     // allows static access
     public static World Get { get; private set; }
+
     // Use this for initialization
     void Start()
     {
@@ -46,12 +48,13 @@ public class World : MonoBehaviour
         // move plane away from 0,0
         plane.transform.position = new Vector3(xSize / 2f - blockSize / 2f, 0f, zSize / 2f - blockSize / 2f);
         MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
-        meshFilter.mesh = CreateMesh(xSize, zSize);
+        meshFilter.mesh = CreatePlaneMesh(xSize, zSize);
         MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        renderer.material = material;
+        renderer.material = planeMaterial;
         MeshCollider collider = plane.AddComponent<MeshCollider>();
         collider.sharedMesh = meshFilter.mesh;
     }
+
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>    
@@ -62,6 +65,7 @@ public class World : MonoBehaviour
         else
             return null;
     }
+
     public bool IsCellExists(int x, int z, int y)
     {
         if (x < xSize && y < ySize && z < zSize && x >= 0 && y >= 0 && z >= 0)
@@ -81,8 +85,10 @@ public class World : MonoBehaviour
 
             newBlock.layer = 0; // placed block wouldn't be ignored by raycast
             newBlock.transform.parent = this.transform;
+            newBlock.GetComponent<BoxCollider>().isTrigger = false;
         }
     }
+
     public bool CanBePlaced(Placeable blockToPlace)
     {
         var coordinats = blockToPlace.GetCoordinats();
@@ -116,12 +122,7 @@ public class World : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-    private Mesh CreateMesh(float width, float height)
+    private Mesh CreatePlaneMesh(float width, float height)
     {
         Mesh m = new Mesh();
         m.name = "ScriptedMesh";

@@ -8,10 +8,13 @@ using UnityStandardAssets.Characters.FirstPerson;
 /// </summary>
 public class Builder : MonoBehaviour
 {
+    /// <summary>
+    /// Whatever players holds in hands
+    /// </summary>
+    [SerializeField] Placeable holds;       
 
-    [SerializeField] Placeable holds;
-    private Material building;
     [SerializeField] private Material buildingDenialMaterial;
+
     void TakeInHand(Placeable placeable)
     {
         if (holds != null)
@@ -43,7 +46,6 @@ public class Builder : MonoBehaviour
                 holds.gameObject.transform.position = placingPosition;
                 //Debug.Log("Looking at (x,z,y)" + coordinats.x + " " + coordinats.z + " " + coordinats.y);
             }
-
 
             //if (EventSystem.current.IsPointerOverGameObject())
             //    return null;// -3; //hovering over UI
