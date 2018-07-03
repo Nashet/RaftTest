@@ -11,7 +11,7 @@ public class Builder : MonoBehaviour
     /// <summary>
     /// Whatever players holds in hands
     /// </summary>
-    [SerializeField] Placeable holds;       
+    [SerializeField] Placeable holds;
 
     [SerializeField] private Material buildingDenialMaterial;
 
@@ -37,15 +37,29 @@ public class Builder : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
             {
-                var placingPosition = hit.point;
+                Vector3 lookingPosition = new Vector3(hit.point.x + World.blockSize / 2f, hit.point.y + World.blockSize / 2f, hit.point.z + World.blockSize / 2f);
+                Vector3 blockPlacingPosition;
+                Debug.Log("Looking at (x,z,y)" + lookingPosition.x + " " + lookingPosition.z + " " + lookingPosition.y);
 
-                placingPosition.y += World.Get.blockSize / 2f; // adding half of standard height
-                placingPosition.x = (int)placingPosition.x * World.Get.blockSize;
-                placingPosition.y = (int)placingPosition.y * World.Get.blockSize;
-                placingPosition.z = (int)placingPosition.z * World.Get.blockSize;
-                
-                holds.gameObject.transform.position = placingPosition;
+
+                // removing fractional part Mathf.CeilToInt
+                blockPlacingPosition.x = Mathf.FloorToInt(lookingPosition.x);
+                blockPlacingPosition.y = Mathf.FloorToInt(lookingPosition.y);
+                blockPlacingPosition.z = Mathf.FloorToInt(lookingPosition.z);
+                if (holds.AllowsMultipleObjectsInCell)
+                {
+                    Vector2Int side = holds.GetClosestSide(lookingPosition, blockPlacingPosition);
+
+                    blockPlacingPosition.x += side.x * (0.5f - holds.BlockThickness / 2f);
+                    blockPlacingPosition.z += side.y * (0.5f - holds.BlockThickness / 2f);
+                    if (side.y == 0) // rotate block if it's closer to y side
+                        holds.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                    else
+                        holds.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                }
+
                 //Debug.Log("Looking at (x,z,y)" + coordinats.x + " " + coordinats.z + " " + coordinats.y);
+                holds.gameObject.transform.position = blockPlacingPosition;
             }
 
             //if (EventSystem.current.IsPointerOverGameObject())

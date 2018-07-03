@@ -13,7 +13,7 @@ public class World : MonoBehaviour
     [SerializeField] private Material planeMaterial;
 
     /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
-    public int blockSize;
+    public const int blockSize = 1;
 
     /// <summary>
     /// holds data about every cell in world
@@ -35,7 +35,7 @@ public class World : MonoBehaviour
         Get = this;
 
         map = new Placeable[xSize, zSize, ySize];
-        Air = new Placeable(false, null);
+        Air = new Placeable(false, null, 1f);
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
@@ -76,7 +76,7 @@ public class World : MonoBehaviour
 
     public void PlaceBlock(Placeable block)
     {
-        var coordinats = block.GetCoordinats();
+        var coordinats = block.GetIntCoordinats();
         if (IsCellExists(coordinats.x, coordinats.z, coordinats.y))
         {
             Debug.Log("Placed block in (x,z,y)" + coordinats.x + " " + coordinats.z + " " + coordinats.y);
@@ -91,7 +91,7 @@ public class World : MonoBehaviour
 
     public bool CanBePlaced(Placeable blockToPlace)
     {
-        var coordinats = blockToPlace.GetCoordinats();
+        var coordinats = blockToPlace.GetIntCoordinats();
         var cell = GetCell(coordinats.x, coordinats.z, coordinats.y);
         if (cell == null)
             return false; // wrong index
@@ -99,7 +99,7 @@ public class World : MonoBehaviour
         {
             if (cell == Air)
             {
-                if (blockToPlace.allowsMultipleObjectsInCell) // is wall
+                if (blockToPlace.AllowsMultipleObjectsInCell) // is wall
                 {
                     // check if underlying cell exists and not empty
                     var coordsToCheck = coordinats;

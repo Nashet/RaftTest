@@ -14,12 +14,12 @@ public class GManager : MonoBehaviour
     {
         get { return thisObject; }
     }
-	// Use this for initialization
-	void Awake()
+    // Use this for initialization
+    void Awake()
     {
         thisObject = this;
         // could be read from a config file
-        block1 = new Placeable(false, prefab1);
-        block2 = new Placeable(true, prefab2);
-    }	
+        block1 = new Placeable(false, prefab1, blockThickness: 1f);
+        block2 = new Placeable(true, prefab2, blockThickness: 0.2f);
+    }
 }

@@ -302,6 +302,10 @@ Prefab:
       propertyPath: m_StepOffset
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 14300000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_Radius
+      value: 0.3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_IsPrefabParent: 0
@@ -525,7 +529,6 @@ MonoBehaviour:
   zSize: 8
   ySize: 4
   planeMaterial: {fileID: 2100000, guid: 86354c480d599d344bb54b5d5183f858, type: 2}
-  blockSize: 1
 --- !u!4 &488517504
 Transform:
   m_ObjectHideFlags: 0
@@ -583,6 +586,10 @@ Prefab:
     - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
