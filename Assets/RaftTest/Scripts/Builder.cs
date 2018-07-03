@@ -33,15 +33,15 @@ public class Builder : MonoBehaviour
             holds.UpdateHoldingBlock();
         // selects block 
         if (Input.GetKeyUp(KeyCode.F1))
-            TakeInHand(GManager.Get.allBlocks[0]);
-        else
-        if (Input.GetKeyUp(KeyCode.F2))
-            TakeInHand(GManager.Get.allBlocks[1]);
-        else
-        if (Input.GetKeyUp(KeyCode.F3))
-            TakeInHand(GManager.Get.allBlocks[2]);
-        if (Input.GetKeyUp(KeyCode.F4))
             TakeInHand(null);
+        else if (Input.GetKeyUp(KeyCode.F2))
+            TakeInHand(GManager.Get.allBlocks[0]);
+        else if (Input.GetKeyUp(KeyCode.F3))
+            TakeInHand(GManager.Get.allBlocks[1]);
+        else if (Input.GetKeyUp(KeyCode.F4))
+            TakeInHand(GManager.Get.allBlocks[2]);
+        else if (Input.GetKeyUp(KeyCode.F5))
+            TakeInHand(GManager.Get.allBlocks[3]);
     }
 
 }

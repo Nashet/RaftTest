@@ -12,6 +12,7 @@ using UnityEngine;
 [Serializable]
 public class Placeable// : IPlaceable
 {
+    [SerializeField] private bool requiresSomeFoundation;
     [SerializeField] private bool allowsMultipleObjectsInCell;// MultipleObjectsInCell isn't fully implemented    
 
     [Tooltip("Should be about same as gameObject thickness")]
@@ -145,9 +146,8 @@ public class Placeable// : IPlaceable
             if (cell == world.AirBlock)
             {
                 // todo put it in Placeable?
-                if (this.allowsMultipleObjectsInCell) // is wall
-                {
-                    // check if underlying cell exists and not empty
+                if (this.requiresSomeFoundation) // check if underlying cell exists and not empty
+                {                    
                     var coordsToCheck = coords;
                     coordsToCheck.y -= 1;
                     var uderlyingCell = world.GetCell(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y);
