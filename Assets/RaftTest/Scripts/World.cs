@@ -5,34 +5,146 @@ using UnityEngine;
 /// <summary>
 /// keeps map
 /// </summary>
-public class World : MonoBehaviour {
+public class World : MonoBehaviour
+{
 
-    [SerializeField] private int xSize;
-    [SerializeField] private int ySize;
-    [SerializeField] private Material material;
+    [SerializeField] private int xSize, zSize, ySize; // y is a height
+
+    [SerializeField] private Material planeMaterial;
+
+    /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
+    private const int blockSize = 1;
+
+    /// <summary>
+    /// holds data about every cell in world
+    /// </summary>
+    [SerializeField] private Placeable[,,] map;
+
+    /// <summary>
+    /// Empty block
+    /// </summary>
+    public Placeable Air { get; private set; }
+
+    // allows static access
+    public static World Get { get; private set; }
+
     // Use this for initialization
-    void Start () {
-        //var size : float;
+    void Start()
+    {
+
+        Get = this;
+
+        // fill map with empty blocks
+        map = new Placeable[xSize, zSize, ySize];
+        Air = new Placeable(false, null, 1f);
+        for (int x = 0; x < xSize; x++)
+            for (int z = 0; z < zSize; z++)
+                for (int y = 0; y < ySize; y++)
+                    map[x, z, y] = Air;
 
         GameObject plane = new GameObject("Plane");
         plane.transform.parent = this.transform;
-        MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
-        meshFilter.mesh = CreateMesh(xSize, ySize);
-        MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        renderer.material = material;//.shader = Shader.Find("Particles/Additive");
-        MeshCollider collider = plane.AddComponent<MeshCollider>();
-        collider.sharedMesh = meshFilter.mesh;       
 
+        // move plane away from 0,0
+        plane.transform.position = new Vector3(xSize / 2f - blockSize / 2f, 0f, zSize / 2f - blockSize / 2f);
+
+        MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
+        meshFilter.mesh = CreatePlaneMesh(xSize, zSize);
+        MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        renderer.material = planeMaterial;
+        MeshCollider collider = plane.AddComponent<MeshCollider>();
+        collider.sharedMesh = meshFilter.mesh;
     }
-    Mesh CreateMesh(float width, float height)
+
+    /// <summary>
+    /// null means that cell doesn't exist (wrong index)
+    /// </summary>    
+    public Placeable GetCell(int x, int z, int y)
+    {
+        if (IsCellExists(x, z, y))
+            return map[x, z, y];
+        else
+            return null;
+    }
+
+    /// <summary>
+    /// null means that cell doesn't exist (wrong index)
+    /// </summary>   
+    public bool IsCellExists(int x, int z, int y)
+    {
+        if (x < xSize && y < ySize && z < zSize && x >= 0 && y >= 0 && z >= 0)
+            return true;
+        else
+            return false;
+    }
+
+    public void PlaceBlock(Placeable block)
+    {
+        var coords = block.GetIntCoords();
+        if (IsCellExists(coords.x, coords.z, coords.y))
+        {
+            Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
+            map[coords.x, coords.z, coords.y] = block;
+            var newBlock = Object.Instantiate(block.gameObject);
+
+            newBlock.layer = 0; // placed block wouldn't be ignored by raycast
+            newBlock.transform.parent = this.transform;
+            newBlock.GetComponent<BoxCollider>().isTrigger = false;
+        }
+    }
+    /// <summary>
+    /// Adjust coordinates by 0.5, because block center is 0.5, 0.5
+    /// </summary>
+    /// <param name="coords"></param>
+    /// <returns></returns>
+    public static Vector3 AdjustCoords(Vector3 coords)
+    {
+        Vector3 res = new Vector3(coords.x + World.blockSize / 2f, coords.y + World.blockSize / 2f, coords.z + World.blockSize / 2f);
+        return res;
+    }
+
+    public bool CanBePlaced(Placeable blockToPlace)
+    {
+        var coords = blockToPlace.GetIntCoords();
+        var cell = GetCell(coords.x, coords.z, coords.y);
+        if (cell == null)
+            return false; // wrong index
+        else
+        {
+            if (cell == Air)
+            {
+                // todo put it in Placeable?
+                if (blockToPlace.AllowsMultipleObjectsInCell) // is wall
+                {
+                    // check if underlying cell exists and not empty
+                    var coordsToCheck = coords;
+                    coordsToCheck.y -= 1;
+                    var uderlyingCell = GetCell(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y);
+                    if (uderlyingCell == null || uderlyingCell == Air)
+                        return false;
+                    else
+                        return true;
+                }
+                else
+                    return true;
+            }
+
+            //else if (blockToPlace.allowsMultipleObjectsInCell && cell.allowsMultipleObjectsInCell)
+            //    return true;// fix that? can build several walls in single cell
+            else
+                return false;
+        }
+    }
+
+    private Mesh CreatePlaneMesh(float width, float height)
     {
         Mesh m = new Mesh();
         m.name = "ScriptedMesh";
         m.vertices = new Vector3[] {
-         new Vector3(-width, 0.01f, height),
-         new Vector3(width, 0.01f, height),
-         new Vector3(width, 0.01f, -height),
-         new Vector3(-width, 0.01f, -height),
+         new Vector3(-width / 2f *blockSize, 0.00f, height/ 2f*blockSize),
+         new Vector3(width/ 2f*blockSize, 0.00f, height/ 2f*blockSize),
+         new Vector3(width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
+         new Vector3(-width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
      };
         m.uv = new Vector2[] {
          new Vector2 (0, 0),
@@ -45,8 +157,4 @@ public class World : MonoBehaviour {
 
         return m;
     }
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }
