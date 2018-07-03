@@ -11,8 +11,9 @@ using UnityEngine;
 public class Placeable// : IPlaceable
 {
     public bool AllowsMultipleObjectsInCell { get; private set; }
-    public GameObject gameObject { get; private set; }    
+    public GameObject gameObject { get; private set; }
     public float BlockThickness { get; private set; }
+    public MeshRenderer renderer { get; private set; }
     //private float blockThickness;
     /// <summary>
     /// Constructor
@@ -26,20 +27,21 @@ public class Placeable// : IPlaceable
         this.BlockThickness = blockThickness;
     }
 
-    public Vector3Int GetIntCoordinats()
+    public Vector3Int GetIntCoords()
     {
-        Vector3 lookingPosition = new Vector3(gameObject.transform.position.x + World.blockSize / 2f, gameObject.transform.position.y + World.blockSize / 2f, gameObject.transform.position.z + World.blockSize / 2f);
-        int x = Mathf.FloorToInt(lookingPosition.x);
-        int y = Mathf.FloorToInt(lookingPosition.z);
-        int z = Mathf.FloorToInt(lookingPosition.y);
-        //Debug.Log("Int coordinats: " + new Vector3Int(x, z, y));
-        return new Vector3Int(x, z, y);
+        Vector3 AdjustedCoords = World.AdjustCoords(gameObject.transform.position);
         
+        int x = Mathf.FloorToInt(AdjustedCoords.x);
+        int y = Mathf.FloorToInt(AdjustedCoords.z);
+        int z = Mathf.FloorToInt(AdjustedCoords.y);
+        //Debug.Log("Int coordinates: " + new Vector3Int(x, z, y));
+        return new Vector3Int(x, z, y);
+
     }
     /// <summary>
     /// returns which side of map is closer to point - north, south, etc
     /// </summary>
-    public Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+    public static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
     {
         // distance to block's side
         float xDifference = lookingPosition.x - blockPlacingPosition.x;
@@ -60,8 +62,6 @@ public class Placeable// : IPlaceable
             return new Vector2Int(0, -1);
         else //if (distToNorth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
             return new Vector2Int(0, 1);
-    }
+    }    
 
-    public MeshRenderer renderer { get; private set; }
-    
 }

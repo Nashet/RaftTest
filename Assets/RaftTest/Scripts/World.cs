@@ -13,7 +13,7 @@ public class World : MonoBehaviour
     [SerializeField] private Material planeMaterial;
 
     /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
-    public const int blockSize = 1;
+    private const int blockSize = 1;
 
     /// <summary>
     /// holds data about every cell in world
@@ -34,12 +34,12 @@ public class World : MonoBehaviour
 
         Get = this;
 
+        // fill map with empty blocks
         map = new Placeable[xSize, zSize, ySize];
         Air = new Placeable(false, null, 1f);
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
-
                     map[x, z, y] = Air;
 
         GameObject plane = new GameObject("Plane");
@@ -47,6 +47,7 @@ public class World : MonoBehaviour
 
         // move plane away from 0,0
         plane.transform.position = new Vector3(xSize / 2f - blockSize / 2f, 0f, zSize / 2f - blockSize / 2f);
+
         MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = CreatePlaneMesh(xSize, zSize);
         MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
@@ -66,6 +67,9 @@ public class World : MonoBehaviour
             return null;
     }
 
+    /// <summary>
+    /// null means that cell doesn't exist (wrong index)
+    /// </summary>   
     public bool IsCellExists(int x, int z, int y)
     {
         if (x < xSize && y < ySize && z < zSize && x >= 0 && y >= 0 && z >= 0)
@@ -76,11 +80,11 @@ public class World : MonoBehaviour
 
     public void PlaceBlock(Placeable block)
     {
-        var coordinats = block.GetIntCoordinats();
-        if (IsCellExists(coordinats.x, coordinats.z, coordinats.y))
+        var coords = block.GetIntCoords();
+        if (IsCellExists(coords.x, coords.z, coords.y))
         {
-            Debug.Log("Placed block in (x,z,y)" + coordinats.x + " " + coordinats.z + " " + coordinats.y);
-            map[coordinats.x, coordinats.z, coordinats.y] = block;
+            Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
+            map[coords.x, coords.z, coords.y] = block;
             var newBlock = Object.Instantiate(block.gameObject);
 
             newBlock.layer = 0; // placed block wouldn't be ignored by raycast
@@ -88,21 +92,32 @@ public class World : MonoBehaviour
             newBlock.GetComponent<BoxCollider>().isTrigger = false;
         }
     }
+    /// <summary>
+    /// Adjust coordinates by 0.5, because block center is 0.5, 0.5
+    /// </summary>
+    /// <param name="coords"></param>
+    /// <returns></returns>
+    public static Vector3 AdjustCoords(Vector3 coords)
+    {
+        Vector3 res = new Vector3(coords.x + World.blockSize / 2f, coords.y + World.blockSize / 2f, coords.z + World.blockSize / 2f);
+        return res;
+    }
 
     public bool CanBePlaced(Placeable blockToPlace)
     {
-        var coordinats = blockToPlace.GetIntCoordinats();
-        var cell = GetCell(coordinats.x, coordinats.z, coordinats.y);
+        var coords = blockToPlace.GetIntCoords();
+        var cell = GetCell(coords.x, coords.z, coords.y);
         if (cell == null)
             return false; // wrong index
         else
         {
             if (cell == Air)
             {
+                // todo put it in Placeable?
                 if (blockToPlace.AllowsMultipleObjectsInCell) // is wall
                 {
                     // check if underlying cell exists and not empty
-                    var coordsToCheck = coordinats;
+                    var coordsToCheck = coords;
                     coordsToCheck.y -= 1;
                     var uderlyingCell = GetCell(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y);
                     if (uderlyingCell == null || uderlyingCell == Air)
@@ -113,7 +128,6 @@ public class World : MonoBehaviour
                 else
                     return true;
             }
-
 
             //else if (blockToPlace.allowsMultipleObjectsInCell && cell.allowsMultipleObjectsInCell)
             //    return true;// fix that? can build several walls in single cell
