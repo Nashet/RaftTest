@@ -12,6 +12,7 @@ public class World : MonoBehaviour
 
     [SerializeField] private Material planeMaterial;
 
+
     /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
     private const int blockSize = 1;
 
@@ -23,11 +24,12 @@ public class World : MonoBehaviour
     /// <summary>
     /// Empty block
     /// </summary>
-    public Placeable Air { get; private set; }
+    public Placeable AirBlock { get; private set; }
 
     // allows static access
     public static World Get { get; private set; }
 
+    
     // Use this for initialization
     void Start()
     {
@@ -36,11 +38,11 @@ public class World : MonoBehaviour
 
         // fill map with empty blocks
         map = new Placeable[xSize, zSize, ySize];
-        Air = new Placeable(false, null, 1f);
+        AirBlock = new Placeable(false, null, 1f);
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
-                    map[x, z, y] = Air;
+                    map[x, z, y] = AirBlock;
 
         GameObject plane = new GameObject("Plane");
         plane.transform.parent = this.transform;
@@ -85,7 +87,7 @@ public class World : MonoBehaviour
         {
             Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
             map[coords.x, coords.z, coords.y] = block;
-            var newBlock = Object.Instantiate(block.gameObject);
+            var newBlock = Object.Instantiate(block.GameObject);
 
             newBlock.layer = 0; // placed block wouldn't be ignored by raycast
             newBlock.transform.parent = this.transform;
@@ -111,7 +113,7 @@ public class World : MonoBehaviour
             return false; // wrong index
         else
         {
-            if (cell == Air)
+            if (cell == AirBlock)
             {
                 // todo put it in Placeable?
                 if (blockToPlace.AllowsMultipleObjectsInCell) // is wall
@@ -120,7 +122,7 @@ public class World : MonoBehaviour
                     var coordsToCheck = coords;
                     coordsToCheck.y -= 1;
                     var uderlyingCell = GetCell(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y);
-                    if (uderlyingCell == null || uderlyingCell == Air)
+                    if (uderlyingCell == null || uderlyingCell == AirBlock)
                         return false;
                     else
                         return true;

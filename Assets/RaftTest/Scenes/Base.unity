@@ -383,7 +383,7 @@ GameObject:
   m_Component:
   - component: {fileID: 176851465}
   m_Layer: 2
-  m_Name: Projection
+  m_Name: BlockInHandsProjection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -401,9 +401,56 @@ Transform:
   m_Children:
   - {fileID: 1033904730}
   - {fileID: 684746394}
+  - {fileID: 1115350386}
   m_Father: {fileID: 488517504}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &266950909
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 176851465}
+    m_Modifications:
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1229407095689734, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_Name
+      value: transparentWal
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &398303610
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,12 +634,21 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1012911015 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1967263169009654, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+    type: 2}
+  m_PrefabInternal: {fileID: 1138577232}
+--- !u!23 &1012911017 stripped
+MeshRenderer:
+  m_PrefabParentObject: {fileID: 23423719928309832, guid: 7de4377425fb22b47af8f3c7afcc7cec,
     type: 2}
   m_PrefabInternal: {fileID: 1138577232}
 --- !u!4 &1033904730 stripped
@@ -605,6 +661,26 @@ GameObject:
   m_PrefabParentObject: {fileID: 1229407095689734, guid: e5d75df48c17f604082f2b8daeb397e8,
     type: 2}
   m_PrefabInternal: {fileID: 753630822}
+--- !u!23 &1036263287 stripped
+MeshRenderer:
+  m_PrefabParentObject: {fileID: 23120060786863944, guid: e5d75df48c17f604082f2b8daeb397e8,
+    type: 2}
+  m_PrefabInternal: {fileID: 753630822}
+--- !u!1 &1115350383 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1229407095689734, guid: e5d75df48c17f604082f2b8daeb397e8,
+    type: 2}
+  m_PrefabInternal: {fileID: 266950909}
+--- !u!4 &1115350386 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8,
+    type: 2}
+  m_PrefabInternal: {fileID: 266950909}
+--- !u!23 &1115350387 stripped
+MeshRenderer:
+  m_PrefabParentObject: {fileID: 23120060786863944, guid: e5d75df48c17f604082f2b8daeb397e8,
+    type: 2}
+  m_PrefabInternal: {fileID: 266950909}
 --- !u!1001 &1138577232
 Prefab:
   m_ObjectHideFlags: 0
@@ -646,7 +722,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1967263169009654, guid: 7de4377425fb22b47af8f3c7afcc7cec, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7de4377425fb22b47af8f3c7afcc7cec, type: 2}
@@ -678,10 +754,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19f567428e93924893d54f24903fa16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab1: {fileID: 1012911015}
-  prefab2: {fileID: 1036263285}
-  originalMat1: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
-  originalMat2: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
+  buildingDenialMaterial: {fileID: 2100000, guid: 74aceaa260cf03c47b195161846769d2,
+    type: 2}
+  allBlocks:
+  - allowsMultipleObjectsInCell: 0
+    blockThickness: 1
+    renderer: {fileID: 1012911017}
+    gameObject: {fileID: 1012911015}
+    originalMat: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
+  - allowsMultipleObjectsInCell: 1
+    blockThickness: 0.25
+    renderer: {fileID: 1036263287}
+    gameObject: {fileID: 1036263285}
+    originalMat: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
+  - allowsMultipleObjectsInCell: 1
+    blockThickness: 0.1
+    renderer: {fileID: 1115350387}
+    gameObject: {fileID: 1115350383}
+    originalMat: {fileID: 2100000, guid: f988ae1129ccaa84d943a0a26da745d4, type: 2}
 --- !u!4 &1970803541
 Transform:
   m_ObjectHideFlags: 0
@@ -710,5 +800,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a3dbb45d046614b8f657ea66c6fc00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingDenialMaterial: {fileID: 2100000, guid: 74aceaa260cf03c47b195161846769d2,
-    type: 2}
