@@ -7,11 +7,9 @@ using UnityEngine;
 /// </summary>
 public class World : MonoBehaviour
 {
-
     [SerializeField] private int xSize, zSize, ySize; // y is a height
 
     [SerializeField] private Material planeMaterial;
-
 
     /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
     private const int blockSize = 1;
@@ -24,7 +22,8 @@ public class World : MonoBehaviour
     /// <summary>
     /// Empty block
     /// </summary>
-    public Placeable AirBlock { get; private set; }
+    public Placeable AirBlock { get { return airBlock; } }
+    private Placeable airBlock;
 
     // allows static access
     public static World Get { get; private set; }
@@ -33,16 +32,13 @@ public class World : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
         Get = this;
 
         // fill map with empty blocks
         map = new Placeable[xSize, zSize, ySize];
-        AirBlock = new Placeable(false, null, 1f);
-        for (int x = 0; x < xSize; x++)
-            for (int z = 0; z < zSize; z++)
-                for (int y = 0; y < ySize; y++)
-                    map[x, z, y] = AirBlock;
+
+        airBlock = new Placeable(false, null, 1f);
+        Fill(airBlock);
 
         GameObject plane = new GameObject("Plane");
         plane.transform.parent = this.transform;
@@ -56,6 +52,14 @@ public class World : MonoBehaviour
         renderer.material = planeMaterial;
         MeshCollider collider = plane.AddComponent<MeshCollider>();
         collider.sharedMesh = meshFilter.mesh;
+    }
+    public void Fill(Placeable block)
+    {
+        
+        for (int x = 0; x < xSize; x++)
+            for (int z = 0; z < zSize; z++)
+                for (int y = 0; y < ySize; y++)
+                    map[x, z, y] = airBlock;
     }
 
     /// <summary>
@@ -82,7 +86,7 @@ public class World : MonoBehaviour
 
     public void PlaceBlock(Placeable block)
     {
-        var coords = block.GetIntCoords();
+        var coords = block.GetIntegerCoords();
         if (IsCellExists(coords.x, coords.z, coords.y))
         {
             Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
@@ -103,40 +107,7 @@ public class World : MonoBehaviour
     {
         Vector3 res = new Vector3(coords.x + World.blockSize / 2f, coords.y + World.blockSize / 2f, coords.z + World.blockSize / 2f);
         return res;
-    }
-
-    public bool CanBePlaced(Placeable blockToPlace)
-    {
-        var coords = blockToPlace.GetIntCoords();
-        var cell = GetCell(coords.x, coords.z, coords.y);
-        if (cell == null)
-            return false; // wrong index
-        else
-        {
-            if (cell == AirBlock)
-            {
-                // todo put it in Placeable?
-                if (blockToPlace.AllowsMultipleObjectsInCell) // is wall
-                {
-                    // check if underlying cell exists and not empty
-                    var coordsToCheck = coords;
-                    coordsToCheck.y -= 1;
-                    var uderlyingCell = GetCell(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y);
-                    if (uderlyingCell == null || uderlyingCell == AirBlock)
-                        return false;
-                    else
-                        return true;
-                }
-                else
-                    return true;
-            }
-
-            //else if (blockToPlace.allowsMultipleObjectsInCell && cell.allowsMultipleObjectsInCell)
-            //    return true;// fix that? can build several walls in single cell
-            else
-                return false;
-        }
-    }
+    }    
 
     private Mesh CreatePlaneMesh(float width, float height)
     {
