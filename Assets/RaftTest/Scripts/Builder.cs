@@ -12,7 +12,7 @@ public class Builder : MonoBehaviour
     /// Whatever players holds in hands
     /// </summary>
     Placeable holds;
-
+    [SerializeField] private GameObject debugCube;
     void TakeInHand(Placeable placeable)//todo refactor with prefabs?
     {
         if (holds != null)
@@ -42,6 +42,13 @@ public class Builder : MonoBehaviour
             TakeInHand(GManager.Get.allBlocks[2]);
         else if (Input.GetKeyUp(KeyCode.F5))
             TakeInHand(GManager.Get.allBlocks[3]);
+        else if (Input.GetKeyUp(KeyCode.F6))
+            TakeInHand(GManager.Get.allBlocks[4]);
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+        {
+            debugCube.transform.position = hit.point;
+        }
     }
 
 }

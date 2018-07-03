@@ -28,7 +28,7 @@ public class World : MonoBehaviour
     // allows static access
     public static World Get { get; private set; }
 
-    
+
     // Use this for initialization
     void Start()
     {
@@ -55,7 +55,7 @@ public class World : MonoBehaviour
     }
     public void Fill(Placeable block)
     {
-        
+
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
@@ -95,7 +95,10 @@ public class World : MonoBehaviour
 
             newBlock.layer = 0; // placed block wouldn't be ignored by raycast
             newBlock.transform.parent = this.transform;
-            newBlock.GetComponent<BoxCollider>().isTrigger = false;
+            if (block.isTrigger)
+                newBlock.GetComponent<Collider>().isTrigger = true;
+            else
+                newBlock.GetComponent<Collider>().isTrigger = false;
         }
     }
     /// <summary>
@@ -107,7 +110,7 @@ public class World : MonoBehaviour
     {
         Vector3 res = new Vector3(coords.x + World.blockSize / 2f, coords.y + World.blockSize / 2f, coords.z + World.blockSize / 2f);
         return res;
-    }    
+    }
 
     private Mesh CreatePlaneMesh(float width, float height)
     {

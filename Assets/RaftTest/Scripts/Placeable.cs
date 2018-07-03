@@ -12,6 +12,7 @@ using UnityEngine;
 [Serializable]
 public class Placeable// : IPlaceable
 {
+    [SerializeField] public bool isTrigger;
     [SerializeField] private bool requiresSomeFoundation;
     [SerializeField] private bool allowsMultipleObjectsInCell;// MultipleObjectsInCell isn't fully implemented    
 
@@ -121,8 +122,10 @@ public class Placeable// : IPlaceable
                     blockPlacingPosition.z += lookingAtSide.y * (0.5f - this.blockThickness / 2f);
                     if (lookingAtSide.y == 0) // rotate block if it's closer to y side
                         this.GameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                       // this.GameObject.transform.Rotate(0f, 0f, 0f);
                     else
-                        this.GameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                       this.GameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                       // this.GameObject.transform.Rotate(0f, 90f, 90f);
                 }
 
                 //Debug.Log("Looking at (x,z,y)" + coordinates.x + " " + coordinates.z + " " + coordinates.y);
