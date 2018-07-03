@@ -86,7 +86,7 @@ public class World : MonoBehaviour
 
     public void PlaceBlock(Placeable block)
     {
-        var coords = block.GetIntegerCoords();
+        var coords = Placeable.GetIntegerCoords(block.GameObject.transform.position);
         if (IsCellExists(coords.x, coords.z, coords.y))
         {
             Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);

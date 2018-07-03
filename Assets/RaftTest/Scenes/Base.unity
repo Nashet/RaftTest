@@ -308,6 +308,22 @@ Prefab:
       propertyPath: m_Radius
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 14300000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_Height
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_MouseLook.XSensitivity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_MouseLook.YSensitivity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_MouseLook.lockCursor
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_IsPrefabParent: 0
@@ -981,7 +997,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19f567428e93924893d54f24903fa16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingDenialMaterial: {fileID: 2100000, guid: 74aceaa260cf03c47b195161846769d2,
+  buildingDeniedMaterial: {fileID: 2100000, guid: 74aceaa260cf03c47b195161846769d2,
+    type: 2}
+  buildingAlowedMaterial: {fileID: 2100000, guid: dc21556129d52654a8a177d6ce8cef86,
     type: 2}
   allBlocks:
   - allowsMultipleObjectsInCell: 0

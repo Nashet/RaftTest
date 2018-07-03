@@ -15,7 +15,7 @@ public class Placeable// : IPlaceable
     [SerializeField] private bool allowsMultipleObjectsInCell;// MultipleObjectsInCell isn't fully implemented    
 
     [Tooltip("Should be about same as gameObject thickness")]
-    [SerializeField] private float blockThickness;    
+    [SerializeField] private float blockThickness;
 
     [SerializeField] private MeshRenderer renderer;
 
@@ -36,15 +36,17 @@ public class Placeable// : IPlaceable
         this.blockThickness = blockThickness;
     }
 
-    public Vector3Int GetIntegerCoords()
+    public static Vector3Int GetIntegerCoords(Vector3 position)
     {
-        Vector3 AdjustedCoords = World.AdjustCoords(GameObject.transform.position);
+        Vector3 AdjustedCoords = World.AdjustCoords(position);
 
         int x = Mathf.FloorToInt(AdjustedCoords.x);
-        int y = Mathf.FloorToInt(AdjustedCoords.z);
-        int z = Mathf.FloorToInt(AdjustedCoords.y);
+        int y = Mathf.FloorToInt(AdjustedCoords.y);
+        int z = Mathf.FloorToInt(AdjustedCoords.z);
+
+        
         //Debug.Log("Int coordinates: " + new Vector3Int(x, z, y));
-        return new Vector3Int(x, z, y);
+        return new Vector3Int(x, y, z);
 
     }
     /// <summary>
@@ -79,12 +81,15 @@ public class Placeable// : IPlaceable
         if (CanBePlaced(World.Get))
         {
             if (Input.GetMouseButtonUp(0))
+            {
+                this.renderer.material = originalMat;
                 World.Get.PlaceBlock(this);
-            this.renderer.material = originalMat;
+            }
+            this.renderer.material = GManager.Get.buildingAlowedMaterial; // originalMat;
         }
         else
         {
-            this.renderer.material = GManager.Get.buildingDenialMaterial;
+            this.renderer.material = GManager.Get.buildingDeniedMaterial;
         }
     }
 
@@ -101,14 +106,10 @@ public class Placeable// : IPlaceable
             {
                 Vector3 lookingPosition = World.AdjustCoords(hit.point);
                 Vector3 blockPlacingPosition;
-                //Debug.Log("Looking at (x,z,y)" + lookingPosition.x + " " + lookingPosition.z + " " + lookingPosition.y);
-                Debug.Log("Looking at (x,z,y)" + hit.point.x + " " + hit.point.z + " " + hit.point.y);
+                Debug.Log("Looking at (x,z,y)" + lookingPosition.x + " " + lookingPosition.z + " " + lookingPosition.y);
+                // Debug.Log("Looking at (x,z,y)" + hit.point.x + " " + hit.point.z + " " + hit.point.y);
 
-
-                // removing fractional part placing blocks in grid 
-                blockPlacingPosition.x = Mathf.FloorToInt(lookingPosition.x);
-                blockPlacingPosition.y = Mathf.FloorToInt(lookingPosition.y);
-                blockPlacingPosition.z = Mathf.FloorToInt(lookingPosition.z);
+                blockPlacingPosition = GetIntegerCoords(hit.point);
 
                 // allow block to sticks to 1 of 4 side of a cell
                 if (this.allowsMultipleObjectsInCell)
@@ -135,7 +136,7 @@ public class Placeable// : IPlaceable
     }
     public bool CanBePlaced(World world)
     {
-        var coords = this.GetIntegerCoords();
+        var coords = GetIntegerCoords(this.gameObject.transform.position);
         var cell = world.GetCell(coords.x, coords.z, coords.y);
         if (cell == null)
             return false; // wrong index

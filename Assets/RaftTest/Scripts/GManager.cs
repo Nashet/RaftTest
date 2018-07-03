@@ -7,7 +7,8 @@ using UnityEngine;
 /// </summary>
 public class GManager : MonoBehaviour
 {    
-    [SerializeField] public Material buildingDenialMaterial;
+    [SerializeField] public Material buildingDeniedMaterial;
+    [SerializeField] public Material buildingAlowedMaterial;
     [SerializeField] public Placeable[] allBlocks;
 
     static GManager thisObject;
