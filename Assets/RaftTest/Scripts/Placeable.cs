@@ -12,17 +12,16 @@ using UnityEngine;
 [Serializable]
 public class Placeable// : IPlaceable
 {
-    [SerializeField] public bool isTrigger;
+    [SerializeField] private bool isTrigger;
     [SerializeField] private bool requiresSomeFoundation;
     [SerializeField] private bool allowsMultipleObjectsInCell;// MultipleObjectsInCell isn't fully implemented    
 
     [Tooltip("Should be about same as gameObject thickness")]
     [SerializeField] private float blockThickness;
-
+    
     [SerializeField] private MeshRenderer renderer;
 
-    [SerializeField] private GameObject gameObject;
-    public GameObject GameObject { get { return gameObject; } }// todo hide it from public?
+    [SerializeField] private GameObject gameObject;    
 
     [SerializeField] private Material originalMat;
 
@@ -33,8 +32,8 @@ public class Placeable// : IPlaceable
     {
         this.gameObject = prefab;
         this.allowsMultipleObjectsInCell = allowsMultipleObjectsInCell;
-        if (GameObject != null)
-            renderer = GameObject.GetComponent<MeshRenderer>();
+        if (gameObject != null)
+            renderer = gameObject.GetComponent<MeshRenderer>();
         this.blockThickness = blockThickness;
     }
 
@@ -49,8 +48,16 @@ public class Placeable// : IPlaceable
         
         //Debug.Log("Int coordinates: " + new Vector3Int(x, z, y));
         return new Vector3Int(x, y, z);
-
     }
+
+    /// <summary>
+    /// Restores original material, instead of green "allowing" material
+    /// </summary>
+    internal void SetOriginalMaterial()
+    {
+        renderer.material = originalMat;
+    }
+
     /// <summary>
     /// returns which side of map is closer to point - north, south, etc
     /// </summary>
@@ -78,15 +85,10 @@ public class Placeable// : IPlaceable
             return new Vector2Int(0, 1);
     }
 
-    public void UpdateColor()
+    void UpdateMaterial()
     {
         if (CanBePlaced(World.Get))
         {
-            if (Input.GetMouseButtonUp(0))
-            {
-                this.renderer.material = originalMat;
-                World.Get.PlaceBlock(this);
-            }
             this.renderer.material = GManager.Get.buildingAlowedMaterial; // originalMat;
         }
         else
@@ -121,21 +123,21 @@ public class Placeable// : IPlaceable
                     blockPlacingPosition.x += lookingAtSide.x * (0.5f - this.blockThickness / 2f);
                     blockPlacingPosition.z += lookingAtSide.y * (0.5f - this.blockThickness / 2f);
                     if (lookingAtSide.y == 0) // rotate block if it's closer to y side
-                        this.GameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                        // this.GameObject.transform.Rotate(0f, 0f, 0f);
                     else
-                       this.GameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                       this.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
                        // this.GameObject.transform.Rotate(0f, 90f, 90f);
                 }
 
                 //Debug.Log("Looking at (x,z,y)" + coordinates.x + " " + coordinates.z + " " + coordinates.y);
-                this.GameObject.transform.position = blockPlacingPosition;
+                this.gameObject.transform.position = blockPlacingPosition;
             }
 
             //if (EventSystem.current.IsPointerOverGameObject())
             //    return null;// -3; //hovering over UI
             // updates holding block color 
-            this.UpdateColor();
+            this.UpdateMaterial();
         }
     }
     public bool CanBePlaced(World world)
@@ -167,6 +169,43 @@ public class Placeable// : IPlaceable
             //    return true;// fix that? can build several walls in single cell
             else
                 return false;
+        }
+    }
+    public GameObject Instantiate()
+    {
+        SetOriginalMaterial();
+        var newBlock = UnityEngine.Object.Instantiate(this.gameObject);
+        newBlock.layer = 0; // placed block wouldn't be ignored by raycast
+        
+        if (this.isTrigger)
+            newBlock.GetComponent<Collider>().isTrigger = true;
+        else
+            newBlock.GetComponent<Collider>().isTrigger = false;
+        return newBlock;
+    }
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void PlaceBlock(World world)
+    {
+        if (this != null && this.CanBePlaced(world))
+        {
+            var coords = Placeable.GetIntegerCoords(this.gameObject.transform.position);
+            //if (world.IsCellExists(coords.x, coords.z, coords.y))
+            {
+                var newBlock = this.Instantiate();
+                newBlock.transform.parent = world.transform;
+                Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
+                world.Add(coords.x, coords.z, coords.y, this);                   
+            }
         }
     }
 }

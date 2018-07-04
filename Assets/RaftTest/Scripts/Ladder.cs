@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Object with that script works as ladder. Object should have collider with IsTrigger on
+/// Climbing object should have RigidBody component
+/// </summary>
 public class Ladder : MonoBehaviour
 {
-
-    [SerializeField] private float climbSpeed;
-    
+    [SerializeField] private float climbSpeed;    
     void OnTriggerStay(Collider other)
-    {     
-        //if (collision.gameObject.GetComponent<Builder>()!= )
+    {
+        if (other.tag == "Player")
         {
             var position = other.gameObject.transform.position;
             position.y += climbSpeed;            

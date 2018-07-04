@@ -11,18 +11,20 @@ public class Builder : MonoBehaviour
     /// <summary>
     /// Whatever players holds in hands
     /// </summary>
-    Placeable holds;
+    private Placeable holds;
+
     [SerializeField] private GameObject debugCube;
+
     void TakeInHand(Placeable placeable)//todo refactor with prefabs?
     {
-        if (holds != null)
+        if (holds != null) // hides previous object in hands
         {
-            holds.GameObject.SetActive(false);
+            holds.Hide();
         }
         holds = placeable;
-        if (holds != null)
+        if (holds != null) // shows new object in habds
         {
-            holds.GameObject.SetActive(true);
+            holds.Show();
         }
     }
 
@@ -31,6 +33,18 @@ public class Builder : MonoBehaviour
     {
         if (holds != null)
             holds.UpdateHoldingBlock();
+
+        ManageControls();
+
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+        {
+            debugCube.transform.position = hit.point;
+        }
+    }
+
+    void ManageControls()
+    {
         // selects block 
         if (Input.GetKeyUp(KeyCode.F1))
             TakeInHand(null);
@@ -44,11 +58,10 @@ public class Builder : MonoBehaviour
             TakeInHand(GManager.Get.allBlocks[3]);
         else if (Input.GetKeyUp(KeyCode.F6))
             TakeInHand(GManager.Get.allBlocks[4]);
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+
+        if (Input.GetMouseButtonUp(0)) // place block in a world
         {
-            debugCube.transform.position = hit.point;
+            holds.PlaceBlock(World.Get);
         }
     }
-
 }

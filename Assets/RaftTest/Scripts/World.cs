@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class World : MonoBehaviour
 
     [SerializeField] private Material planeMaterial;
 
-    /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
+    /// <summary> Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
     private const int blockSize = 1;
 
     /// <summary>
@@ -22,12 +23,10 @@ public class World : MonoBehaviour
     /// <summary>
     /// Empty block
     /// </summary>
-    public Placeable AirBlock { get { return airBlock; } }
-    private Placeable airBlock;
+    public Placeable AirBlock { get; private set; }
 
     // allows static access
     public static World Get { get; private set; }
-
 
     // Use this for initialization
     void Start()
@@ -37,8 +36,8 @@ public class World : MonoBehaviour
         // fill map with empty blocks
         map = new Placeable[xSize, zSize, ySize];
 
-        airBlock = new Placeable(false, null, 1f);
-        Fill(airBlock);
+        AirBlock = new Placeable(false, null, 1f);
+        Fill(AirBlock);
 
         GameObject plane = new GameObject("Plane");
         plane.transform.parent = this.transform;
@@ -59,7 +58,7 @@ public class World : MonoBehaviour
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
-                    map[x, z, y] = airBlock;
+                    map[x, z, y] = AirBlock;
     }
 
     /// <summary>
@@ -84,23 +83,7 @@ public class World : MonoBehaviour
             return false;
     }
 
-    public void PlaceBlock(Placeable block)
-    {
-        var coords = Placeable.GetIntegerCoords(block.GameObject.transform.position);
-        if (IsCellExists(coords.x, coords.z, coords.y))
-        {
-            Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
-            map[coords.x, coords.z, coords.y] = block;
-            var newBlock = Object.Instantiate(block.GameObject);
-
-            newBlock.layer = 0; // placed block wouldn't be ignored by raycast
-            newBlock.transform.parent = this.transform;
-            if (block.isTrigger)
-                newBlock.GetComponent<Collider>().isTrigger = true;
-            else
-                newBlock.GetComponent<Collider>().isTrigger = false;
-        }
-    }
+    
     /// <summary>
     /// Adjust coordinates by 0.5, because block center is 0.5, 0.5
     /// </summary>
@@ -132,5 +115,13 @@ public class World : MonoBehaviour
         m.RecalculateNormals();
 
         return m;
+    }
+
+    /// <summary>
+    /// Coordinates check should be outside
+    /// </summary>    
+    internal void Add(int x, int z, int y, Placeable placeable)
+    {
+        map[x, z, y] = placeable;
     }
 }
