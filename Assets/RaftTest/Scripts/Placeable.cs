@@ -13,18 +13,20 @@ using UnityEngine;
 public class Placeable// : IPlaceable
 {
     [SerializeField] private string name;
-    [SerializeField] private bool isTrigger;
-    
-    [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;    
 
-    /// <summary> Full block mean that it fills entire cell, like 1x1, not a wall like 0.5x1     
+    [Tooltip("Turn on if you want to turn of physics for that block and/or include manual collision detection")]
+    [SerializeField] private bool isTrigger;
+
+    [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;
+        
     [SerializeField] private bool isFullBlock;
+    /// <summary> Full block mean that it fills entire cell, like 1x1, not a wall like 0.5x1     
+    public bool IsFullBlock { get { return isFullBlock; } }
 
     [SerializeField] private bool requiresSomeFoundation;
     [SerializeField] private bool allowsEdgePlacing;
     public bool OnlyCenterPlacing { get { return !allowsEdgePlacing; } }
-
-    //[SerializeField] private bool allowsMultipleObjectsInCell;
+        
 
     [Tooltip("Should be about same as gameObject thickness")]
     [SerializeField] private float blockThickness;
@@ -43,7 +45,7 @@ public class Placeable// : IPlaceable
     /// <summary>
     /// Constructor. Instead, you can set values in inspector
     /// </summary>   
-   
+
     public Placeable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material)
     {
         this.name = name;
@@ -71,10 +73,6 @@ public class Placeable// : IPlaceable
 
 
         return new Vector3Int(x, y, z);
-    }
-    public bool IsFullBlock()
-    {
-        return isFullBlock;
     }
     /// <summary>
     /// Restores original material, instead of green "allowing" material
@@ -174,8 +172,8 @@ public class Placeable// : IPlaceable
             return false; // wrong index
         else
         {
-            if (placeToBuild == World.AirBlock  && !placeToBuild.IsFullBlock()) // is empty space
-                                                                                //| !placeToBuild.IsFullBlock()
+            if (placeToBuild == World.AirBlock && !placeToBuild.IsFullBlock) // is empty space
+                                                                             //| !placeToBuild.IsFullBlock()
             {
                 // here go all kinds of foundation checks
                 if (!requiresSomeFoundation)
@@ -186,14 +184,25 @@ public class Placeable// : IPlaceable
 
                 var bottomBlockCoords = blockPlacementCoords + Vector3Int.down;
 
-                var blockBelowThatHalfBlock = world.GetBlock(bottomBlockCoords, sideSnapping);
                 // either..
-                if (world.IsFullBlock(bottomBlockCoords) //full block below
-                    || blockBelowThatHalfBlock != World.AirBlock && blockBelowThatHalfBlock != null// there is half block below in right position                
-                    || this.IsFullBlock() && world.HasAnyNonAirBlock(bottomBlockCoords) && !world.HasAnyNonAirBlock(blockPlacementCoords)) // any block below, no any half blocks here and this is full block
-                    return true;
-                else
-                    return false;
+                if (this.IsFullBlock)
+                {
+                    if (world.HasAnyNonAirBlock(bottomBlockCoords) && !world.HasAnyNonAirBlock(blockPlacementCoords))
+                        // any block below, no any half blocks here and this is full block
+                        return true;
+                    else
+                        return false;
+                }
+                else // not full block //can be center part or one of 4 edge parts
+                {
+                    var blockBelowThatHalfBlock = world.GetBlock(bottomBlockCoords, sideSnapping);
+                    if (blockBelowThatHalfBlock != null && blockBelowThatHalfBlock.IsFullBlock //full block below
+                       || blockBelowThatHalfBlock != null && blockBelowThatHalfBlock != World.AirBlock) // there is half block below in right position        
+
+                        return true;
+                    else
+                        return false;
+                }
             }
             //else if (this.allowsMultipleObjectsInCell)
             //    return true;
@@ -236,7 +245,7 @@ public class Placeable// : IPlaceable
 
             var newBlock = this.Instantiate();
             newBlock.transform.parent = world.transform;
-            Debug.Log("Placed block in (x,y,z)" + coords + " with snapping "+ sideSnapping) ;
+            Debug.Log("Placed block in (x,y,z)" + coords + " with snapping " + sideSnapping);
             world.Add(coords.x, coords.y, coords.z, this, sideSnapping);
 
         }

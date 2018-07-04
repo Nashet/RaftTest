@@ -111,34 +111,6 @@ public class World : MonoBehaviour
     }
 
     /// <summary>
-    /// false also could mean that cell doesn't exist (wrong index)
-    /// </summary>    
-    public bool IsFullBlock(int x, int y, int z)
-    {
-        if (IsCellExists(x, y, z))
-        {
-            if (map[x, y, z].Get(Vector2Int.down).IsFullBlock()
-                || map[x, y, z].Get(Vector2Int.right).IsFullBlock()
-                || map[x, y, z].Get(Vector2Int.up).IsFullBlock()
-                || map[x, y, z].Get(Vector2Int.left).IsFullBlock()
-                )
-                return true;
-            else
-                return false;
-        }
-        else
-            return false;
-    }
-    /// <summary>
-    /// false also could mean that cell doesn't exist (wrong index)
-    /// </summary>    
-    public bool IsFullBlock(Vector3Int position)
-    {
-        return IsFullBlock(position.x, position.y, position.z);
-    }
-
-
-    /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>   
     public bool IsCellExists(int x, int y, int z)
@@ -148,7 +120,6 @@ public class World : MonoBehaviour
         else
             return false;
     }
-
 
     /// <summary>
     /// Adjust coordinates by 0.5, because block center is 0.5, 0.5
@@ -188,7 +159,7 @@ public class World : MonoBehaviour
     /// </summary>    
     internal void Add(int x, int y, int z, Placeable placeable, Vector2Int sideSnapping)
     {        
-        if (placeable.IsFullBlock())
+        if (placeable.IsFullBlock) // fill all places
         {
             map[x, y, z].Place(placeable, Vector2Int.zero);
             map[x, y, z].Place(placeable, Vector2Int.left);
@@ -196,8 +167,7 @@ public class World : MonoBehaviour
             map[x, y, z].Place(placeable, Vector2Int.up);
             map[x, y, z].Place(placeable, Vector2Int.down);
         }
-        else
-
+        else // fill specific part
             map[x, y, z].Place(placeable, sideSnapping);
     }
 }
