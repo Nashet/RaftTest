@@ -38,7 +38,7 @@ public class World : MonoBehaviour
         // fill map with empty blocks
         map = new Cell[xSize, ySize, zSize];
 
-        AirBlock = new Placeable(true, null, 1f);
+        AirBlock = new Placeable("Empty air", true, null, 1f, false, false, true, isFullBlock: false, material: null);
         Fill(AirBlock);
 
         GameObject plane = new GameObject("Plane");
@@ -68,7 +68,7 @@ public class World : MonoBehaviour
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>    
-    public Placeable GetBlock(int x,  int y, int z, Vector2Int side)
+    public Placeable GetBlock(int x, int y, int z, Vector2Int side)
     {
         if (IsCellExists(x, y, z))
             return map[x, y, z].Get(side);
@@ -187,7 +187,17 @@ public class World : MonoBehaviour
     /// Coordinates check should be outside
     /// </summary>    
     internal void Add(int x, int y, int z, Placeable placeable, Vector2Int sideSnapping)
-    {
-        map[x, y, z].Place(placeable, sideSnapping);
+    {        
+        if (placeable.IsFullBlock())
+        {
+            map[x, y, z].Place(placeable, Vector2Int.zero);
+            map[x, y, z].Place(placeable, Vector2Int.left);
+            map[x, y, z].Place(placeable, Vector2Int.right);
+            map[x, y, z].Place(placeable, Vector2Int.up);
+            map[x, y, z].Place(placeable, Vector2Int.down);
+        }
+        else
+
+            map[x, y, z].Place(placeable, sideSnapping);
     }
 }

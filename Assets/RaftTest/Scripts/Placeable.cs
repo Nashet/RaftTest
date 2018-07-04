@@ -12,13 +12,17 @@ using UnityEngine;
 [Serializable]
 public class Placeable// : IPlaceable
 {
+    [SerializeField] private string name;
     [SerializeField] private bool isTrigger;
-    [SerializeField] private bool requiresSomeFoundation;
-    [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;
-    [SerializeField] private bool allowsEdgePlacing;
+    
+    [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;    
 
-    /// <summary> Full block mean that it fills entire cell, like 1x1, not a wall or     
+    /// <summary> Full block mean that it fills entire cell, like 1x1, not a wall like 0.5x1     
     [SerializeField] private bool isFullBlock;
+
+    [SerializeField] private bool requiresSomeFoundation;
+    [SerializeField] private bool allowsEdgePlacing;
+    public bool OnlyCenterPlacing { get { return !allowsEdgePlacing; } }
 
     //[SerializeField] private bool allowsMultipleObjectsInCell;
 
@@ -38,9 +42,18 @@ public class Placeable// : IPlaceable
 
     /// <summary>
     /// Constructor. Instead, you can set values in inspector
-    /// </summary>    
-    public Placeable(bool allowsEdgePlacing, GameObject prefab, float blockThickness)
+    /// </summary>   
+   
+    public Placeable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material)
     {
+        this.name = name;
+        this.isTrigger = isTrigger;
+        this.requiresSomeFoundation = requiresSomeFoundation;
+        this.canBePlacedAtZeroLevelWithoutFoundation = canBePlacedAtZeroLevelWithoutFoundation;
+        this.isFullBlock = isFullBlock;
+        this.material = material;
+        this.name = name;
+
         this.gameObject = prefab;
         this.allowsEdgePlacing = allowsEdgePlacing;
         if (gameObject != null)
@@ -138,10 +151,10 @@ public class Placeable// : IPlaceable
                     blockPlacingPosition.x += sideSnapping.x * (0.5f - this.blockThickness / 2f);
                     blockPlacingPosition.z += sideSnapping.y * (0.5f - this.blockThickness / 2f);
                     if (sideSnapping.y == 0) // rotate block if it's closer to y side
-                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);                    
+                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                     else
                         this.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-                    
+
                 }
                 this.gameObject.transform.position = blockPlacingPosition;
                 Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
@@ -161,7 +174,8 @@ public class Placeable// : IPlaceable
             return false; // wrong index
         else
         {
-            if (placeToBuild == World.AirBlock && !placeToBuild.IsFullBlock()) // is empty space
+            if (placeToBuild == World.AirBlock  && !placeToBuild.IsFullBlock()) // is empty space
+                                                                                //| !placeToBuild.IsFullBlock()
             {
                 // here go all kinds of foundation checks
                 if (!requiresSomeFoundation)
@@ -222,9 +236,16 @@ public class Placeable// : IPlaceable
 
             var newBlock = this.Instantiate();
             newBlock.transform.parent = world.transform;
-            Debug.Log("Placed block in (x,y,z)" + coords);
+            Debug.Log("Placed block in (x,y,z)" + coords + " with snapping "+ sideSnapping) ;
             world.Add(coords.x, coords.y, coords.z, this, sideSnapping);
 
         }
+    }
+    /// <summary>
+    /// for better debug
+    // </summary>    
+    override public string ToString()
+    {
+        return name;
     }
 }
