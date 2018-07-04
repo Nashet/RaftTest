@@ -32,7 +32,7 @@ public class Builder : MonoBehaviour
     void Update()
     {
         if (holds != null)
-            holds.UpdateHoldingBlock();
+            holds.UpdateBlock();
 
         ManageControls();
 

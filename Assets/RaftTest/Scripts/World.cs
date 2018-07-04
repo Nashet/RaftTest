@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 /// <summary>
-/// keeps map
+/// Represents world, keeps map
 /// </summary>
 public class World : MonoBehaviour
 {
+
     [SerializeField] private int xSize, zSize, ySize; // y is a height
 
     [SerializeField] private Material planeMaterial;
@@ -18,12 +20,12 @@ public class World : MonoBehaviour
     /// <summary>
     /// holds data about every cell in world
     /// </summary>
-    [SerializeField] private Placeable[,,] map;
+    [SerializeField] private Cell[,,] map;
 
     /// <summary>
     /// Empty block
     /// </summary>
-    public Placeable AirBlock { get; private set; }
+    public static Placeable AirBlock { get; private set; }
 
     // allows static access
     public static World Get { get; private set; }
@@ -34,7 +36,7 @@ public class World : MonoBehaviour
         Get = this;
 
         // fill map with empty blocks
-        map = new Placeable[xSize, zSize, ySize];
+        map = new Cell[xSize, zSize, ySize];
 
         AirBlock = new Placeable(false, null, 1f);
         Fill(AirBlock);
@@ -58,19 +60,41 @@ public class World : MonoBehaviour
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
-                    map[x, z, y] = AirBlock;
+                {
+                    map[x, z, y].Init();
+                }
     }
 
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>    
-    public Placeable GetCell(int x, int z, int y)
+    public Placeable GetBlock(int x, int z, int y, Vector2Int side)
     {
         if (IsCellExists(x, z, y))
-            return map[x, z, y];
+            return map[x, z, y].Get(side);
         else
             return null;
     }
+    /// <summary>
+    /// false also could mean that cell doesn't exist (wrong index)
+    /// </summary>    
+    public bool HasAnyNonAirBlock(int x, int z, int y)
+    {
+        if (IsCellExists(x, z, y))
+        {
+            if (map[x, z, y].Get(Vector2Int.down) != AirBlock
+                || map[x, z, y].Get(Vector2Int.right) != AirBlock
+                || map[x, z, y].Get(Vector2Int.up) != AirBlock
+                || map[x, z, y].Get(Vector2Int.left) != AirBlock
+                )
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+
 
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
@@ -83,7 +107,7 @@ public class World : MonoBehaviour
             return false;
     }
 
-    
+
     /// <summary>
     /// Adjust coordinates by 0.5, because block center is 0.5, 0.5
     /// </summary>
@@ -120,8 +144,8 @@ public class World : MonoBehaviour
     /// <summary>
     /// Coordinates check should be outside
     /// </summary>    
-    internal void Add(int x, int z, int y, Placeable placeable)
+    internal void Add(int x, int z, int y, Placeable placeable, Vector2Int sideSnapping)
     {
-        map[x, z, y] = placeable;
+        map[x, z, y].Place(placeable, sideSnapping);
     }
 }

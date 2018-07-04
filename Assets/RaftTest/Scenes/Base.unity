@@ -627,8 +627,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df0f3a502e49c542a37a9ee6c175b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xSize: 10
-  zSize: 8
+  xSize: 20
+  zSize: 15
   ySize: 8
   planeMaterial: {fileID: 2100000, guid: 86354c480d599d344bb54b5d5183f858, type: 2}
 --- !u!4 &488517504
@@ -1256,39 +1256,44 @@ MonoBehaviour:
   allBlocks:
   - isTrigger: 0
     requiresSomeFoundation: 0
+    allowsEdgePlacing: 0
     allowsMultipleObjectsInCell: 0
     blockThickness: 1
     renderer: {fileID: 1012911017}
     gameObject: {fileID: 1012911015}
-    originalMat: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
+    material: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
   - isTrigger: 0
     requiresSomeFoundation: 1
+    allowsEdgePlacing: 1
     allowsMultipleObjectsInCell: 1
     blockThickness: 0.25
     renderer: {fileID: 1036263287}
     gameObject: {fileID: 1036263285}
-    originalMat: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
+    material: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
   - isTrigger: 0
     requiresSomeFoundation: 1
+    allowsEdgePlacing: 1
     allowsMultipleObjectsInCell: 1
     blockThickness: 0.1
     renderer: {fileID: 1115350387}
     gameObject: {fileID: 1115350383}
-    originalMat: {fileID: 2100000, guid: f988ae1129ccaa84d943a0a26da745d4, type: 2}
+    material: {fileID: 2100000, guid: f988ae1129ccaa84d943a0a26da745d4, type: 2}
   - isTrigger: 0
     requiresSomeFoundation: 1
+    allowsEdgePlacing: 0
     allowsMultipleObjectsInCell: 0
     blockThickness: 0.1
     renderer: {fileID: 2134757963}
     gameObject: {fileID: 2134757959}
-    originalMat: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
+    material: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
   - isTrigger: 1
     requiresSomeFoundation: 0
-    allowsMultipleObjectsInCell: 1
+    allowsEdgePlacing: 1
+    allowsMultipleObjectsInCell: 0
     blockThickness: 0.1
     renderer: {fileID: 704640129}
     gameObject: {fileID: 1633621811}
-    originalMat: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
+    material: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
 --- !u!4 &1970803541
 Transform:
   m_ObjectHideFlags: 0
