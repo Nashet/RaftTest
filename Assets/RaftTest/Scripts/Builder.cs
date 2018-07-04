@@ -58,6 +58,8 @@ public class Builder : MonoBehaviour
             TakeInHand(GManager.Get.allBlocks[3]);
         else if (Input.GetKeyUp(KeyCode.F6))
             TakeInHand(GManager.Get.allBlocks[4]);
+        else if (Input.GetKeyUp(KeyCode.F7))
+            TakeInHand(GManager.Get.allBlocks[5]);
 
         if (Input.GetMouseButtonUp(0)) // place block in a world
         {

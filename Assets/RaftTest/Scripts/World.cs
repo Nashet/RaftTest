@@ -10,7 +10,7 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
 
-    [SerializeField] private int xSize, zSize, ySize; // y is a height
+    [SerializeField] private int xSize, ySize, zSize; // y is a height
 
     [SerializeField] private Material planeMaterial;
 
@@ -36,9 +36,9 @@ public class World : MonoBehaviour
         Get = this;
 
         // fill map with empty blocks
-        map = new Cell[xSize, zSize, ySize];
+        map = new Cell[xSize, ySize, zSize];
 
-        AirBlock = new Placeable(true, null, 1f);
+        AirBlock = new Placeable("Empty air", true, null, 1f, false, false, true, isFullBlock: false, material: null);
         Fill(AirBlock);
 
         GameObject plane = new GameObject("Plane");
@@ -58,34 +58,43 @@ public class World : MonoBehaviour
     {
 
         for (int x = 0; x < xSize; x++)
-            for (int z = 0; z < zSize; z++)
-                for (int y = 0; y < ySize; y++)
+            for (int y = 0; y < ySize; y++)
+                for (int z = 0; z < zSize; z++)
                 {
-                    map[x, z, y].Init();
+                    map[x, y, z].Init();
                 }
     }
 
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>    
-    public Placeable GetBlock(int x, int z, int y, Vector2Int side)
+    public Placeable GetBlock(int x, int y, int z, Vector2Int side)
     {
-        if (IsCellExists(x, z, y))
-            return map[x, z, y].Get(side);
+        if (IsCellExists(x, y, z))
+            return map[x, y, z].Get(side);
         else
             return null;
     }
     /// <summary>
+    /// null means that cell doesn't exist (wrong index)
+    /// </summary>    
+    public Placeable GetBlock(Vector3Int position, Vector2Int side)
+    {
+        return GetBlock(position.x, position.y, position.z, side);
+    }
+
+    /// <summary>
     /// false also could mean that cell doesn't exist (wrong index)
     /// </summary>    
-    public bool HasAnyNonAirBlock(int x, int z, int y)
+    public bool HasAnyNonAirBlock(int x, int y, int z)
     {
-        if (IsCellExists(x, z, y))
+        if (IsCellExists(x, y, z))
         {
-            if (map[x, z, y].Get(Vector2Int.down) != AirBlock
-                || map[x, z, y].Get(Vector2Int.right) != AirBlock
-                || map[x, z, y].Get(Vector2Int.up) != AirBlock
-                || map[x, z, y].Get(Vector2Int.left) != AirBlock
+            if (map[x, y, z].Get(Vector2Int.down) != AirBlock
+                || map[x, y, z].Get(Vector2Int.right) != AirBlock
+                || map[x, y, z].Get(Vector2Int.up) != AirBlock
+                || map[x, y, z].Get(Vector2Int.left) != AirBlock
+                || map[x, y, z].Get(Vector2Int.zero) != AirBlock
                 )
                 return true;
             else
@@ -97,35 +106,21 @@ public class World : MonoBehaviour
     /// <summary>
     /// false also could mean that cell doesn't exist (wrong index)
     /// </summary>    
-    public bool IsFullBlock(int x, int z, int y)
+    public bool HasAnyNonAirBlock(Vector3Int position)
     {
-        if (IsCellExists(x, z, y))
-        {
-            if (map[x, z, y].Get(Vector2Int.down).IsFullBlock()
-                || map[x, z, y].Get(Vector2Int.right).IsFullBlock()
-                || map[x, z, y].Get(Vector2Int.up).IsFullBlock()
-                || map[x, z, y].Get(Vector2Int.left).IsFullBlock()
-                )
-                return true;
-            else
-                return false;
-        }
-        else
-            return false;
+        return HasAnyNonAirBlock(position.x, position.y, position.z);
     }
-
 
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>   
-    public bool IsCellExists(int x, int z, int y)
+    public bool IsCellExists(int x, int y, int z)
     {
         if (x < xSize && y < ySize && z < zSize && x >= 0 && y >= 0 && z >= 0)
             return true;
         else
             return false;
     }
-
 
     /// <summary>
     /// Adjust coordinates by 0.5, because block center is 0.5, 0.5
@@ -163,8 +158,17 @@ public class World : MonoBehaviour
     /// <summary>
     /// Coordinates check should be outside
     /// </summary>    
-    internal void Add(int x, int z, int y, Placeable placeable, Vector2Int sideSnapping)
-    {
-        map[x, z, y].Place(placeable, sideSnapping);
+    internal void Add(int x, int y, int z, Placeable placeable, Vector2Int sideSnapping)
+    {        
+        if (placeable.IsFullBlock) // fill all places
+        {
+            map[x, y, z].Place(placeable, Vector2Int.zero);
+            map[x, y, z].Place(placeable, Vector2Int.left);
+            map[x, y, z].Place(placeable, Vector2Int.right);
+            map[x, y, z].Place(placeable, Vector2Int.up);
+            map[x, y, z].Place(placeable, Vector2Int.down);
+        }
+        else // fill specific part
+            map[x, y, z].Place(placeable, sideSnapping);
     }
 }

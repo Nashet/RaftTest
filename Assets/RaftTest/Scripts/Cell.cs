@@ -8,7 +8,7 @@ using UnityEngine;
 struct Cell
 {
     private Placeable[,] container;
-
+    private Placeable centralBlock;
     /// <summary>
     /// Necessary to call
     /// </summary>
@@ -19,18 +19,26 @@ struct Cell
         container[0, 1] = World.AirBlock;
         container[1, 0] = World.AirBlock;
         container[1, 1] = World.AirBlock;
+        centralBlock = World.AirBlock;
     }
 
     public Placeable Get(Vector2Int side) // Convert Vector2Int into specialized Struct?
-    {
+    {        
+        if (side == Vector2Int.zero)
+            return centralBlock;
         Vector2Int convertedCoords = ConvertCoords(side);
         return container[convertedCoords.x, convertedCoords.y];
     }
 
     public void Place(Placeable block, Vector2Int side)
     {
-        Vector2Int convertedCoords = ConvertCoords(side);
-        container[convertedCoords.x, convertedCoords.y] = block;
+        if (side == Vector2Int.zero)
+            centralBlock = block;
+        else
+        {
+            Vector2Int convertedCoords = ConvertCoords(side);
+            container[convertedCoords.x, convertedCoords.y] = block;
+        }
     }
     /// <summary>
     /// Converts coords from (-1..1,-1..1) format to normal array format (0..1, 0..1)
@@ -38,6 +46,7 @@ struct Cell
     private Vector2Int ConvertCoords(Vector2Int side)
     {
         // if side is center (0,0) it stays (0,0)
+
         if (side.x < 0)
         {
             side.x = 1;
