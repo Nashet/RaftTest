@@ -1,44 +1,45 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 /// <summary>
-/// keeps map
+/// Represents world, keeps map
 /// </summary>
 public class World : MonoBehaviour
 {
+
     [SerializeField] private int xSize, zSize, ySize; // y is a height
 
     [SerializeField] private Material planeMaterial;
 
-    /// <summary>Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
+    /// <summary> Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
     private const int blockSize = 1;
 
     /// <summary>
     /// holds data about every cell in world
     /// </summary>
-    [SerializeField] private Placeable[,,] map;
+    [SerializeField] private Cell[,,] map;
 
     /// <summary>
     /// Empty block
     /// </summary>
-    public Placeable AirBlock { get { return airBlock; } }
-    private Placeable airBlock;
+    public static Placeable AirBlock { get; private set; }
 
     // allows static access
     public static World Get { get; private set; }
 
-    
     // Use this for initialization
     void Start()
     {
         Get = this;
 
         // fill map with empty blocks
-        map = new Placeable[xSize, zSize, ySize];
+        map = new Cell[xSize, zSize, ySize];
 
-        airBlock = new Placeable(false, null, 1f);
-        Fill(airBlock);
+        AirBlock = new Placeable(false, null, 1f);
+        Fill(AirBlock);
 
         GameObject plane = new GameObject("Plane");
         plane.transform.parent = this.transform;
@@ -53,25 +54,47 @@ public class World : MonoBehaviour
         MeshCollider collider = plane.AddComponent<MeshCollider>();
         collider.sharedMesh = meshFilter.mesh;
     }
-    public void Fill(Placeable block)
+    void Fill(Placeable block)
     {
-        
+
         for (int x = 0; x < xSize; x++)
             for (int z = 0; z < zSize; z++)
                 for (int y = 0; y < ySize; y++)
-                    map[x, z, y] = airBlock;
+                {
+                    map[x, z, y].Init();
+                }
     }
 
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>    
-    public Placeable GetCell(int x, int z, int y)
+    public Placeable GetBlock(int x, int z, int y, Vector2Int side)
     {
         if (IsCellExists(x, z, y))
-            return map[x, z, y];
+            return map[x, z, y].Get(side);
         else
             return null;
     }
+    /// <summary>
+    /// false also could mean that cell doesn't exist (wrong index)
+    /// </summary>    
+    public bool HasAnyNonAirBlock(int x, int z, int y)
+    {
+        if (IsCellExists(x, z, y))
+        {
+            if (map[x, z, y].Get(Vector2Int.down) != AirBlock
+                || map[x, z, y].Get(Vector2Int.right) != AirBlock
+                || map[x, z, y].Get(Vector2Int.up) != AirBlock
+                || map[x, z, y].Get(Vector2Int.left) != AirBlock
+                )
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+
 
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
@@ -84,20 +107,7 @@ public class World : MonoBehaviour
             return false;
     }
 
-    public void PlaceBlock(Placeable block)
-    {
-        var coords = block.GetIntegerCoords();
-        if (IsCellExists(coords.x, coords.z, coords.y))
-        {
-            Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
-            map[coords.x, coords.z, coords.y] = block;
-            var newBlock = Object.Instantiate(block.GameObject);
 
-            newBlock.layer = 0; // placed block wouldn't be ignored by raycast
-            newBlock.transform.parent = this.transform;
-            newBlock.GetComponent<BoxCollider>().isTrigger = false;
-        }
-    }
     /// <summary>
     /// Adjust coordinates by 0.5, because block center is 0.5, 0.5
     /// </summary>
@@ -107,7 +117,7 @@ public class World : MonoBehaviour
     {
         Vector3 res = new Vector3(coords.x + World.blockSize / 2f, coords.y + World.blockSize / 2f, coords.z + World.blockSize / 2f);
         return res;
-    }    
+    }
 
     private Mesh CreatePlaneMesh(float width, float height)
     {
@@ -129,5 +139,13 @@ public class World : MonoBehaviour
         m.RecalculateNormals();
 
         return m;
+    }
+
+    /// <summary>
+    /// Coordinates check should be outside
+    /// </summary>    
+    internal void Add(int x, int z, int y, Placeable placeable, Vector2Int sideSnapping)
+    {
+        map[x, z, y].Place(placeable, sideSnapping);
     }
 }
