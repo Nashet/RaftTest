@@ -37,7 +37,7 @@ public class Placeable// : IPlaceable
         this.blockThickness = blockThickness;
     }
 
-    public static Vector3Int GetIntegerCoords(Vector3 position)
+    static Vector3Int GetIntegerCoords(Vector3 position)
     {
         Vector3 AdjustedCoords = World.AdjustCoords(position);
 
@@ -53,7 +53,7 @@ public class Placeable// : IPlaceable
     /// <summary>
     /// Restores original material, instead of green "allowing" material
     /// </summary>
-    internal void SetOriginalMaterial()
+    void SetOriginalMaterial()
     {
         renderer.material = originalMat;
     }
@@ -61,7 +61,7 @@ public class Placeable// : IPlaceable
     /// <summary>
     /// returns which side of map is closer to point - north, south, etc
     /// </summary>
-    public static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+    static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
     {
         // distance to block's side
         float xDifference = lookingPosition.x - blockPlacingPosition.x;
@@ -98,7 +98,7 @@ public class Placeable// : IPlaceable
     }
 
     /// <summary>
-    /// updates block held by player - rotates, changes color if building not allowed
+    /// updates block held by player - rotates, changes color if building is not allowed, etc
     /// </summary>
     public void UpdateHoldingBlock()
     {
@@ -140,7 +140,7 @@ public class Placeable// : IPlaceable
             this.UpdateMaterial();
         }
     }
-    public bool CanBePlaced(World world)
+    bool CanBePlaced(World world)
     {
         var coords = GetIntegerCoords(this.gameObject.transform.position);
         var cell = world.GetCell(coords.x, coords.z, coords.y);
@@ -171,7 +171,7 @@ public class Placeable// : IPlaceable
                 return false;
         }
     }
-    public GameObject Instantiate()
+    GameObject Instantiate()
     {
         SetOriginalMaterial();
         var newBlock = UnityEngine.Object.Instantiate(this.gameObject);

@@ -52,7 +52,7 @@ public class World : MonoBehaviour
         MeshCollider collider = plane.AddComponent<MeshCollider>();
         collider.sharedMesh = meshFilter.mesh;
     }
-    public void Fill(Placeable block)
+    void Fill(Placeable block)
     {
 
         for (int x = 0; x < xSize; x++)
