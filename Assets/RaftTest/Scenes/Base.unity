@@ -190,7 +190,9 @@ MonoBehaviour:
 
     f5 - beam
 
-    f6 - ladder'
+    f6 - ladder
+
+    jump to use ladder'
 --- !u!222 &13526202
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1257,7 +1259,7 @@ MonoBehaviour:
   - isTrigger: 0
     requiresSomeFoundation: 0
     allowsEdgePlacing: 0
-    allowsMultipleObjectsInCell: 0
+    isFullBlock: 1
     blockThickness: 1
     renderer: {fileID: 1012911017}
     gameObject: {fileID: 1012911015}
@@ -1265,7 +1267,7 @@ MonoBehaviour:
   - isTrigger: 0
     requiresSomeFoundation: 1
     allowsEdgePlacing: 1
-    allowsMultipleObjectsInCell: 1
+    isFullBlock: 0
     blockThickness: 0.25
     renderer: {fileID: 1036263287}
     gameObject: {fileID: 1036263285}
@@ -1273,7 +1275,7 @@ MonoBehaviour:
   - isTrigger: 0
     requiresSomeFoundation: 1
     allowsEdgePlacing: 1
-    allowsMultipleObjectsInCell: 1
+    isFullBlock: 0
     blockThickness: 0.1
     renderer: {fileID: 1115350387}
     gameObject: {fileID: 1115350383}
@@ -1281,7 +1283,7 @@ MonoBehaviour:
   - isTrigger: 0
     requiresSomeFoundation: 1
     allowsEdgePlacing: 0
-    allowsMultipleObjectsInCell: 0
+    isFullBlock: 0
     blockThickness: 0.1
     renderer: {fileID: 2134757963}
     gameObject: {fileID: 2134757959}
@@ -1289,7 +1291,7 @@ MonoBehaviour:
   - isTrigger: 1
     requiresSomeFoundation: 0
     allowsEdgePlacing: 1
-    allowsMultipleObjectsInCell: 0
+    isFullBlock: 0
     blockThickness: 0.1
     renderer: {fileID: 704640129}
     gameObject: {fileID: 1633621811}
