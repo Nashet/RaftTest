@@ -12,14 +12,14 @@ struct Cell
     /// <summary>
     /// Necessary to call
     /// </summary>
-    public void Init()
+    public void Init(Placeable block)
     {
         container = new Placeable[2, 2];
-        container[0, 0] = World.AirBlock;
-        container[0, 1] = World.AirBlock;
-        container[1, 0] = World.AirBlock;
-        container[1, 1] = World.AirBlock;
-        centralBlock = World.AirBlock;
+        container[0, 0] = block;
+        container[0, 1] = block;
+        container[1, 0] = block;
+        container[1, 1] = block;
+        centralBlock = block;
     }
 
     public Placeable Get(Vector2Int side) // Convert Vector2Int into specialized Struct?

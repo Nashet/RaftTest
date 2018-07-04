@@ -1401,7 +1401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13d60c0060f38ca4fba4df1781942ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  climbSpeed: 0.1
+  climbSpeed: 0.17
 --- !u!1 &1970803538
 GameObject:
   m_ObjectHideFlags: 0

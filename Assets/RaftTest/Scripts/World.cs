@@ -9,7 +9,6 @@ using UnityEngine;
 /// </summary>
 public class World : MonoBehaviour
 {
-
     [SerializeField] private int xSize, ySize, zSize; // y is a height
 
     [SerializeField] private Material planeMaterial;
@@ -34,7 +33,7 @@ public class World : MonoBehaviour
     void Start()
     {
         Get = this;
-
+        
         // fill map with empty blocks
         map = new Cell[xSize, ySize, zSize];
 
@@ -61,7 +60,7 @@ public class World : MonoBehaviour
             for (int y = 0; y < ySize; y++)
                 for (int z = 0; z < zSize; z++)
                 {
-                    map[x, y, z].Init();
+                    map[x, y, z].Init(block);
                 }
     }
 
@@ -133,7 +132,7 @@ public class World : MonoBehaviour
         return res;
     }
 
-    private Mesh CreatePlaneMesh(float width, float height)
+    private static Mesh CreatePlaneMesh(float width, float height)
     {
         Mesh m = new Mesh();
         m.name = "ScriptedMesh";
@@ -143,11 +142,11 @@ public class World : MonoBehaviour
          new Vector3(width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
          new Vector3(-width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
      };
-        m.uv = new Vector2[] {
+        m.uv = new[] {
          new Vector2 (0, 0),
          new Vector2 (0, 1),
          new Vector2(1, 1),
-         new Vector2 (1, 0)
+         new Vector2 (1, 0),         
      };
         m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
         m.RecalculateNormals();
@@ -159,7 +158,7 @@ public class World : MonoBehaviour
     /// Coordinates check should be outside
     /// </summary>    
     internal void Add(int x, int y, int z, Placeable placeable, Vector2Int sideSnapping)
-    {        
+    {
         if (placeable.IsFullBlock) // fill all places
         {
             map[x, y, z].Place(placeable, Vector2Int.zero);
@@ -170,5 +169,14 @@ public class World : MonoBehaviour
         }
         else // fill specific part
             map[x, y, z].Place(placeable, sideSnapping);
+    }
+    /// <summary>
+    /// Allowing faster app reloading
+    /// </summary>
+    void Update()
+    {
+
+        if (Get == null)
+            Start();
     }
 }

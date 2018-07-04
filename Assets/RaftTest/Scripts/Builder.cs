@@ -61,7 +61,7 @@ public class Builder : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.F7))
             TakeInHand(GManager.Get.allBlocks[5]);
 
-        if (Input.GetMouseButtonUp(0)) // place block in a world
+        if (holds != null && Input.GetMouseButtonUp(0)) // place block in a world
         {
             holds.PlaceBlock(World.Get);
         }
