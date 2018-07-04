@@ -642,8 +642,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xSize: 20
-  zSize: 15
   ySize: 8
+  zSize: 15
   planeMaterial: {fileID: 2100000, guid: 86354c480d599d344bb54b5d5183f858, type: 2}
 --- !u!4 &488517504
 Transform:

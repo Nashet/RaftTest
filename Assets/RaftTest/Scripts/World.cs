@@ -10,7 +10,7 @@ using UnityEngine;
 public class World : MonoBehaviour
 {
 
-    [SerializeField] private int xSize, zSize, ySize; // y is a height
+    [SerializeField] private int xSize, ySize, zSize; // y is a height
 
     [SerializeField] private Material planeMaterial;
 
@@ -36,7 +36,7 @@ public class World : MonoBehaviour
         Get = this;
 
         // fill map with empty blocks
-        map = new Cell[xSize, zSize, ySize];
+        map = new Cell[xSize, ySize, zSize];
 
         AirBlock = new Placeable(true, null, 1f);
         Fill(AirBlock);
@@ -58,20 +58,20 @@ public class World : MonoBehaviour
     {
 
         for (int x = 0; x < xSize; x++)
-            for (int z = 0; z < zSize; z++)
-                for (int y = 0; y < ySize; y++)
+            for (int y = 0; y < ySize; y++)
+                for (int z = 0; z < zSize; z++)
                 {
-                    map[x, z, y].Init();
+                    map[x, y, z].Init();
                 }
     }
 
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>    
-    public Placeable GetBlock(int x, int z, int y, Vector2Int side)
+    public Placeable GetBlock(int x,  int y, int z, Vector2Int side)
     {
-        if (IsCellExists(x, z, y))
-            return map[x, z, y].Get(side);
+        if (IsCellExists(x, y, z))
+            return map[x, y, z].Get(side);
         else
             return null;
     }
@@ -86,14 +86,14 @@ public class World : MonoBehaviour
     /// <summary>
     /// false also could mean that cell doesn't exist (wrong index)
     /// </summary>    
-    public bool HasAnyNonAirBlock(int x, int z, int y)
+    public bool HasAnyNonAirBlock(int x, int y, int z)
     {
-        if (IsCellExists(x, z, y))
+        if (IsCellExists(x, y, z))
         {
-            if (map[x, z, y].Get(Vector2Int.down) != AirBlock
-                || map[x, z, y].Get(Vector2Int.right) != AirBlock
-                || map[x, z, y].Get(Vector2Int.up) != AirBlock
-                || map[x, z, y].Get(Vector2Int.left) != AirBlock
+            if (map[x, y, z].Get(Vector2Int.down) != AirBlock
+                || map[x, y, z].Get(Vector2Int.right) != AirBlock
+                || map[x, y, z].Get(Vector2Int.up) != AirBlock
+                || map[x, y, z].Get(Vector2Int.left) != AirBlock
                 )
                 return true;
             else
@@ -113,14 +113,14 @@ public class World : MonoBehaviour
     /// <summary>
     /// false also could mean that cell doesn't exist (wrong index)
     /// </summary>    
-    public bool IsFullBlock(int x, int z, int y)
+    public bool IsFullBlock(int x, int y, int z)
     {
-        if (IsCellExists(x, z, y))
+        if (IsCellExists(x, y, z))
         {
-            if (map[x, z, y].Get(Vector2Int.down).IsFullBlock()
-                || map[x, z, y].Get(Vector2Int.right).IsFullBlock()
-                || map[x, z, y].Get(Vector2Int.up).IsFullBlock()
-                || map[x, z, y].Get(Vector2Int.left).IsFullBlock()
+            if (map[x, y, z].Get(Vector2Int.down).IsFullBlock()
+                || map[x, y, z].Get(Vector2Int.right).IsFullBlock()
+                || map[x, y, z].Get(Vector2Int.up).IsFullBlock()
+                || map[x, y, z].Get(Vector2Int.left).IsFullBlock()
                 )
                 return true;
             else
@@ -141,7 +141,7 @@ public class World : MonoBehaviour
     /// <summary>
     /// null means that cell doesn't exist (wrong index)
     /// </summary>   
-    public bool IsCellExists(int x, int z, int y)
+    public bool IsCellExists(int x, int y, int z)
     {
         if (x < xSize && y < ySize && z < zSize && x >= 0 && y >= 0 && z >= 0)
             return true;
@@ -186,8 +186,8 @@ public class World : MonoBehaviour
     /// <summary>
     /// Coordinates check should be outside
     /// </summary>    
-    internal void Add(int x, int z, int y, Placeable placeable, Vector2Int sideSnapping)
+    internal void Add(int x, int y, int z, Placeable placeable, Vector2Int sideSnapping)
     {
-        map[x, z, y].Place(placeable, sideSnapping);
+        map[x, y, z].Place(placeable, sideSnapping);
     }
 }
