@@ -12,13 +12,21 @@ using UnityEngine;
 [Serializable]
 public class Placeable// : IPlaceable
 {
+    [SerializeField] private string name;
+
+    [Tooltip("Turn on if you want to turn of physics for that block and/or include manual collision detection")]
     [SerializeField] private bool isTrigger;
+
+    [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;
+        
+    [SerializeField] private bool isFullBlock;
+    /// <summary> Full block mean that it fills entire cell, like 1x1, not a wall like 0.5x1     
+    public bool IsFullBlock { get { return isFullBlock; } }
+
     [SerializeField] private bool requiresSomeFoundation;
     [SerializeField] private bool allowsEdgePlacing;
-
-    /// <summary> Full block mean that it fills entire cell, like 1x1    
-    [SerializeField] private bool isFullBlock;
-    //[SerializeField] private bool allowsMultipleObjectsInCell;
+    public bool OnlyCenterPlacing { get { return !allowsEdgePlacing; } }
+        
 
     [Tooltip("Should be about same as gameObject thickness")]
     [SerializeField] private float blockThickness;
@@ -36,9 +44,18 @@ public class Placeable// : IPlaceable
 
     /// <summary>
     /// Constructor. Instead, you can set values in inspector
-    /// </summary>    
-    public Placeable(bool allowsEdgePlacing, GameObject prefab, float blockThickness)
+    /// </summary>   
+
+    public Placeable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material)
     {
+        this.name = name;
+        this.isTrigger = isTrigger;
+        this.requiresSomeFoundation = requiresSomeFoundation;
+        this.canBePlacedAtZeroLevelWithoutFoundation = canBePlacedAtZeroLevelWithoutFoundation;
+        this.isFullBlock = isFullBlock;
+        this.material = material;
+        this.name = name;
+
         this.gameObject = prefab;
         this.allowsEdgePlacing = allowsEdgePlacing;
         if (gameObject != null)
@@ -55,12 +72,7 @@ public class Placeable// : IPlaceable
         int z = Mathf.FloorToInt(adjustedCoords.z);
 
 
-        //Debug.Log("Int coordinates: " + new Vector3Int(x, z, y));
         return new Vector3Int(x, y, z);
-    }
-    public bool IsFullBlock()
-    {
-        return isFullBlock;
     }
     /// <summary>
     /// Restores original material, instead of green "allowing" material
@@ -125,7 +137,7 @@ public class Placeable// : IPlaceable
                 Vector3 lookingPosition = World.AdjustCoords(hit.point);
                 Vector3 blockPlacingPosition;
 
-                // Debug.Log("Looking at (x,z,y)" + hit.point.x + " " + hit.point.z + " " + hit.point.y);
+
 
                 blockPlacingPosition = GetIntegerCoords(hit.point);
 
@@ -138,51 +150,59 @@ public class Placeable// : IPlaceable
                     blockPlacingPosition.z += sideSnapping.y * (0.5f - this.blockThickness / 2f);
                     if (sideSnapping.y == 0) // rotate block if it's closer to y side
                         this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                    // this.GameObject.transform.Rotate(0f, 0f, 0f);
                     else
                         this.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-                    // this.GameObject.transform.Rotate(0f, 90f, 90f);
+
                 }
-
-                //Debug.Log("Looking at (x,z,y)" + coordinates.x + " " + coordinates.z + " " + coordinates.y);
                 this.gameObject.transform.position = blockPlacingPosition;
-                Debug.Log("Looking at (x,z,y)"
-                    + lookingPosition.x + " " + lookingPosition.z + " " + lookingPosition.y
-                    + " side is " + sideSnapping);
+                Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
+                //if (EventSystem.current.IsPointerOverGameObject())
+                //    return null;// -3; //hovering over UI
+                // updates holding block color 
+                this.UpdateMaterial();
             }
-
-            //if (EventSystem.current.IsPointerOverGameObject())
-            //    return null;// -3; //hovering over UI
-            // updates holding block color 
-            this.UpdateMaterial();
         }
     }
     bool CanBePlaced(World world)
     {
-        var coords = GetIntegerCoords(this.gameObject.transform.position);
-        var block = world.GetBlock(coords.x, coords.z, coords.y, sideSnapping);
-        if (block == null)
+        var blockPlacementCoords = GetIntegerCoords(this.gameObject.transform.position);
+        var placeToBuild = world.GetBlock(blockPlacementCoords, sideSnapping);
+
+        if (placeToBuild == null)
             return false; // wrong index
         else
         {
-            if (block == World.AirBlock) // is empty space
+            if (placeToBuild == World.AirBlock && !placeToBuild.IsFullBlock) // is empty space
+                                                                             //| !placeToBuild.IsFullBlock()
             {
-                if (this.requiresSomeFoundation) // check if underlying cell exists and not empty
-                {
-                    var bottomCell = coords;
-                    bottomCell.y -= 1;
+                // here go all kinds of foundation checks
+                if (!requiresSomeFoundation)
+                    return true;
 
-                    // either full block or half block in right position
-                    // if (world.HasAnyNonAirBlock(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y))
-                    var bottomBlock = world.GetBlock(bottomCell.x, bottomCell.z, bottomCell.y, sideSnapping);
-                    if (world.IsFullBlock(bottomCell.x, bottomCell.z, bottomCell.y)
-                        || bottomBlock != World.AirBlock && bottomBlock != null)
+                if (canBePlacedAtZeroLevelWithoutFoundation && blockPlacementCoords.y == 0)
+                    return true;
+
+                var bottomBlockCoords = blockPlacementCoords + Vector3Int.down;
+
+                // either..
+                if (this.IsFullBlock)
+                {
+                    if (world.HasAnyNonAirBlock(bottomBlockCoords) && !world.HasAnyNonAirBlock(blockPlacementCoords))
+                        // any block below, no any half blocks here and this is full block
                         return true;
                     else
                         return false;
                 }
-                else
-                    return true;
+                else // not full block //can be center part or one of 4 edge parts
+                {
+                    var blockBelowThatHalfBlock = world.GetBlock(bottomBlockCoords, sideSnapping);
+                    if (blockBelowThatHalfBlock != null && blockBelowThatHalfBlock.IsFullBlock //full block below
+                       || blockBelowThatHalfBlock != null && blockBelowThatHalfBlock != World.AirBlock) // there is half block below in right position        
+
+                        return true;
+                    else
+                        return false;
+                }
             }
             //else if (this.allowsMultipleObjectsInCell)
             //    return true;
@@ -222,13 +242,19 @@ public class Placeable// : IPlaceable
         if (this != null && this.CanBePlaced(world))
         {
             var coords = Placeable.GetIntegerCoords(this.gameObject.transform.position);
-            //if (world.IsCellExists(coords.x, coords.z, coords.y)) // already checked in CanBePlaced()
-            {
-                var newBlock = this.Instantiate();
-                newBlock.transform.parent = world.transform;
-                Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
-                world.Add(coords.x, coords.z, coords.y, this, sideSnapping);
-            }
+
+            var newBlock = this.Instantiate();
+            newBlock.transform.parent = world.transform;
+            Debug.Log("Placed block in (x,y,z)" + coords + " with snapping " + sideSnapping);
+            world.Add(coords.x, coords.y, coords.z, this, sideSnapping);
+
         }
+    }
+    /// <summary>
+    /// for better debug
+    // </summary>    
+    override public string ToString()
+    {
+        return name;
     }
 }
