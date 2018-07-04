@@ -916,7 +916,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1012911016
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -928,8 +928,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.02, y: 1, z: 1.02}
+  m_Center: {x: -0.01, y: 0, z: -0.01}
 --- !u!23 &1012911017
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1267,7 +1267,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1967263169009654, guid: 7de4377425fb22b47af8f3c7afcc7cec, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23423719928309832, guid: 7de4377425fb22b47af8f3c7afcc7cec,
         type: 2}
@@ -1278,6 +1278,26 @@ Prefab:
         type: 2}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Center.x
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Center.z
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Size.x
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Size.z
+      value: 1.02
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
