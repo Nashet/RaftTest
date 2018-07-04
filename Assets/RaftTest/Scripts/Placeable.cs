@@ -7,50 +7,69 @@ using UnityEngine;
 //{
 //}
 /// <summary>
-/// Represents block which can be placed in world
+/// Represents block which can be placed in world and can be hold in hands
 /// </summary>
 [Serializable]
 public class Placeable// : IPlaceable
 {
-    [SerializeField] private bool allowsMultipleObjectsInCell;// MultipleObjectsInCell isn't fully implemented    
+    [SerializeField] private bool isTrigger;
+    [SerializeField] private bool requiresSomeFoundation;
+    [SerializeField] private bool allowsEdgePlacing;
+    //[SerializeField] private bool allowsMultipleObjectsInCell;
 
     [Tooltip("Should be about same as gameObject thickness")]
-    [SerializeField] private float blockThickness;    
+    [SerializeField] private float blockThickness;
 
     [SerializeField] private MeshRenderer renderer;
 
     [SerializeField] private GameObject gameObject;
-    public GameObject GameObject { get { return gameObject; } }// todo hide it from public?
 
-    [SerializeField] private Material originalMat;
+    /// <summary> Original material    
+    [SerializeField] private Material material;
+
+    /// <summary> which side of map it is closer - north, south, etc 
+    /// 0,0 if it's center (default)
+    private Vector2Int sideSnapping;
 
     /// <summary>
     /// Constructor. Instead, you can set values in inspector
     /// </summary>    
-    public Placeable(bool allowsMultipleObjectsInCell, GameObject prefab, float blockThickness)
+    public Placeable(bool allowsEdgePlacing, GameObject prefab, float blockThickness)
     {
         this.gameObject = prefab;
-        this.allowsMultipleObjectsInCell = allowsMultipleObjectsInCell;
-        if (GameObject != null)
-            renderer = GameObject.GetComponent<MeshRenderer>();
+        this.allowsEdgePlacing = allowsEdgePlacing;
+        if (gameObject != null)
+            renderer = gameObject.GetComponent<MeshRenderer>();
         this.blockThickness = blockThickness;
     }
 
-    public Vector3Int GetIntegerCoords()
+    static Vector3Int GetIntegerCoords(Vector3 position)
     {
-        Vector3 AdjustedCoords = World.AdjustCoords(GameObject.transform.position);
+        Vector3 adjustedCoords = World.AdjustCoords(position);
 
-        int x = Mathf.FloorToInt(AdjustedCoords.x);
-        int y = Mathf.FloorToInt(AdjustedCoords.z);
-        int z = Mathf.FloorToInt(AdjustedCoords.y);
+        int x = Mathf.FloorToInt(adjustedCoords.x);
+        int y = Mathf.FloorToInt(adjustedCoords.y);
+        int z = Mathf.FloorToInt(adjustedCoords.z);
+
+
         //Debug.Log("Int coordinates: " + new Vector3Int(x, z, y));
-        return new Vector3Int(x, z, y);
-
+        return new Vector3Int(x, y, z);
     }
+
     /// <summary>
-    /// returns which side of map is closer to point - north, south, etc
+    /// Restores original material, instead of green "allowing" material
     /// </summary>
-    public static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+    void SetOriginalMaterial()
+    {
+        renderer.material = material;
+    }
+
+    /// <summary>
+    /// returns which side of map is closer to point - north, south, west, east
+    /// 4 sides are coded in following format:
+    /// (-1,0),(0,-1),(1,0),(0,1)
+    /// </summary>
+    static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
     {
         // distance to block's side
         float xDifference = lookingPosition.x - blockPlacingPosition.x;
@@ -74,24 +93,22 @@ public class Placeable// : IPlaceable
             return new Vector2Int(0, 1);
     }
 
-    public void UpdateColor()
+    void UpdateMaterial()
     {
         if (CanBePlaced(World.Get))
         {
-            if (Input.GetMouseButtonUp(0))
-                World.Get.PlaceBlock(this);
-            this.renderer.material = originalMat;
+            this.renderer.material = GManager.Get.buildingAlowedMaterial; // originalMat;
         }
         else
         {
-            this.renderer.material = GManager.Get.buildingDenialMaterial;
+            this.renderer.material = GManager.Get.buildingDeniedMaterial;
         }
     }
 
     /// <summary>
-    /// updates block held by player - rotates, changes color if building not allowed
+    /// updates block held by player - rotates, changes color if building is not allowed, etc
     /// </summary>
-    public void UpdateHoldingBlock()
+    public void UpdateBlock()
     {
         if (this != null)
         {
@@ -101,68 +118,106 @@ public class Placeable// : IPlaceable
             {
                 Vector3 lookingPosition = World.AdjustCoords(hit.point);
                 Vector3 blockPlacingPosition;
-                //Debug.Log("Looking at (x,z,y)" + lookingPosition.x + " " + lookingPosition.z + " " + lookingPosition.y);
-                Debug.Log("Looking at (x,z,y)" + hit.point.x + " " + hit.point.z + " " + hit.point.y);
 
+                // Debug.Log("Looking at (x,z,y)" + hit.point.x + " " + hit.point.z + " " + hit.point.y);
 
-                // removing fractional part placing blocks in grid 
-                blockPlacingPosition.x = Mathf.FloorToInt(lookingPosition.x);
-                blockPlacingPosition.y = Mathf.FloorToInt(lookingPosition.y);
-                blockPlacingPosition.z = Mathf.FloorToInt(lookingPosition.z);
+                blockPlacingPosition = GetIntegerCoords(hit.point);
 
                 // allow block to sticks to 1 of 4 side of a cell
-                if (this.allowsMultipleObjectsInCell)
+                if (this.allowsEdgePlacing)
                 {
-                    Vector2Int lookingAtSide = Placeable.GetClosestSide(lookingPosition, blockPlacingPosition);
+                    sideSnapping = GetClosestSide(lookingPosition, blockPlacingPosition);
 
-                    blockPlacingPosition.x += lookingAtSide.x * (0.5f - this.blockThickness / 2f);
-                    blockPlacingPosition.z += lookingAtSide.y * (0.5f - this.blockThickness / 2f);
-                    if (lookingAtSide.y == 0) // rotate block if it's closer to y side
-                        this.GameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                    blockPlacingPosition.x += sideSnapping.x * (0.5f - this.blockThickness / 2f);
+                    blockPlacingPosition.z += sideSnapping.y * (0.5f - this.blockThickness / 2f);
+                    if (sideSnapping.y == 0) // rotate block if it's closer to y side
+                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                    // this.GameObject.transform.Rotate(0f, 0f, 0f);
                     else
-                        this.GameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                    // this.GameObject.transform.Rotate(0f, 90f, 90f);
                 }
 
                 //Debug.Log("Looking at (x,z,y)" + coordinates.x + " " + coordinates.z + " " + coordinates.y);
-                this.GameObject.transform.position = blockPlacingPosition;
+                this.gameObject.transform.position = blockPlacingPosition;
+                Debug.Log("Looking at (x,z,y)"
+                    + lookingPosition.x + " " + lookingPosition.z + " " + lookingPosition.y
+                    + " side is " + sideSnapping);
             }
 
             //if (EventSystem.current.IsPointerOverGameObject())
             //    return null;// -3; //hovering over UI
             // updates holding block color 
-            this.UpdateColor();
+            this.UpdateMaterial();
         }
     }
-    public bool CanBePlaced(World world)
+    bool CanBePlaced(World world)
     {
-        var coords = this.GetIntegerCoords();
-        var cell = world.GetCell(coords.x, coords.z, coords.y);
-        if (cell == null)
+        var coords = GetIntegerCoords(this.gameObject.transform.position);
+        var block = world.GetBlock(coords.x, coords.z, coords.y, sideSnapping);
+        if (block == null)
             return false; // wrong index
         else
         {
-            if (cell == world.AirBlock)
+            if (block == World.AirBlock) // is empty space
             {
-                // todo put it in Placeable?
-                if (this.allowsMultipleObjectsInCell) // is wall
+                if (this.requiresSomeFoundation) // check if underlying cell exists and not empty
                 {
-                    // check if underlying cell exists and not empty
                     var coordsToCheck = coords;
-                    coordsToCheck.y -= 1;
-                    var uderlyingCell = world.GetCell(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y);
-                    if (uderlyingCell == null || uderlyingCell == world.AirBlock)
-                        return false;
-                    else
+                    coordsToCheck.y -= 1;                    
+                    if (world.HasAnyNonAirBlock(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y))
                         return true;
+                    else
+                        return false;
                 }
                 else
                     return true;
             }
-
-            //else if (blockToPlace.allowsMultipleObjectsInCell && cell.allowsMultipleObjectsInCell)
-            //    return true;// fix that? can build several walls in single cell
+            //else if (this.allowsMultipleObjectsInCell)
+            //    return true;
             else
                 return false;
+        }
+    }
+
+    /// <summary>
+    /// Creates copy of this object ready to put in a world
+    /// </summary>    
+    GameObject Instantiate()
+    {
+        SetOriginalMaterial();
+        var newBlock = UnityEngine.Object.Instantiate(this.gameObject);
+        newBlock.layer = 0; // placed block wouldn't be ignored by raycast
+
+        if (this.isTrigger)
+            newBlock.GetComponent<Collider>().isTrigger = true;
+        else
+            newBlock.GetComponent<Collider>().isTrigger = false;
+        return newBlock;
+    }
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void PlaceBlock(World world)
+    {
+        if (this != null && this.CanBePlaced(world))
+        {
+            var coords = Placeable.GetIntegerCoords(this.gameObject.transform.position);
+            //if (world.IsCellExists(coords.x, coords.z, coords.y)) // already checked in CanBePlaced()
+            {
+                var newBlock = this.Instantiate();
+                newBlock.transform.parent = world.transform;
+                Debug.Log("Placed block in (x,z,y)" + coords.x + " " + coords.z + " " + coords.y);
+                world.Add(coords.x, coords.z, coords.y, this, sideSnapping);
+            }
         }
     }
 }
