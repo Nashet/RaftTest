@@ -15,7 +15,7 @@ public class GManager : MonoBehaviour
     // allows static access
     public static GManager Get
     {
-        get { return thisObject; }
+        get { return thisObject; }  
     }
     // Use this for initialization
     void Awake()
@@ -23,5 +23,13 @@ public class GManager : MonoBehaviour
         thisObject = this;
         // could be read from a config file
         //allBlocks[] = new Placeable(false, null, blockThickness: 1f);
+    }
+    /// <summary>
+    /// Allowing faster app reloading
+    /// </summary>
+    void Update()
+    {
+        if (thisObject == null)
+            Awake();
     }
 }
