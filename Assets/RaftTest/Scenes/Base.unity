@@ -352,6 +352,18 @@ Prefab:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_MouseLook.clampVerticalRotation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_IsWalking
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_MouseLook.smooth
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_IsPrefabParent: 0
@@ -1257,7 +1269,8 @@ MonoBehaviour:
     type: 2}
   allBlocks:
   - isTrigger: 0
-    requiresSomeFoundation: 0
+    requiresSomeFoundation: 1
+    canBePlacedAtZeroLevelWithoutFoundation: 1
     allowsEdgePlacing: 0
     isFullBlock: 1
     blockThickness: 1
@@ -1266,6 +1279,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
   - isTrigger: 0
     requiresSomeFoundation: 1
+    canBePlacedAtZeroLevelWithoutFoundation: 0
     allowsEdgePlacing: 1
     isFullBlock: 0
     blockThickness: 0.25
@@ -1274,6 +1288,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
   - isTrigger: 0
     requiresSomeFoundation: 1
+    canBePlacedAtZeroLevelWithoutFoundation: 0
     allowsEdgePlacing: 1
     isFullBlock: 0
     blockThickness: 0.1
@@ -1282,6 +1297,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: f988ae1129ccaa84d943a0a26da745d4, type: 2}
   - isTrigger: 0
     requiresSomeFoundation: 1
+    canBePlacedAtZeroLevelWithoutFoundation: 0
     allowsEdgePlacing: 0
     isFullBlock: 0
     blockThickness: 0.1
@@ -1290,6 +1306,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
   - isTrigger: 1
     requiresSomeFoundation: 0
+    canBePlacedAtZeroLevelWithoutFoundation: 0
     allowsEdgePlacing: 1
     isFullBlock: 0
     blockThickness: 0.1

@@ -14,10 +14,12 @@ public class Placeable// : IPlaceable
 {
     [SerializeField] private bool isTrigger;
     [SerializeField] private bool requiresSomeFoundation;
+    [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;
     [SerializeField] private bool allowsEdgePlacing;
 
-    /// <summary> Full block mean that it fills entire cell, like 1x1    
+    /// <summary> Full block mean that it fills entire cell, like 1x1, not a wall or     
     [SerializeField] private bool isFullBlock;
+
     //[SerializeField] private bool allowsMultipleObjectsInCell;
 
     [Tooltip("Should be about same as gameObject thickness")]
@@ -159,30 +161,33 @@ public class Placeable// : IPlaceable
     }
     bool CanBePlaced(World world)
     {
-        var coords = GetIntegerCoords(this.gameObject.transform.position);
-        var block = world.GetBlock(coords.x, coords.z, coords.y, sideSnapping);
-        if (block == null)
+        var placementPosition = GetIntegerCoords(this.gameObject.transform.position);
+        var placeToBuild = world.GetBlock(placementPosition.x, placementPosition.z, placementPosition.y, sideSnapping);
+
+        if (placeToBuild == null)
             return false; // wrong index
         else
         {
-            if (block == World.AirBlock) // is empty space
+            if (placeToBuild == World.AirBlock && !placeToBuild.IsFullBlock()) // is empty space
             {
-                if (this.requiresSomeFoundation) // check if underlying cell exists and not empty
-                {
-                    var bottomCell = coords;
-                    bottomCell.y -= 1;
-
-                    // either full block or half block in right position
-                    // if (world.HasAnyNonAirBlock(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y))
-                    var bottomBlock = world.GetBlock(bottomCell.x, bottomCell.z, bottomCell.y, sideSnapping);
-                    if (world.IsFullBlock(bottomCell.x, bottomCell.z, bottomCell.y)
-                        || bottomBlock != World.AirBlock && bottomBlock != null)
-                        return true;
-                    else
-                        return false;
-                }
-                else
+                // here go all kinds of foundation checks
+                if (!requiresSomeFoundation)
                     return true;
+
+                if (canBePlacedAtZeroLevelWithoutFoundation && placementPosition.y == 0)// && !world.IsFullBlock(placementPosition.x, placementPosition.z, placementPosition.y))
+                    return true;
+
+                var bottomBlockCoords = placementPosition + Vector3Int.down;
+
+                var blockBelowThatHalfBlock = world.GetBlock(bottomBlockCoords.x, bottomBlockCoords.z, bottomBlockCoords.y, sideSnapping);
+                // either..
+                if (world.IsFullBlock(bottomBlockCoords.x, bottomBlockCoords.z, bottomBlockCoords.y) //full block below
+                    || blockBelowThatHalfBlock != World.AirBlock && blockBelowThatHalfBlock != null// there is half block below in right position                
+                    || this.IsFullBlock() && world.HasAnyNonAirBlock(bottomBlockCoords.x, bottomBlockCoords.z, bottomBlockCoords.y)
+                    && !world.HasAnyNonAirBlock(placementPosition.x, placementPosition.z, placementPosition.y)) // any block below, no any half blocks here and this is full block
+                    return true;
+                else
+                    return false;
             }
             //else if (this.allowsMultipleObjectsInCell)
             //    return true;
