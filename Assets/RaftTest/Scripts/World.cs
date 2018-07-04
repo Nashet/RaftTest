@@ -94,6 +94,7 @@ public class World : MonoBehaviour
                 || map[x, y, z].Get(Vector2Int.right) != AirBlock
                 || map[x, y, z].Get(Vector2Int.up) != AirBlock
                 || map[x, y, z].Get(Vector2Int.left) != AirBlock
+                || map[x, y, z].Get(Vector2Int.zero) != AirBlock
                 )
                 return true;
             else

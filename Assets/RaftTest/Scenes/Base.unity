@@ -232,7 +232,7 @@ Transform:
   m_LocalScale: {x: 0.25, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 176851465}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &49802095
 BoxCollider:
@@ -553,8 +553,8 @@ Transform:
   - {fileID: 684746394}
   - {fileID: 1115350386}
   - {fileID: 1633621812}
-  - {fileID: 1033904730}
   - {fileID: 49802094}
+  - {fileID: 1033904730}
   m_Father: {fileID: 488517504}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -986,7 +986,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 176851465}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1036263285
 GameObject:
@@ -1436,6 +1436,7 @@ MonoBehaviour:
   allBlocks:
   - name: Foundation
     isTrigger: 0
+    maxLengthWithoutSupport: 1
     canBePlacedAtZeroLevelWithoutFoundation: 1
     isFullBlock: 1
     requiresSomeFoundation: 1
@@ -1446,6 +1447,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
   - name: Wall
     isTrigger: 0
+    maxLengthWithoutSupport: 0
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 1
@@ -1456,6 +1458,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
   - name: Glass wall
     isTrigger: 0
+    maxLengthWithoutSupport: 0
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 1
@@ -1466,6 +1469,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: f988ae1129ccaa84d943a0a26da745d4, type: 2}
   - name: Post
     isTrigger: 0
+    maxLengthWithoutSupport: 0
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 1
@@ -1476,6 +1480,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
   - name: Ladder
     isTrigger: 1
+    maxLengthWithoutSupport: 0
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 0
@@ -1486,6 +1491,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
   - name: Secret door
     isTrigger: 1
+    maxLengthWithoutSupport: 0
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 1
