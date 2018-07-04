@@ -161,8 +161,8 @@ public class Placeable// : IPlaceable
     }
     bool CanBePlaced(World world)
     {
-        var placementPosition = GetIntegerCoords(this.gameObject.transform.position);
-        var placeToBuild = world.GetBlock(placementPosition.x, placementPosition.z, placementPosition.y, sideSnapping);
+        var blockPlacementCoords = GetIntegerCoords(this.gameObject.transform.position);
+        var placeToBuild = world.GetBlock(blockPlacementCoords.x, blockPlacementCoords.z, blockPlacementCoords.y, sideSnapping);
 
         if (placeToBuild == null)
             return false; // wrong index
@@ -174,17 +174,16 @@ public class Placeable// : IPlaceable
                 if (!requiresSomeFoundation)
                     return true;
 
-                if (canBePlacedAtZeroLevelWithoutFoundation && placementPosition.y == 0)// && !world.IsFullBlock(placementPosition.x, placementPosition.z, placementPosition.y))
+                if (canBePlacedAtZeroLevelWithoutFoundation && blockPlacementCoords.y == 0)// && !world.IsFullBlock(placementPosition.x, placementPosition.z, placementPosition.y))
                     return true;
 
-                var bottomBlockCoords = placementPosition + Vector3Int.down;
+                var bottomBlockCoords = blockPlacementCoords + Vector3Int.down;
 
                 var blockBelowThatHalfBlock = world.GetBlock(bottomBlockCoords.x, bottomBlockCoords.z, bottomBlockCoords.y, sideSnapping);
                 // either..
                 if (world.IsFullBlock(bottomBlockCoords.x, bottomBlockCoords.z, bottomBlockCoords.y) //full block below
                     || blockBelowThatHalfBlock != World.AirBlock && blockBelowThatHalfBlock != null// there is half block below in right position                
-                    || this.IsFullBlock() && world.HasAnyNonAirBlock(bottomBlockCoords.x, bottomBlockCoords.z, bottomBlockCoords.y)
-                    && !world.HasAnyNonAirBlock(placementPosition.x, placementPosition.z, placementPosition.y)) // any block below, no any half blocks here and this is full block
+                    || this.IsFullBlock() && world.HasAnyNonAirBlock(bottomBlockCoords) && !world.HasAnyNonAirBlock(blockPlacementCoords)) // any block below, no any half blocks here and this is full block
                     return true;
                 else
                     return false;

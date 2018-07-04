@@ -76,6 +76,14 @@ public class World : MonoBehaviour
             return null;
     }
     /// <summary>
+    /// null means that cell doesn't exist (wrong index)
+    /// </summary>    
+    public Placeable GetBlock(Vector3Int position, Vector2Int side)
+    {
+        return GetBlock(position.x, position.y, position.z, side);
+    }
+
+    /// <summary>
     /// false also could mean that cell doesn't exist (wrong index)
     /// </summary>    
     public bool HasAnyNonAirBlock(int x, int z, int y)
@@ -97,6 +105,14 @@ public class World : MonoBehaviour
     /// <summary>
     /// false also could mean that cell doesn't exist (wrong index)
     /// </summary>    
+    public bool HasAnyNonAirBlock(Vector3Int position)
+    {
+        return HasAnyNonAirBlock(position.x, position.y, position.z);
+    }
+
+    /// <summary>
+    /// false also could mean that cell doesn't exist (wrong index)
+    /// </summary>    
     public bool IsFullBlock(int x, int z, int y)
     {
         if (IsCellExists(x, z, y))
@@ -112,6 +128,13 @@ public class World : MonoBehaviour
         }
         else
             return false;
+    }
+    /// <summary>
+    /// false also could mean that cell doesn't exist (wrong index)
+    /// </summary>    
+    public bool IsFullBlock(Vector3Int position)
+    {
+        return IsFullBlock(position.x, position.y, position.z);
     }
 
 
