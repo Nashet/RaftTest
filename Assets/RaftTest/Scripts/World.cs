@@ -38,7 +38,7 @@ public class World : MonoBehaviour
         // fill map with empty blocks
         map = new Cell[xSize, zSize, ySize];
 
-        AirBlock = new Placeable(false, null, 1f);
+        AirBlock = new Placeable(true, null, 1f);
         Fill(AirBlock);
 
         GameObject plane = new GameObject("Plane");
@@ -86,6 +86,25 @@ public class World : MonoBehaviour
                 || map[x, z, y].Get(Vector2Int.right) != AirBlock
                 || map[x, z, y].Get(Vector2Int.up) != AirBlock
                 || map[x, z, y].Get(Vector2Int.left) != AirBlock
+                )
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+    /// <summary>
+    /// false also could mean that cell doesn't exist (wrong index)
+    /// </summary>    
+    public bool IsFullBlock(int x, int z, int y)
+    {
+        if (IsCellExists(x, z, y))
+        {
+            if (map[x, z, y].Get(Vector2Int.down).IsFullBlock()
+                || map[x, z, y].Get(Vector2Int.right).IsFullBlock()
+                || map[x, z, y].Get(Vector2Int.up).IsFullBlock()
+                || map[x, z, y].Get(Vector2Int.left).IsFullBlock()
                 )
                 return true;
             else

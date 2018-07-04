@@ -15,6 +15,9 @@ public class Placeable// : IPlaceable
     [SerializeField] private bool isTrigger;
     [SerializeField] private bool requiresSomeFoundation;
     [SerializeField] private bool allowsEdgePlacing;
+
+    /// <summary> Full block mean that it fills entire cell, like 1x1    
+    [SerializeField] private bool isFullBlock;
     //[SerializeField] private bool allowsMultipleObjectsInCell;
 
     [Tooltip("Should be about same as gameObject thickness")]
@@ -55,7 +58,10 @@ public class Placeable// : IPlaceable
         //Debug.Log("Int coordinates: " + new Vector3Int(x, z, y));
         return new Vector3Int(x, y, z);
     }
-
+    public bool IsFullBlock()
+    {
+        return isFullBlock;
+    }
     /// <summary>
     /// Restores original material, instead of green "allowing" material
     /// </summary>
@@ -163,9 +169,14 @@ public class Placeable// : IPlaceable
             {
                 if (this.requiresSomeFoundation) // check if underlying cell exists and not empty
                 {
-                    var coordsToCheck = coords;
-                    coordsToCheck.y -= 1;                    
-                    if (world.HasAnyNonAirBlock(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y))
+                    var bottomCell = coords;
+                    bottomCell.y -= 1;
+
+                    // either full block or half block in right position
+                    // if (world.HasAnyNonAirBlock(coordsToCheck.x, coordsToCheck.z, coordsToCheck.y))
+                    var bottomBlock = world.GetBlock(bottomCell.x, bottomCell.z, bottomCell.y, sideSnapping);
+                    if (world.IsFullBlock(bottomCell.x, bottomCell.z, bottomCell.y)
+                        || bottomBlock != World.AirBlock && bottomBlock != null)
                         return true;
                     else
                         return false;
