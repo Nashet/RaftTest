@@ -6,64 +6,40 @@ using UnityStandardAssets.Characters.FirstPerson;
 /// <summary>
 /// Allows FPS camera to build blocks
 /// </summary>
-public class Builder : MonoBehaviour
+public class Builder : MonoBehaviour, ICharacter
 {
     /// <summary>
     /// Whatever players holds in hands
     /// </summary>
-    private Placeable holds;
+    public IHoldable Holds { get; private set; }
 
     [SerializeField] private GameObject debugCube;
 
-    void TakeInHand(Placeable placeable)//todo refactor with prefabs?
+    public void TakeInHand(IHoldable placeable)//todo refactor with prefabs?
     {
-        if (holds != null) // hides previous object in hands
+        if (Holds != null) // hides previous object in hands
         {
-            holds.Hide();
+            Holds.Hide();
         }
-        holds = placeable;
-        if (holds != null) // shows new object in habds
+        Holds = placeable;
+        if (Holds != null) // shows new object in hands
         {
-            holds.Show();
+            Holds.Show();
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (holds != null)
-            holds.UpdateBlock();
+        if (Holds != null)
+            Holds.UpdateBlock();        
 
-        ManageControls();
-
+        // places small cube at looking position, for debugging
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
         {
             debugCube.transform.position = hit.point;
-        }
-    }
-
-    void ManageControls()
-    {
-        // selects block 
-        if (Input.GetKeyUp(KeyCode.F1))
-            TakeInHand(null);
-        else if (Input.GetKeyUp(KeyCode.F2))
-            TakeInHand(GManager.Get.allBlocks[0]);
-        else if (Input.GetKeyUp(KeyCode.F3))
-            TakeInHand(GManager.Get.allBlocks[1]);
-        else if (Input.GetKeyUp(KeyCode.F4))
-            TakeInHand(GManager.Get.allBlocks[2]);
-        else if (Input.GetKeyUp(KeyCode.F5))
-            TakeInHand(GManager.Get.allBlocks[3]);
-        else if (Input.GetKeyUp(KeyCode.F6))
-            TakeInHand(GManager.Get.allBlocks[4]);
-        else if (Input.GetKeyUp(KeyCode.F7))
-            TakeInHand(GManager.Get.allBlocks[5]);
-
-        if (holds != null && Input.GetMouseButtonUp(0)) // place block in a world
-        {
-            holds.PlaceBlock(World.Get);
-        }
-    }
+        }        
+    }    
 }
+

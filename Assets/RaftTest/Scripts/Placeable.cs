@@ -3,17 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//public interface IPlaceable
-//{
-//}
+
 /// <summary>
 /// Represents block which can be placed in world and can be hold in hands
 /// </summary>
 [Serializable]
-public class Placeable// : IPlaceable
+public class Placeable : Nameable, IHideable, IHoldable 
 {
-    [SerializeField] private string name;
-
     [Tooltip("Turn on if you want to turn of physics for that block and/or include manual collision detection")]
     [SerializeField] private bool isTrigger;
 
@@ -41,9 +37,11 @@ public class Placeable// : IPlaceable
     /// <summary> Original material    
     [SerializeField] private Material material;
 
-    /// <summary> which side of map it is closer - north, south, etc 
-    /// 0,0 if it's center (default)
+    /// <summary> which side of map it is closer - north, south, west, east. 0,0 if it's center (default)
     private Vector2Int sideSnapping;
+
+    public event EventHandler<EventArgs> Hidden;
+    public event EventHandler<EventArgs> Shown;
 
     /// <summary>
     /// Constructor. Instead, you can set values in inspector
@@ -118,11 +116,11 @@ public class Placeable// : IPlaceable
     {
         if (CanBePlaced(World.Get))
         {
-            this.renderer.material = GManager.Get.buildingAlowedMaterial; // originalMat;
+            this.renderer.material = GManager.Get.BuildingAlowedMaterial; // originalMat;
         }
         else
         {
-            this.renderer.material = GManager.Get.buildingDeniedMaterial;
+            this.renderer.material = GManager.Get.BuildingDeniedMaterial;
         }
     }
 
@@ -192,9 +190,9 @@ public class Placeable// : IPlaceable
                 {
                     if (!world.HasAnyNonAirBlock(blockPlacementCoords)// any block below, no any blocks here                        
                         && (world.HasAnyNonAirBlock(bottomBlockCoords) || HasHorizontalSupport()))
-                            return true;
-                        else
-                            return false;                    
+                        return true;
+                    else
+                        return false;
                 }
                 else // not full block //can be center part or one of 4 edge parts
                 {
@@ -205,7 +203,7 @@ public class Placeable// : IPlaceable
                     else
                         return false;
                 }
-            }            
+            }
             else
                 return false;
         }
@@ -219,7 +217,7 @@ public class Placeable// : IPlaceable
         int xEnd = pos.x + maxLengthWithoutSupport;
         int zStart = pos.z - maxLengthWithoutSupport;
         int zEnd = pos.z + maxLengthWithoutSupport;
-        int level = pos.y-1; // search in lower level
+        int level = pos.y - 1; // search in lower level
         for (int i = xStart; i <= xEnd; i++)
             for (int j = zStart; j <= zEnd; j++)
                 if (World.Get.HasAnyNonAirBlock(i, level, j))
@@ -246,11 +244,24 @@ public class Placeable// : IPlaceable
     public void Show()
     {
         gameObject.SetActive(true);
+        EventHandler<EventArgs> handler = Shown;
+        if (handler != null)
+        {
+            handler(this, EventArgs.Empty);
+        }
     }
 
     public void Hide()
     {
         gameObject.SetActive(false);
+        // Make a temporary copy of the event to avoid possibility of
+        // a race condition if the last subscriber unsubscribes
+        // immediately after the null check and before the event is raised.
+        EventHandler<EventArgs> handler = Hidden;
+        if (handler != null)
+        {
+            handler(this, EventArgs.Empty);
+        }
     }
 
     public void PlaceBlock(World world)
@@ -265,12 +276,5 @@ public class Placeable// : IPlaceable
             world.Add(coords.x, coords.y, coords.z, this, sideSnapping);
 
         }
-    }
-    /// <summary>
-    /// for better debug
-    // </summary>    
-    override public string ToString()
-    {
-        return name;
     }
 }

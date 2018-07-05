@@ -6,9 +6,13 @@ using UnityEngine;
 /// game manager, holds some common links
 /// </summary>
 public class GManager : MonoBehaviour
-{    
-    [SerializeField] public Material buildingDeniedMaterial;
-    [SerializeField] public Material buildingAlowedMaterial;
+{
+    [SerializeField] private Material buildingDeniedMaterial;
+    public Material BuildingDeniedMaterial { get { return buildingDeniedMaterial; } }
+
+    [SerializeField] private Material buildingAlowedMaterial;
+    public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }
+
     [SerializeField] public Placeable[] allBlocks;
 
     static GManager thisObject;

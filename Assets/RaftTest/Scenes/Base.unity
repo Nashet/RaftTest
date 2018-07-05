@@ -1381,7 +1381,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1633621812
 Transform:
   m_ObjectHideFlags: 0
@@ -1547,6 +1547,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugCube: {fileID: 1092467439}
+--- !u!114 &2019566255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2019566253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036d359a7aa150442a6ed56f4bc59793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2134757959
 GameObject:
   m_ObjectHideFlags: 0
