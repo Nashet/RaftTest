@@ -186,15 +186,13 @@ MonoBehaviour:
 
     F3 - build walls,
 
-    f4 - glass walls
+    F4 - glass walls
 
-    f5 - beam
+    F5 - beam
 
-    f6 - ladder
+    F6 - ladder
 
-    f7 - secret door
-
-    jump to use ladder'
+    F7 - secret door'
 --- !u!222 &13526202
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -928,8 +926,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.02, y: 1, z: 1.02}
+  m_Center: {x: -0.01, y: 0, z: -0.01}
 --- !u!23 &1012911017
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1279,6 +1277,26 @@ Prefab:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Center.x
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Center.z
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Size.x
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Size.z
+      value: 1.02
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 7de4377425fb22b47af8f3c7afcc7cec, type: 2}
@@ -1363,7 +1381,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1633621812
 Transform:
   m_ObjectHideFlags: 0
@@ -1388,7 +1406,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 1, z: 0.54}
+  m_Size: {x: 0.32, y: 1.01, z: 0.54}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1633621814
 MonoBehaviour:
@@ -1401,7 +1419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13d60c0060f38ca4fba4df1781942ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  climbSpeed: 0.1
+  climbSpeed: 0.3
 --- !u!1 &1970803538
 GameObject:
   m_ObjectHideFlags: 0

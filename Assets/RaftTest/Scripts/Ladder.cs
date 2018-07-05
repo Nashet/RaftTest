@@ -8,14 +8,12 @@ using UnityEngine;
 /// </summary>
 public class Ladder : MonoBehaviour
 {
-    [SerializeField] private float climbSpeed;    
-    void OnTriggerStay(Collider other)
+    [SerializeField] private float climbSpeed;
+    void OnTriggerStay(Collider other)    
     {
         if (other.tag == "Player")
         {
-            var position = other.gameObject.transform.position;
-            position.y += climbSpeed;            
-            other.transform.position = position;            
+            other.gameObject.transform.Translate(Vector3.up * climbSpeed);
         }
-    }
+    }    
 }

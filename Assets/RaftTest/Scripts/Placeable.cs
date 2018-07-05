@@ -255,7 +255,7 @@ public class Placeable// : IPlaceable
 
     public void PlaceBlock(World world)
     {
-        if (this != null && this.CanBePlaced(world))
+        if (this.CanBePlaced(world))
         {
             var coords = Placeable.GetIntegerCoords(this.gameObject.transform.position);
 
