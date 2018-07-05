@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Object with that script works as ladder. Object should have collider with IsTrigger on
-/// Climbing object should have RigidBody component
-/// </summary>
-public class Ladder : MonoBehaviour
+namespace RaftTest
 {
-    [SerializeField] private float climbSpeed;
-    void OnTriggerStay(Collider other)    
+    /// <summary>
+    /// Object with that script works as ladder. Object should have collider with IsTrigger on
+    /// Climbing object should have RigidBody component
+    /// </summary>
+    public class Ladder : MonoBehaviour
     {
-        if (other.tag == "Player")
+        [SerializeField] private float climbSpeed;
+        void OnTriggerStay(Collider other)
         {
-            other.gameObject.transform.Translate(Vector3.up * climbSpeed);
+            if (other.tag == "Player")
+            {
+                other.gameObject.transform.Translate(Vector3.up * climbSpeed);
+            }
         }
-    }    
+    }
 }
