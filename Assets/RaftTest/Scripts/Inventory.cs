@@ -12,13 +12,12 @@ namespace RaftTest
     [RequireComponent(typeof(Builder))]
     public class Inventory : MonoBehaviour
     {
-        private Builder player;
+        private ICharacter player;
         void Start()
         {
             player = GetComponent<Builder>();
             if (player == null)
                 Debug.Log("Missing Builder component");
-
         }
 
         // Update is called once per frame

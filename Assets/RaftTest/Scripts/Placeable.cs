@@ -20,7 +20,7 @@ namespace RaftTest
         [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;
 
         [SerializeField] private bool isFullBlock;
-        /// <summary> Full block mean that it fills entire cell, like 1x1, not a wall like 0.5x1     
+        /// <summary> Full block means that it fills entire cell, like 1x1, not a wall like 0.5x1     
         public bool IsFullBlock { get { return isFullBlock; } }
 
         [SerializeField] private bool requiresSomeFoundation;
@@ -43,7 +43,7 @@ namespace RaftTest
 
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
-
+        public static event EventHandler<EventArgs> Placed;
         /// <summary>
         /// Constructor. Instead, you can set values in inspector
         /// </summary>   
@@ -276,6 +276,11 @@ namespace RaftTest
                 Debug.Log("Placed block in (x,y,z)" + coords + " with snapping " + sideSnapping);
                 world.Add(coords.x, coords.y, coords.z, this, sideSnapping);
 
+                EventHandler<EventArgs> handler = Placed;
+                if (handler != null)
+                {
+                    handler(this, EventArgs.Empty);
+                }
             }
         }
     }
