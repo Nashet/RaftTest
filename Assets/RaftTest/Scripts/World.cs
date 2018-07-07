@@ -10,9 +10,9 @@ namespace RaftTest
     /// </summary>
     public class World : MonoBehaviour
     {
-        [SerializeField] private int xSize, ySize, zSize; // y is a height
+        [SerializeField] protected int xSize, ySize, zSize; // y is a height
 
-        [SerializeField] private Material planeMaterial;
+        [SerializeField] protected Material planeMaterial;
 
         /// <summary> Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
         private const int blockSize = 1;
@@ -20,7 +20,7 @@ namespace RaftTest
         /// <summary>
         /// holds data about every cell in world
         /// </summary>
-        [SerializeField] private Cell[,,] map;
+        [SerializeField] protected Cell[,,] map;
 
         /// <summary>
         /// Empty block
@@ -33,14 +33,7 @@ namespace RaftTest
         // Use this for initialization
         void Start()
         {
-            Get = this;
-
-            // fill map with empty blocks
-            map = new Cell[xSize, ySize, zSize];
-
-            AirBlock = new Placeable("Empty air", true, null, 1f, false, false, true, isFullBlock: false, material: null);
-            Fill(AirBlock);
-
+            SetUpLogic();
             GameObject plane = new GameObject("Plane");
             plane.transform.parent = this.transform;
 
@@ -54,7 +47,18 @@ namespace RaftTest
             MeshCollider collider = plane.AddComponent<MeshCollider>();
             collider.sharedMesh = meshFilter.mesh;
         }
-        void Fill(Placeable block)
+        protected void SetUpLogic()
+        {
+            Get = this;
+
+            // fill map with empty blocks
+            map = new Cell[xSize, ySize, zSize];
+
+            AirBlock = new Placeable("Empty air", true, null, 1f, false, false, true,
+                isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
+            Fill(AirBlock);
+        }
+        protected void Fill(Placeable block)
         {
 
             for (int x = 0; x < xSize; x++)
@@ -158,18 +162,20 @@ namespace RaftTest
         /// <summary>
         /// Coordinates check should be outside
         /// </summary>    
-        internal void Add(int x, int y, int z, Placeable placeable, Vector2Int sideSnapping)
+        internal void Add(Placeable placeable, Vector2Int sideSnapping)
         {
+            var coords = placeable.GetIntegerCoords();
+            
             if (placeable.IsFullBlock) // fill all places
             {
-                map[x, y, z].Place(placeable, Vector2Int.zero);
-                map[x, y, z].Place(placeable, Vector2Int.left);
-                map[x, y, z].Place(placeable, Vector2Int.right);
-                map[x, y, z].Place(placeable, Vector2Int.up);
-                map[x, y, z].Place(placeable, Vector2Int.down);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.zero);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.left);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.right);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.up);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.down);
             }
             else // fill specific part
-                map[x, y, z].Place(placeable, sideSnapping);
+                map[coords.x, coords.y, coords.z].Place(placeable, sideSnapping);
         }
         /// <summary>
         /// Allowing faster app reloading

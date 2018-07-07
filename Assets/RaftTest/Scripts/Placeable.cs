@@ -31,15 +31,15 @@ namespace RaftTest
         [Tooltip("Should be about same as gameObject thickness")]
         [SerializeField] private float blockThickness;
 
-        [SerializeField] private MeshRenderer renderer;
+        [SerializeField] protected MeshRenderer renderer;
 
-        [SerializeField] private GameObject gameObject;
+        [SerializeField] protected GameObject gameObject;
 
         /// <summary> Original material    
         [SerializeField] private Material material;
 
         /// <summary> which side of map it is closer - north, south, west, east. 0,0 if it's center (default)
-        private Vector2Int sideSnapping;
+        protected Vector2Int sideSnapping;
 
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
@@ -48,7 +48,7 @@ namespace RaftTest
         /// Constructor. Instead, you can set values in inspector
         /// </summary>   
 
-        public Placeable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material)
+        public Placeable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport)
         {
             this.name = name;
             this.isTrigger = isTrigger;
@@ -64,10 +64,19 @@ namespace RaftTest
                 renderer = gameObject.GetComponent<MeshRenderer>();
             this.blockThickness = blockThickness;
         }
-
-        static Vector3Int GetIntegerCoords(Vector3 position)
+        protected static Vector3Int GetIntegerCoords(Vector3 position)
         {
             Vector3 adjustedCoords = World.AdjustCoords(position);
+
+            int x = Mathf.FloorToInt(adjustedCoords.x);
+            int y = Mathf.FloorToInt(adjustedCoords.y);
+            int z = Mathf.FloorToInt(adjustedCoords.z);
+
+            return new Vector3Int(x, y, z);
+        }
+        public Vector3Int GetIntegerCoords()
+        {
+            Vector3 adjustedCoords = World.AdjustCoords(gameObject.transform.position);
 
             int x = Mathf.FloorToInt(adjustedCoords.x);
             int y = Mathf.FloorToInt(adjustedCoords.y);
@@ -79,7 +88,7 @@ namespace RaftTest
         /// <summary>
         /// Restores original material, instead of green "allowing" material
         /// </summary>
-        void SetOriginalMaterial()
+        protected void SetOriginalMaterial()
         {
             renderer.material = material;
         }
@@ -89,7 +98,7 @@ namespace RaftTest
         /// 4 sides are coded in following format:
         /// (-1,0),(0,-1),(1,0),(0,1)
         /// </summary>
-        static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+        protected static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
         {
             // distance to block's side
             float xDifference = lookingPosition.x - blockPlacingPosition.x;
@@ -113,7 +122,7 @@ namespace RaftTest
                 return new Vector2Int(0, 1);
         }
 
-        void UpdateMaterial()
+        protected void UpdateMaterial()
         {
             if (CanBePlaced(World.Get))
             {
@@ -130,42 +139,39 @@ namespace RaftTest
         /// </summary>
         public void UpdateBlock()
         {
-            if (this != null)
+            RaycastHit hit;
+
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
             {
-                RaycastHit hit;
+                Vector3 lookingPosition = World.AdjustCoords(hit.point);
+                Vector3 blockPlacingPosition;
 
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+
+
+                blockPlacingPosition = GetIntegerCoords(hit.point);
+
+                // allow block to sticks to 1 of 4 side of a cell
+                if (this.allowsEdgePlacing)
                 {
-                    Vector3 lookingPosition = World.AdjustCoords(hit.point);
-                    Vector3 blockPlacingPosition;
+                    sideSnapping = GetClosestSide(lookingPosition, blockPlacingPosition);
 
+                    blockPlacingPosition.x += sideSnapping.x * (0.5f - this.blockThickness / 2f);
+                    blockPlacingPosition.z += sideSnapping.y * (0.5f - this.blockThickness / 2f);
+                    if (sideSnapping.y == 0) // rotate block if it's closer to y side
+                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                    else
+                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
-
-                    blockPlacingPosition = GetIntegerCoords(hit.point);
-
-                    // allow block to sticks to 1 of 4 side of a cell
-                    if (this.allowsEdgePlacing)
-                    {
-                        sideSnapping = GetClosestSide(lookingPosition, blockPlacingPosition);
-
-                        blockPlacingPosition.x += sideSnapping.x * (0.5f - this.blockThickness / 2f);
-                        blockPlacingPosition.z += sideSnapping.y * (0.5f - this.blockThickness / 2f);
-                        if (sideSnapping.y == 0) // rotate block if it's closer to y side
-                            this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                        else
-                            this.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-
-                    }
-                    this.gameObject.transform.position = blockPlacingPosition;
-                    Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
-                    //if (EventSystem.current.IsPointerOverGameObject())
-                    //    return null;// -3; //hovering over UI
-                    // updates holding block color 
-                    this.UpdateMaterial();
                 }
+                this.gameObject.transform.position = blockPlacingPosition;
+                Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
+                //if (EventSystem.current.IsPointerOverGameObject())
+                //    return null;// -3; //hovering over UI
+                // updates holding block color 
+                this.UpdateMaterial();
             }
         }
-        bool CanBePlaced(World world)
+        protected bool CanBePlaced(World world)
         {
 
             var blockPlacementCoords = GetIntegerCoords(this.gameObject.transform.position);
@@ -210,7 +216,7 @@ namespace RaftTest
             }
         }
 
-        private bool HasHorizontalSupport()
+        protected bool HasHorizontalSupport()
         {
             // scan neighbor cells for support
             var pos = GetIntegerCoords(gameObject.transform.position);
@@ -265,16 +271,14 @@ namespace RaftTest
             }
         }
 
-        public void PlaceBlock(World world)
+        public void Place(World world)
         {
             if (this.CanBePlaced(world))
             {
-                var coords = Placeable.GetIntegerCoords(this.gameObject.transform.position);
-
                 var newBlock = this.Instantiate();
                 newBlock.transform.parent = world.transform;
-                Debug.Log("Placed block in (x,y,z)" + coords + " with snapping " + sideSnapping);
-                world.Add(coords.x, coords.y, coords.z, this, sideSnapping);
+
+                world.Add(this, sideSnapping);
 
                 EventHandler<EventArgs> handler = Placed;
                 if (handler != null)
@@ -283,5 +287,6 @@ namespace RaftTest
                 }
             }
         }
+
     }
 }

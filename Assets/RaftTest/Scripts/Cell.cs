@@ -6,7 +6,7 @@ namespace RaftTest
     /// <summary>
     /// Represents element of World's map
     /// </summary>
-    struct Cell
+    public struct Cell
     {
         private Placeable[,] container;
         private Placeable centralBlock;
@@ -34,11 +34,15 @@ namespace RaftTest
         public void Place(Placeable block, Vector2Int side)
         {
             if (side == Vector2Int.zero)
+            {
                 centralBlock = block;
+                Debug.Log("Placed block in (x,y,z)" + block.GetIntegerCoords() + " with snapping " + side);
+            }
             else
             {
                 Vector2Int convertedCoords = ConvertCoords(side);
                 container[convertedCoords.x, convertedCoords.y] = block;
+                Debug.Log("Placed block in (x,y,z)" + block.GetIntegerCoords() + " with snapping " + convertedCoords);
             }
         }
         /// <summary>

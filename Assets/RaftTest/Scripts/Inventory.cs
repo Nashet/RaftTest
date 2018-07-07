@@ -47,7 +47,7 @@ namespace RaftTest
             {
                 var isPlaceable = player.Holds as Placeable;
                 if (isPlaceable != null)
-                    isPlaceable.PlaceBlock(World.Get);
+                    isPlaceable.Place(World.Get);
             }
         }
     }
