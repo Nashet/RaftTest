@@ -33,7 +33,7 @@ namespace RaftTest
 
         [SerializeField] protected MeshRenderer renderer;
 
-        [SerializeField] protected GameObject gameObject;
+        [SerializeField] protected GameObject block;
 
         /// <summary> Original material    
         [SerializeField] private Material material;
@@ -58,25 +58,16 @@ namespace RaftTest
             this.material = material;
             this.name = name;
 
-            this.gameObject = prefab;
+            this.block = prefab;
             this.allowsEdgePlacing = allowsEdgePlacing;
-            if (gameObject != null)
-                renderer = gameObject.GetComponent<MeshRenderer>();
+            if (block != null)
+                renderer = block.GetComponent<MeshRenderer>();
             this.blockThickness = blockThickness;
         }
-        protected static Vector3Int GetIntegerCoords(Vector3 position)
-        {
-            Vector3 adjustedCoords = World.AdjustCoords(position);
-
-            int x = Mathf.FloorToInt(adjustedCoords.x);
-            int y = Mathf.FloorToInt(adjustedCoords.y);
-            int z = Mathf.FloorToInt(adjustedCoords.z);
-
-            return new Vector3Int(x, y, z);
-        }
+        
         public Vector3Int GetIntegerCoords()
         {
-            Vector3 adjustedCoords = World.AdjustCoords(gameObject.transform.position);
+            Vector3 adjustedCoords = World.AdjustCoords(block.transform.position);
 
             int x = Mathf.FloorToInt(adjustedCoords.x);
             int y = Mathf.FloorToInt(adjustedCoords.y);
@@ -93,40 +84,13 @@ namespace RaftTest
             renderer.material = material;
         }
 
-        /// <summary>
-        /// returns which side of map is closer to point - north, south, west, east
-        /// 4 sides are coded in following format:
-        /// (-1,0),(0,-1),(1,0),(0,1)
-        /// </summary>
-        protected static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
-        {
-            // distance to block's side
-            float xDifference = lookingPosition.x - blockPlacingPosition.x;
-            float zDifference = lookingPosition.z - blockPlacingPosition.z;
-            Vector2 point = new Vector2(xDifference, zDifference);
-
-            // find to which border it's closer         
-            float distToWest = Mathf.Abs(0f - point.x);
-            float distToEast = Mathf.Abs(1f - point.x);
-            float distToSouth = Mathf.Abs(0f - point.y);
-            float distToNorth = Mathf.Abs(1f - point.y);
-
-            if (distToEast == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
-                return new Vector2Int(1, 0);
-            else if (distToWest == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
-                return new Vector2Int(-1, 0);
-            else if (distToSouth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
-                return new Vector2Int(0, -1);
-            else //if (distToNorth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
-                 // default
-                return new Vector2Int(0, 1);
-        }
+        
 
         protected void UpdateMaterial()
         {
             if (CanBePlaced(World.Get))
             {
-                this.renderer.material = GManager.Get.BuildingAlowedMaterial; // originalMat;
+                this.renderer.material = GManager.Get.BuildingAlowedMaterial;
             }
             else
             {
@@ -148,22 +112,22 @@ namespace RaftTest
 
 
 
-                blockPlacingPosition = GetIntegerCoords(hit.point);
+                blockPlacingPosition = World.GetIntegerCoords(hit.point);
 
                 // allow block to sticks to 1 of 4 side of a cell
                 if (this.allowsEdgePlacing)
                 {
-                    sideSnapping = GetClosestSide(lookingPosition, blockPlacingPosition);
+                    sideSnapping = World.GetClosestSide(lookingPosition, blockPlacingPosition);
 
                     blockPlacingPosition.x += sideSnapping.x * (0.5f - this.blockThickness / 2f);
                     blockPlacingPosition.z += sideSnapping.y * (0.5f - this.blockThickness / 2f);
-                    if (sideSnapping.y == 0) // rotate block if it's closer to y side
-                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                    if (sideSnapping.y == 0) // rotate block if it's closer to z side
+                        this.block.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                     else
-                        this.gameObject.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                        this.block.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
                 }
-                this.gameObject.transform.position = blockPlacingPosition;
+                this.block.transform.position = blockPlacingPosition;
                 Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
                 //if (EventSystem.current.IsPointerOverGameObject())
                 //    return null;// -3; //hovering over UI
@@ -174,7 +138,7 @@ namespace RaftTest
         protected bool CanBePlaced(World world)
         {
 
-            var blockPlacementCoords = GetIntegerCoords(this.gameObject.transform.position);
+            var blockPlacementCoords = World.GetIntegerCoords(this.block.transform.position);
             var placeToBuild = world.GetBlock(blockPlacementCoords, sideSnapping);
 
             if (placeToBuild == null)
@@ -219,7 +183,7 @@ namespace RaftTest
         protected bool HasHorizontalSupport()
         {
             // scan neighbor cells for support
-            var pos = GetIntegerCoords(gameObject.transform.position);
+            var pos = World.GetIntegerCoords(block.transform.position);
             int xStart = pos.x - maxLengthWithoutSupport;
             int xEnd = pos.x + maxLengthWithoutSupport;
             int zStart = pos.z - maxLengthWithoutSupport;
@@ -238,8 +202,8 @@ namespace RaftTest
         GameObject Instantiate()
         {
             SetOriginalMaterial();
-            var newBlock = UnityEngine.Object.Instantiate(this.gameObject);
-            newBlock.layer = 0; // placed block wouldn't be ignored by raycast
+            var newBlock = UnityEngine.Object.Instantiate(this.block);
+            newBlock.layer = 0; // placed block wouldn't be ignored by raycast           
 
             if (this.isTrigger)
                 newBlock.GetComponent<Collider>().isTrigger = true;
@@ -250,7 +214,7 @@ namespace RaftTest
 
         public void Show()
         {
-            gameObject.SetActive(true);
+            block.SetActive(true);
             EventHandler<EventArgs> handler = Shown;
             if (handler != null)
             {
@@ -260,7 +224,7 @@ namespace RaftTest
 
         public void Hide()
         {
-            gameObject.SetActive(false);
+            block.SetActive(false);
             // Make a temporary copy of the event to avoid possibility of
             // a race condition if the last subscriber unsubscribes
             // immediately after the null check and before the event is raised.
@@ -277,6 +241,8 @@ namespace RaftTest
             {
                 var newBlock = this.Instantiate();
                 newBlock.transform.parent = world.transform;
+                //newBlock.tag = "Placed";
+                PlacedBlock.Add(newBlock, this, sideSnapping);
 
                 world.Add(this, sideSnapping);
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace RaftTest
@@ -63,6 +64,19 @@ namespace RaftTest
                 side.y = 0;
             }
             return side;
+        }
+
+        internal void Remove(Vector2Int side)
+        {
+            if (side == Vector2Int.zero)
+            {
+                centralBlock = World.AirBlock;                 
+            }
+            else
+            {
+                Vector2Int convertedCoords = ConvertCoords(side);
+                container[convertedCoords.x, convertedCoords.y] = World.AirBlock;                
+            }
         }
     }
 }

@@ -21,10 +21,10 @@ public class MockPlaceable : Placeable
     public MockPlaceable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport, Vector2Int side)
     : base(name, allowsEdgePlacing, prefab, blockThickness, isTrigger, requiresSomeFoundation, canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, material, maxLengthWithoutSupport)
     {
-        gameObject = new GameObject();
-        gameObject.AddComponent<BoxCollider>();
+        block = new GameObject();
+        block.AddComponent<BoxCollider>();
         sideSnapping = side;
-        renderer = gameObject.AddComponent<MeshRenderer>();
+        renderer = block.AddComponent<MeshRenderer>();
     }
 }
 public class TestPlaceable
