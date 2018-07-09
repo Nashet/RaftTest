@@ -80,7 +80,7 @@ namespace RaftTest
                 return null;
         }
 
-        internal void Remove(PlacedBlock selectedObject)
+        public void Remove(PlacedBlock selectedObject)
         {
             var coords = GetIntegerCoords(selectedObject.transform.position);
             if (IsCellExists(coords.x, coords.y, coords.z))

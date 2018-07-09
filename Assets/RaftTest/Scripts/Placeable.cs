@@ -235,14 +235,14 @@ namespace RaftTest
             }
         }
 
-        public void Place(World world)
+        public PlacedBlock Place(World world)
         {
             if (this.CanBePlaced(world))
             {
-                var newBlock = this.Instantiate();
-                newBlock.transform.parent = world.transform;
-                //newBlock.tag = "Placed";
-                PlacedBlock.Add(newBlock, this, sideSnapping);
+                var newBlockObject = this.Instantiate();
+                newBlockObject.transform.parent = world.transform;
+                
+                var placedBlock= PlacedBlock.Add(newBlockObject, this, sideSnapping);
 
                 world.Add(this, sideSnapping);
 
@@ -251,7 +251,9 @@ namespace RaftTest
                 {
                     handler(this, EventArgs.Empty);
                 }
+                return placedBlock;
             }
+            return null;
         }
 
     }

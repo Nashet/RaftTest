@@ -14,6 +14,7 @@ namespace RaftTest
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
         public static event EventHandler<EventArgs> Used;
+    
         protected PlacedBlock selectedObject;
 
         private Animation animation;
