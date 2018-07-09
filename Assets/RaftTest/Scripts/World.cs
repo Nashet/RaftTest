@@ -10,9 +10,9 @@ namespace RaftTest
     /// </summary>
     public class World : MonoBehaviour
     {
-        [SerializeField] private int xSize, ySize, zSize; // y is a height
+        [SerializeField] protected int xSize, ySize, zSize; // y is a height
 
-        [SerializeField] private Material planeMaterial;
+        [SerializeField] protected Material planeMaterial;
 
         /// <summary> Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
         private const int blockSize = 1;
@@ -20,7 +20,7 @@ namespace RaftTest
         /// <summary>
         /// holds data about every cell in world
         /// </summary>
-        [SerializeField] private Cell[,,] map;
+        [SerializeField] protected Cell[,,] map;
 
         /// <summary>
         /// Empty block
@@ -33,14 +33,7 @@ namespace RaftTest
         // Use this for initialization
         void Start()
         {
-            Get = this;
-
-            // fill map with empty blocks
-            map = new Cell[xSize, ySize, zSize];
-
-            AirBlock = new Placeable("Empty air", true, null, 1f, false, false, true, isFullBlock: false, material: null);
-            Fill(AirBlock);
-
+            SetUpLogic();
             GameObject plane = new GameObject("Plane");
             plane.transform.parent = this.transform;
 
@@ -54,7 +47,18 @@ namespace RaftTest
             MeshCollider collider = plane.AddComponent<MeshCollider>();
             collider.sharedMesh = meshFilter.mesh;
         }
-        void Fill(Placeable block)
+        protected void SetUpLogic()
+        {
+            Get = this;
+
+            // fill map with empty blocks
+            map = new Cell[xSize, ySize, zSize];
+
+            AirBlock = new Placeable("Empty air", true, null, 1f, false, false, true,
+                isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
+            Fill(AirBlock);
+        }
+        protected void Fill(Placeable block)
         {
 
             for (int x = 0; x < xSize; x++)
@@ -75,6 +79,17 @@ namespace RaftTest
             else
                 return null;
         }
+
+        public void Remove(PlacedBlock selectedObject)
+        {
+            var coords = GetIntegerCoords(selectedObject.transform.position);
+            if (IsCellExists(coords.x, coords.y, coords.z))
+            {
+                map[coords.x, coords.y, coords.z].Remove(selectedObject.sideSnapping);
+                Destroy(selectedObject.gameObject);
+            }
+        }
+
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
@@ -158,18 +173,20 @@ namespace RaftTest
         /// <summary>
         /// Coordinates check should be outside
         /// </summary>    
-        internal void Add(int x, int y, int z, Placeable placeable, Vector2Int sideSnapping)
+        internal void Add(Placeable placeable, Vector2Int sideSnapping)
         {
+            var coords = placeable.GetIntegerCoords();
+            
             if (placeable.IsFullBlock) // fill all places
             {
-                map[x, y, z].Place(placeable, Vector2Int.zero);
-                map[x, y, z].Place(placeable, Vector2Int.left);
-                map[x, y, z].Place(placeable, Vector2Int.right);
-                map[x, y, z].Place(placeable, Vector2Int.up);
-                map[x, y, z].Place(placeable, Vector2Int.down);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.zero);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.left);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.right);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.up);
+                map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.down);
             }
             else // fill specific part
-                map[x, y, z].Place(placeable, sideSnapping);
+                map[coords.x, coords.y, coords.z].Place(placeable, sideSnapping);
         }
         /// <summary>
         /// Allowing faster app reloading
@@ -179,6 +196,44 @@ namespace RaftTest
 
             if (Get == null)
                 Start();
+        }
+        public static Vector3Int GetIntegerCoords(Vector3 position)
+        {
+            Vector3 adjustedCoords = World.AdjustCoords(position);
+
+            int x = Mathf.FloorToInt(adjustedCoords.x);
+            int y = Mathf.FloorToInt(adjustedCoords.y);
+            int z = Mathf.FloorToInt(adjustedCoords.z);
+
+            return new Vector3Int(x, y, z);
+        }
+        /// <summary>
+        /// returns which side of map is closer to point - north, south, west, east
+        /// 4 sides are coded in following format:
+        /// (-1,0),(0,-1),(1,0),(0,1)
+        /// </summary>
+        public static Vector2Int GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+        {
+            // distance to block's side
+            float xDifference = lookingPosition.x - blockPlacingPosition.x;
+            float zDifference = lookingPosition.z - blockPlacingPosition.z;
+            Vector2 point = new Vector2(xDifference, zDifference);
+
+            // find to which border it's closer         
+            float distToWest = Mathf.Abs(0f - point.x);
+            float distToEast = Mathf.Abs(1f - point.x);
+            float distToSouth = Mathf.Abs(0f - point.y);
+            float distToNorth = Mathf.Abs(1f - point.y);
+
+            if (distToEast == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
+                return new Vector2Int(1, 0);
+            else if (distToWest == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
+                return new Vector2Int(-1, 0);
+            else if (distToSouth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
+                return new Vector2Int(0, -1);
+            else //if (distToNorth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
+                 // default
+                return new Vector2Int(0, 1);
         }
     }
 }

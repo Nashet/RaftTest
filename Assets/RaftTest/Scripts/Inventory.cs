@@ -12,13 +12,15 @@ namespace RaftTest
     [RequireComponent(typeof(Builder))]
     public class Inventory : MonoBehaviour
     {
-        private Builder player;
+        private ICharacter player;
+        [SerializeField] private GameObject toolObject;
+        private Tool tool;
         void Start()
         {
             player = GetComponent<Builder>();
+            tool = toolObject.GetComponent<Tool > ();
             if (player == null)
                 Debug.Log("Missing Builder component");
-
         }
 
         // Update is called once per frame
@@ -43,12 +45,20 @@ namespace RaftTest
                 player.TakeInHand(GManager.Get.allBlocks[4]);
             else if (Input.GetKeyUp(KeyCode.F7))
                 player.TakeInHand(GManager.Get.allBlocks[5]);
+            else if (Input.GetKeyUp(KeyCode.F8))
+                player.TakeInHand(tool);
 
             if (player.Holds != null && Input.GetMouseButtonUp(0)) // place block in a world
             {
                 var isPlaceable = player.Holds as Placeable;
                 if (isPlaceable != null)
-                    isPlaceable.PlaceBlock(World.Get);
+                    isPlaceable.Place(World.Get);
+                else
+                {
+                    var isTool = player.Holds as Tool;
+                    if (isTool != null)
+                        isTool.Act();
+                }
             }
         }
     }
