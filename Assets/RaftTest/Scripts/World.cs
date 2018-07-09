@@ -15,7 +15,7 @@ namespace RaftTest
         [SerializeField] protected Material planeMaterial;
 
         /// <summary> Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
-        private const int blockSize = 1;
+        protected const int blockSize = 1;
 
         /// <summary>
         /// holds data about every cell in world
@@ -31,7 +31,7 @@ namespace RaftTest
         public static World Get { get; private set; }
 
         // Use this for initialization
-        void Start()
+        protected void Start()
         {
             SetUpLogic();
             GameObject plane = new GameObject("Plane");
@@ -72,7 +72,7 @@ namespace RaftTest
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public Placeable GetBlock(int x, int y, int z, Vector2Int side)
+        public virtual Placeable GetBlock(int x, int y, int z, Vector2Int side)
         {
             if (IsCellExists(x, y, z))
                 return map[x, y, z].Get(side);
@@ -80,7 +80,7 @@ namespace RaftTest
                 return null;
         }
 
-        public void Remove(PlacedBlock selectedObject)
+        public virtual void Remove(PlacedBlock selectedObject)
         {
             var coords = GetIntegerCoords(selectedObject.transform.position);
             if (IsCellExists(coords.x, coords.y, coords.z))
@@ -93,7 +93,7 @@ namespace RaftTest
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public Placeable GetBlock(Vector3Int position, Vector2Int side)
+        public virtual Placeable GetBlock(Vector3Int position, Vector2Int side)
         {
             return GetBlock(position.x, position.y, position.z, side);
         }
@@ -173,10 +173,10 @@ namespace RaftTest
         /// <summary>
         /// Coordinates check should be outside
         /// </summary>    
-        internal void Add(Placeable placeable, Vector2Int sideSnapping)
+        public virtual void Add(Placeable placeable, Vector2Int sideSnapping)
         {
             var coords = placeable.GetIntegerCoords();
-            
+
             if (placeable.IsFullBlock) // fill all places
             {
                 map[coords.x, coords.y, coords.z].Place(placeable, Vector2Int.zero);
@@ -191,12 +191,13 @@ namespace RaftTest
         /// <summary>
         /// Allowing faster app reloading
         /// </summary>
-        void Update()
+        protected void Update()
         {
 
             if (Get == null)
                 Start();
         }
+
         public static Vector3Int GetIntegerCoords(Vector3 position)
         {
             Vector3 adjustedCoords = World.AdjustCoords(position);
@@ -207,6 +208,7 @@ namespace RaftTest
 
             return new Vector3Int(x, y, z);
         }
+
         /// <summary>
         /// returns which side of map is closer to point - north, south, west, east
         /// 4 sides are coded in following format:

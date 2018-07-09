@@ -1665,7 +1665,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1811211064}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ec9b2c37d88d1e44a1e9f81222ede2f, type: 3}
+  m_Script: {fileID: 11500000, guid: da743ad9095e2b44ca43e73014c9a747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1970803538
@@ -1766,6 +1766,7 @@ MonoBehaviour:
     renderer: {fileID: 49802096}
     block: {fileID: 49802093}
     material: {fileID: 2100000, guid: 8b7f047939bbb4944bea11eeed31e0c2, type: 2}
+  hammer: {fileID: 1811211069}
 --- !u!4 &1970803541
 Transform:
   m_ObjectHideFlags: 0

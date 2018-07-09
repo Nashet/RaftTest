@@ -6,7 +6,7 @@ using UnityEngine;
 namespace RaftTest
 {
     /// <summary>
-    /// Represents block which can be placed in world and can be hold in hands
+    /// Represents block which can be placed in world and can be hold in hands    
     /// </summary>
     [Serializable]
     public class Placeable : Nameable, IHideable, IHoldable
@@ -64,7 +64,7 @@ namespace RaftTest
                 renderer = block.GetComponent<MeshRenderer>();
             this.blockThickness = blockThickness;
         }
-        
+
         public Vector3Int GetIntegerCoords()
         {
             Vector3 adjustedCoords = World.AdjustCoords(block.transform.position);
@@ -84,8 +84,6 @@ namespace RaftTest
             renderer.material = material;
         }
 
-        
-
         protected void UpdateMaterial()
         {
             if (CanBePlaced(World.Get))
@@ -101,18 +99,14 @@ namespace RaftTest
         /// <summary>
         /// updates block held by player - rotates, changes color if building is not allowed, etc
         /// </summary>
-        public void UpdateBlock()
+        public virtual void UpdateBlock()
         {
             RaycastHit hit;
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
             {
                 Vector3 lookingPosition = World.AdjustCoords(hit.point);
-                Vector3 blockPlacingPosition;
-
-
-
-                blockPlacingPosition = World.GetIntegerCoords(hit.point);
+                Vector3 blockPlacingPosition = World.GetIntegerCoords(hit.point);
 
                 // allow block to sticks to 1 of 4 side of a cell
                 if (this.allowsEdgePlacing)
@@ -199,7 +193,7 @@ namespace RaftTest
         /// <summary>
         /// Creates copy of this object ready to put in a world
         /// </summary>    
-        GameObject Instantiate()
+        protected GameObject Instantiate()
         {
             SetOriginalMaterial();
             var newBlock = UnityEngine.Object.Instantiate(this.block);
@@ -212,7 +206,7 @@ namespace RaftTest
             return newBlock;
         }
 
-        public void Show()
+        public virtual void Show()
         {
             block.SetActive(true);
             EventHandler<EventArgs> handler = Shown;
@@ -222,7 +216,7 @@ namespace RaftTest
             }
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             block.SetActive(false);
             // Make a temporary copy of the event to avoid possibility of
@@ -235,14 +229,14 @@ namespace RaftTest
             }
         }
 
-        public PlacedBlock Place(World world)
+        public virtual PlacedBlock Place(World world)
         {
             if (this.CanBePlaced(world))
             {
                 var newBlockObject = this.Instantiate();
                 newBlockObject.transform.parent = world.transform;
-                
-                var placedBlock= PlacedBlock.Add(newBlockObject, this, sideSnapping);
+
+                var placedBlock = PlacedBlock.Add(newBlockObject, this, sideSnapping);
 
                 world.Add(this, sideSnapping);
 

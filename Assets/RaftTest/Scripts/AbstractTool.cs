@@ -6,10 +6,11 @@ namespace RaftTest
 {
     /// <summary>
     /// Basic tool class
-    /// Select block in a world by changing it's material
+    /// Selects block in a world by changing it's material
+    /// Can't be instantiated
     /// </summary>
     [Serializable]
-    public class Tool : MonoBehaviour, IHoldable // Placeable
+    abstract public class AbstractTool : MonoBehaviour, IHoldable // Placeable
     {
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
@@ -17,9 +18,18 @@ namespace RaftTest
     
         protected PlacedBlock selectedObject;
 
+        /// <summary>
+        /// Plays animation on act, if presents
+        /// </summary>
         private Animation animation;
 
-        public void Hide()
+        // Use this for initialization
+        protected void Start()
+        {
+            gameObject.SetActive(false);
+            animation = GetComponent<Animation>();
+        }
+        public virtual void Hide()
         {
             gameObject.SetActive(false);
             if (selectedObject != null)
@@ -31,7 +41,7 @@ namespace RaftTest
             }
         }
 
-        public void Show()
+        public virtual void Show()
         {
             gameObject.SetActive(true);
             EventHandler<EventArgs> handler = Shown;
@@ -40,12 +50,14 @@ namespace RaftTest
                 handler(this, EventArgs.Empty);
             }
         }
+
         protected void RemoveMaterial(MeshRenderer renderer)
         {
             Material[] newArray = new Material[1];
             newArray[0] = renderer.material;
             renderer.materials = newArray;
         }
+
         protected void RemoveSelection(GameObject someObject)
         {
             var renderer = someObject.GetComponent<MeshRenderer>();
@@ -91,7 +103,7 @@ namespace RaftTest
             }
 
         }
-        public void UpdateBlock()
+        public virtual void UpdateBlock()
         {
             RaycastHit hit;
 
@@ -118,25 +130,13 @@ namespace RaftTest
         }
 
 
-
-        // Use this for initialization
-        void Start()
-        {
-            gameObject.SetActive(false);
-            animation = GetComponent<Animation>();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        public void Act()
+        /// <summary>
+        /// makes main action of a tool
+        /// </summary>
+        public virtual void Act()
         {
             if (selectedObject != null)
-            {
-                World.Get.Remove(selectedObject);
+            {             
                 EventHandler<EventArgs> handler = Used;
                 if (handler != null)
                 {

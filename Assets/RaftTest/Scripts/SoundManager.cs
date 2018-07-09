@@ -9,7 +9,7 @@ namespace RaftTest
     /// React to events playing sound
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
-    public class SoundManager : MonoBehaviour
+    sealed public class SoundManager : MonoBehaviour
     {   
         [SerializeField] private AudioClip blockPlacedSound;
         [SerializeField] private AudioClip toolUsedSound;
@@ -23,7 +23,7 @@ namespace RaftTest
             if (audioSource == null)
                 Debug.Log("Missing AudioSource component");
             Placeable.Placed += OnBlockPlaced;
-            Tool.Used += OnToolUsed;
+            AbstractTool.Used += OnToolUsed;
         }
 
         private void OnBlockPlaced(object sender, EventArgs e)

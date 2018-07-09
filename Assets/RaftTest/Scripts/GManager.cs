@@ -14,7 +14,14 @@ namespace RaftTest
         [SerializeField] private Material buildingAlowedMaterial;
         public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }
 
-        [SerializeField] public Placeable[] allBlocks;
+        [SerializeField] private Placeable[] allBlocks;
+        public IEnumerable<Placeable> AllBlocks()
+        {
+            foreach (var item in allBlocks) yield return item;
+        }
+
+        [SerializeField] private Hammer hammer;
+        public Hammer Hammer { get { return hammer; } }
 
         static GManager thisObject;
         // allows static access
@@ -22,6 +29,9 @@ namespace RaftTest
         {
             get { return thisObject; }
         }
+
+
+
         // Use this for initialization
         void Awake()
         {
