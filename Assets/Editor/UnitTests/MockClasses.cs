@@ -24,7 +24,7 @@ public class MockWorld : World
 public class MockPlaceable : Placeable
 {
 
-    public MockPlaceable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport, Vector2Int side)
+    public MockPlaceable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport, Placeable.Side side)
     : base(name, allowsEdgePlacing, prefab, blockThickness, isTrigger, requiresSomeFoundation, canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, material, maxLengthWithoutSupport)
     {
         block = new GameObject();

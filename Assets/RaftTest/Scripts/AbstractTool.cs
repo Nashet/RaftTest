@@ -21,13 +21,13 @@ namespace RaftTest
         /// <summary>
         /// Plays animation on act, if presents
         /// </summary>
-        private Animation animation;
+        private Animation availableAnimation;
 
         // Use this for initialization
         protected void Start()
         {
             gameObject.SetActive(false);
-            animation = GetComponent<Animation>();
+            availableAnimation = GetComponent<Animation>();
         }
         public virtual void Hide()
         {
@@ -143,8 +143,8 @@ namespace RaftTest
                     handler(this, EventArgs.Empty);
                 }
             }
-            if (animation != null)
-                animation.Play();
+            if (availableAnimation != null)
+                availableAnimation.Play();
         }
     }
 }

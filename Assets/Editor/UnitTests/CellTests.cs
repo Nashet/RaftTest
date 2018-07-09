@@ -9,8 +9,7 @@ public class TestCell
     /// Test placing of all types ob blocks
     /// </summary> 
     public void TestPlacing(
-        [Values(-1, 0, 1)]int x,
-        [Values(-1, 0, 1)]int y,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center)]Placeable.Side side,
         [Values(true, false)] bool allowsEdgePlacing,
         [Values(1f)]float blockThickness,
         [Values(true, false)]bool isTrigger,
@@ -19,7 +18,7 @@ public class TestCell
         [Values(true, false)]bool isFullBlock,
         [Values(-1, 0, 1, 2)]int maxLengthWithoutSupport)
     {
-        var side = new Vector2Int(x, y);
+
         var testable = new Cell();
 
         testable.Init(World.AirBlock);

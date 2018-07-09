@@ -38,16 +38,17 @@ namespace RaftTest
         /// <summary> Original material    
         [SerializeField] private Material material;
 
-        /// <summary> which side of map it is closer - north, south, west, east. 0,0 if it's center (default)
-        protected Vector2Int sideSnapping;
+        /// <summary> which side of map it is closer - north, south, west, east. default is center
+        protected Side sideSnapping;
 
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
         public static event EventHandler<EventArgs> Placed;
+
+        public enum Side { Center, West, East, North, South }
         /// <summary>
         /// Constructor. Instead, you can set values in inspector
         /// </summary>   
-
         public Placeable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport)
         {
             this.name = name;
@@ -113,9 +114,17 @@ namespace RaftTest
                 {
                     sideSnapping = World.GetClosestSide(lookingPosition, blockPlacingPosition);
 
-                    blockPlacingPosition.x += sideSnapping.x * (0.5f - this.blockThickness / 2f);
-                    blockPlacingPosition.z += sideSnapping.y * (0.5f - this.blockThickness / 2f);
-                    if (sideSnapping.y == 0) // rotate block if it's closer to z side
+                    if (sideSnapping == Side.East)
+                        blockPlacingPosition.x += (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.West)
+                        blockPlacingPosition.x -= (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.North)
+                        blockPlacingPosition.z += (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.South)
+                        blockPlacingPosition.z -= (0.5f - this.blockThickness / 2f);
+
+
+                    if (sideSnapping == Side.West || sideSnapping == Side.East) // rotate block at Y axis depending on what side is closer: west, north, etc.
                         this.block.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                     else
                         this.block.transform.rotation = Quaternion.Euler(0f, 90f, 0f);

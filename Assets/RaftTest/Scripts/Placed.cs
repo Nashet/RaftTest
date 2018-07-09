@@ -10,12 +10,12 @@ namespace RaftTest
     public class PlacedBlock : MonoBehaviour
     {
         [SerializeField] public Placeable Placeable { get; private set; }
-        [SerializeField] public Vector2Int sideSnapping { get; private set; }
-        public static PlacedBlock Add(GameObject go, Placeable placeable, Vector2Int side)
+        [SerializeField] public Placeable.Side SideSnapping { get; private set; }
+        public static PlacedBlock Add(GameObject go, Placeable placeable, Placeable.Side side)
         {
             var placed = go.AddComponent<PlacedBlock>();
             placed.Placeable = placeable;
-            placed.sideSnapping = side;
+            placed.SideSnapping = side;
             return placed;
         }        
     }
