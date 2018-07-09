@@ -26,6 +26,8 @@ namespace RaftTest
         // Update is called once per frame
         protected void Update()
         {
+            if (player == null)
+                player = GetComponent<Builder>();// for fast reloading
             ManageControls();
         }
         protected void ManageControls()
@@ -60,6 +62,6 @@ namespace RaftTest
                         isTool.Act();
                 }
             }
-        }
+        }        
     }
 }

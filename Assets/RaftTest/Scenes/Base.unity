@@ -182,7 +182,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'F1 button - empty hands,
 
-    F2 - build foundation,
+    F2 - build foundation (full block),
 
     F3 - build walls,
 
@@ -192,7 +192,7 @@ MonoBehaviour:
 
     F6 - ladder
 
-    F7 - secret door
+    F7 - foundation (half block)
 
     F8 - hammer (for block destroying)'
 --- !u!222 &13526202
@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 49802096}
   - component: {fileID: 49802095}
   m_Layer: 2
-  m_Name: SecretDoor
+  m_Name: Foundation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -229,7 +229,7 @@ Transform:
   m_GameObject: {fileID: 49802093}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 176851465}
   m_RootOrder: 4
@@ -245,7 +245,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1.02, y: 1.02, z: 1.02}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &49802096
 MeshRenderer:
@@ -613,6 +613,21 @@ Prefab:
         type: 2}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.x
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.y
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.z
+      value: 1.02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
@@ -1035,7 +1050,22 @@ Prefab:
     - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
         type: 2}
       propertyPath: m_Size.x
-      value: 1
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 23120060786863944, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.y
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.z
+      value: 1.02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
@@ -1053,7 +1083,7 @@ GameObject:
   - component: {fileID: 1012911017}
   - component: {fileID: 1012911016}
   m_Layer: 2
-  m_Name: Foundation
+  m_Name: Stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1070,8 +1100,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.02, y: 1, z: 1.02}
-  m_Center: {x: -0.01, y: 0, z: -0.01}
+  m_Size: {x: 1.02, y: 1.02, z: 1.02}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1012911017
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1160,7 +1190,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1.02, y: 1.02, z: 1.02}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1036263287
 MeshRenderer:
@@ -1178,7 +1208,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: f988ae1129ccaa84d943a0a26da745d4, type: 2}
+  - {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1308,7 +1338,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1.02, y: 1.02, z: 1.02}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &1115350385
 MeshFilter:
@@ -1424,12 +1454,12 @@ Prefab:
     - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
         type: 2}
       propertyPath: m_Center.x
-      value: -0.01
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
         type: 2}
       propertyPath: m_Center.z
-      value: -0.01
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
         type: 2}
@@ -1439,6 +1469,15 @@ Prefab:
     - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
         type: 2}
       propertyPath: m_Size.z
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 1967263169009654, guid: 7de4377425fb22b47af8f3c7afcc7cec, type: 2}
+      propertyPath: m_Name
+      value: Stone
+      objectReference: {fileID: 0}
+    - target: {fileID: 65835024466676974, guid: 7de4377425fb22b47af8f3c7afcc7cec,
+        type: 2}
+      propertyPath: m_Size.y
       value: 1.02
       objectReference: {fileID: 0}
     m_RemovedComponents:
@@ -1486,7 +1525,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4613133234344798, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
       propertyPath: m_LocalScale.x
-      value: 0.25
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
         type: 2}
@@ -1495,7 +1534,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1229407095689734, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
       propertyPath: m_Name
-      value: SecretDoor
+      value: Foundation
       objectReference: {fileID: 0}
     - target: {fileID: 1229407095689734, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
       propertyPath: m_IsActive
@@ -1506,6 +1545,21 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 8b7f047939bbb4944bea11eeed31e0c2, type: 2}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.x
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.y
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 65798864946742802, guid: e5d75df48c17f604082f2b8daeb397e8,
+        type: 2}
+      propertyPath: m_Size.z
+      value: 1.02
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e5d75df48c17f604082f2b8daeb397e8, type: 2}
   m_IsPrefabParent: 0
@@ -1700,25 +1754,27 @@ MonoBehaviour:
   buildingAlowedMaterial: {fileID: 2100000, guid: dc21556129d52654a8a177d6ce8cef86,
     type: 2}
   allBlocks:
-  - name: Foundation
+  - name: Stone
     isTrigger: 0
     maxLengthWithoutSupport: 1
     canBePlacedAtZeroLevelWithoutFoundation: 1
     isFullBlock: 1
     requiresSomeFoundation: 1
-    allowsEdgePlacing: 0
+    allowsXZSnapping: 0
+    allowsYSnapping: 0
     blockThickness: 1
     renderer: {fileID: 1012911017}
     block: {fileID: 1012911015}
-    material: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
+    material: {fileID: 2100000, guid: 8b7f047939bbb4944bea11eeed31e0c2, type: 2}
   - name: Wall
     isTrigger: 0
     maxLengthWithoutSupport: 0
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 1
-    allowsEdgePlacing: 1
-    blockThickness: 0.25
+    allowsXZSnapping: 1
+    allowsYSnapping: 0
+    blockThickness: 0.22
     renderer: {fileID: 1036263287}
     block: {fileID: 1036263285}
     material: {fileID: 2100000, guid: f869116115da60848a24dccf1c3288a6, type: 2}
@@ -1728,8 +1784,9 @@ MonoBehaviour:
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 1
-    allowsEdgePlacing: 1
-    blockThickness: 0.1
+    allowsXZSnapping: 1
+    allowsYSnapping: 1
+    blockThickness: 0.04
     renderer: {fileID: 1115350387}
     block: {fileID: 1115350383}
     material: {fileID: 2100000, guid: f988ae1129ccaa84d943a0a26da745d4, type: 2}
@@ -1739,8 +1796,9 @@ MonoBehaviour:
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 1
-    allowsEdgePlacing: 0
-    blockThickness: 0.4
+    allowsXZSnapping: 0
+    allowsYSnapping: 0
+    blockThickness: 0.8
     renderer: {fileID: 2134757963}
     block: {fileID: 2134757959}
     material: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
@@ -1750,22 +1808,24 @@ MonoBehaviour:
     canBePlacedAtZeroLevelWithoutFoundation: 0
     isFullBlock: 0
     requiresSomeFoundation: 0
-    allowsEdgePlacing: 1
+    allowsXZSnapping: 1
+    allowsYSnapping: 0
     blockThickness: 0.1
     renderer: {fileID: 704640129}
     block: {fileID: 1633621811}
     material: {fileID: 2100000, guid: d5bcf5420a39cc947865f709a05e4a02, type: 2}
-  - name: Secret door
-    isTrigger: 1
-    maxLengthWithoutSupport: 0
-    canBePlacedAtZeroLevelWithoutFoundation: 0
+  - name: Foundation
+    isTrigger: 0
+    maxLengthWithoutSupport: 2
+    canBePlacedAtZeroLevelWithoutFoundation: 1
     isFullBlock: 0
     requiresSomeFoundation: 1
-    allowsEdgePlacing: 1
-    blockThickness: 0.25
+    allowsXZSnapping: 0
+    allowsYSnapping: 1
+    blockThickness: 0.5
     renderer: {fileID: 49802096}
     block: {fileID: 49802093}
-    material: {fileID: 2100000, guid: 8b7f047939bbb4944bea11eeed31e0c2, type: 2}
+    material: {fileID: 2100000, guid: c5d9523f86cad654d999a631ed0db7c1, type: 2}
   hammer: {fileID: 1811211069}
 --- !u!4 &1970803541
 Transform:

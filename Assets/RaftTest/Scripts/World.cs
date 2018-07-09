@@ -54,7 +54,7 @@ namespace RaftTest
             // fill map with empty blocks
             map = new Cell[xSize, ySize, zSize];
 
-            AirBlock = new Placeable("Empty air", true, null, 1f, false, false, true,
+            AirBlock = new Placeable("Empty air", true, true, null, 1f, false, false, true,
                 isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
             Fill(AirBlock);
         }
@@ -104,11 +104,11 @@ namespace RaftTest
         public bool HasAnyNonAirBlock(int x, int y, int z)
         {
             if (IsCellExists(x, y, z))
-            {                
+            {
                 foreach (Placeable.Side eachSide in Enum.GetValues(typeof(Placeable.Side)))
                 {
                     if (map[x, y, z].Get(eachSide) != AirBlock)
-                        return true;                                            
+                        return true;
                 }
                 return false;
             }
@@ -121,6 +121,22 @@ namespace RaftTest
         public bool HasAnyNonAirBlock(Vector3Int position)
         {
             return HasAnyNonAirBlock(position.x, position.y, position.z);
+        }
+
+        internal bool HasAnyNonAirBlockExcept(Vector3Int coords, Placeable.Side exceptThatBlock)
+        {
+            if (IsCellExists(coords.x, coords.y, coords.z))
+            {
+                foreach (Placeable.Side eachSide in Enum.GetValues(typeof(Placeable.Side)))
+                {
+                    var block = map[coords.x, coords.y, coords.z].Get(eachSide);
+                    if (block != AirBlock && eachSide != exceptThatBlock)
+                        return true;
+                }
+                return false;
+            }
+            else
+                return false;
         }
 
         /// <summary>
@@ -149,11 +165,12 @@ namespace RaftTest
         {
             Mesh m = new Mesh();
             m.name = "ScriptedMesh";
+            float planeHeight = 0f;//-blockSize/2f
             m.vertices = new Vector3[] {
-         new Vector3(-width / 2f *blockSize, 0.00f, height/ 2f*blockSize),
-         new Vector3(width/ 2f*blockSize, 0.00f, height/ 2f*blockSize),
-         new Vector3(width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
-         new Vector3(-width/ 2f*blockSize, 0.00f, -height/ 2f*blockSize),
+         new Vector3(-width / 2f *blockSize, planeHeight, height/ 2f*blockSize),
+         new Vector3(width/ 2f*blockSize, planeHeight, height/ 2f*blockSize),
+         new Vector3(width/ 2f*blockSize, planeHeight, -height/ 2f*blockSize),
+         new Vector3(-width/ 2f*blockSize, planeHeight, -height/ 2f*blockSize),
      };
             m.uv = new[] {
          new Vector2 (0, 0),
@@ -206,15 +223,14 @@ namespace RaftTest
         }
 
         /// <summary>
-        /// returns which side of map is closer to point - north, south, west, east
-        /// 4 sides are coded in following format:
-        /// (-1,0),(0,-1),(1,0),(0,1)
+        /// returns which side of map is closer to point - north, south, west, east        
         /// </summary>
-        public static Placeable.Side GetClosestSide(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+        public static Placeable.Side GetClosestSideXZ(Vector3 lookingPosition, Vector3 blockPlacingPosition)
         {
             // distance to block's side
             float xDifference = lookingPosition.x - blockPlacingPosition.x;
             float zDifference = lookingPosition.z - blockPlacingPosition.z;
+
             Vector2 point = new Vector2(xDifference, zDifference);
 
             // find to which border it's closer         
@@ -223,12 +239,100 @@ namespace RaftTest
             float distToSouth = Mathf.Abs(0f - point.y);
             float distToNorth = Mathf.Abs(1f - point.y);
 
-            if (distToEast == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
+            float smallestDist = Mathf.Min(distToWest, distToEast, distToSouth, distToNorth);
+
+            if (distToEast == smallestDist)
                 return Placeable.Side.East;
-            else if (distToWest == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
+            else if (distToWest == smallestDist)
                 return Placeable.Side.West;
-            else
-            if (distToSouth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
+            else if (distToSouth == smallestDist)
+                return Placeable.Side.South;
+            else //if (distToNorth == smallestDist)
+                 // default
+                return Placeable.Side.North;
+        }
+
+
+
+        /// <summary>
+        /// returns which side of map is closer to point - north, south, west, east        
+        /// </summary>
+        public static Placeable.Side GetClosestSideXY(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+        {
+            // distance to block's side
+            float xDifference = lookingPosition.x - blockPlacingPosition.x;
+            float yDifference = lookingPosition.y - blockPlacingPosition.y;
+
+            Vector2 point = new Vector2(xDifference, yDifference);
+
+            // find to which border it's closer         
+            float distToWest = Mathf.Abs(0f - point.x);
+            float distToEast = Mathf.Abs(1f - point.x);
+            float distToBottom = Mathf.Abs(0f - point.y);
+            float distToTop = Mathf.Abs(1f - point.y);
+
+            float smallestDist = Mathf.Min(distToWest, distToEast, distToBottom, distToTop);
+
+            if (distToEast == smallestDist)
+                return Placeable.Side.East;
+            else if (distToWest == smallestDist)
+                return Placeable.Side.West;
+            else if (distToTop == smallestDist)
+                return Placeable.Side.Top;
+            else //if (distToBottom == smallestDist)
+                return Placeable.Side.Bottom;//default
+        }
+        /// <summary>
+        /// returns which side of map is closer to point - north, south, west, east        
+        /// </summary>
+        public static Placeable.Side GetClosestSideY(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+        {
+            // distance to block's side            
+            float yDifference = lookingPosition.y - blockPlacingPosition.y;
+
+            // find to which border it's closer         
+            float distToBottom = Mathf.Abs(0f - yDifference);
+            float distToTop = Mathf.Abs(1f - yDifference);
+
+            float smallestDist = Mathf.Min(distToBottom, distToTop);
+
+            if (distToTop == smallestDist)
+                return Placeable.Side.Top;
+            else //if (distToBottom == smallestDist)
+                return Placeable.Side.Bottom;//default
+        }
+        /// <summary>
+        /// returns which side of map is closer to point - north, south, west, east, top, bottom        
+        /// </summary>
+        public static Placeable.Side GetClosestSideXYZ(Vector3 lookingPosition, Vector3 blockPlacingPosition)
+        {
+            // distance to block's side
+            float xDifference = lookingPosition.x - blockPlacingPosition.x;
+            float zDifference = lookingPosition.z - blockPlacingPosition.z;
+            float yDifference = lookingPosition.y - blockPlacingPosition.y;
+
+            Vector3 point = new Vector3(xDifference, yDifference, zDifference);
+
+            // find to which border it's closer         
+            float distToWest = Mathf.Abs(0f - point.x);
+            float distToEast = Mathf.Abs(1f - point.x);
+            float distToSouth = Mathf.Abs(0f - point.z);
+            float distToNorth = Mathf.Abs(1f - point.z);
+            float distToBottom = Mathf.Abs(0f - point.y);
+            float distToTop = Mathf.Abs(1f - point.y);
+
+            float smallestDist = Mathf.Min(distToWest, distToEast, distToSouth, distToNorth, distToTop, distToBottom);
+
+
+            if (distToTop == smallestDist)
+                return Placeable.Side.Top;
+            else if (distToBottom == smallestDist)
+                return Placeable.Side.Bottom;
+            else if (distToEast == smallestDist)
+                return Placeable.Side.East;
+            else if (distToWest == smallestDist)
+                return Placeable.Side.West;
+            else if (distToSouth == smallestDist)
                 return Placeable.Side.South;
             else //if (distToNorth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
                  // default

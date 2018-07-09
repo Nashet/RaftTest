@@ -13,8 +13,7 @@ namespace RaftTest
     {
         [Tooltip("Turn on if you want to turn of physics for that block and/or include manual collision detection")]
         [SerializeField] private bool isTrigger;
-
-        [Tooltip("Works only for full blocks")]
+                
         [SerializeField] private int maxLengthWithoutSupport;
 
         [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;
@@ -24,8 +23,10 @@ namespace RaftTest
         public bool IsFullBlock { get { return isFullBlock; } }
 
         [SerializeField] private bool requiresSomeFoundation;
-        [SerializeField] private bool allowsEdgePlacing;
-        public bool OnlyCenterPlacing { get { return !allowsEdgePlacing; } }
+
+        [SerializeField] private bool allowsXZSnapping;
+        [SerializeField] private bool allowsYSnapping;
+        public bool OnlyCenterPlacing { get { return !allowsXZSnapping && !allowsYSnapping; } }
 
 
         [Tooltip("Should be about same as gameObject thickness")]
@@ -45,11 +46,11 @@ namespace RaftTest
         public event EventHandler<EventArgs> Shown;
         public static event EventHandler<EventArgs> Placed;
 
-        public enum Side { Center, West, East, North, South }
+        public enum Side { Center, West, East, North, South, Top, Bottom }
         /// <summary>
         /// Constructor. Instead, you can set values in inspector
         /// </summary>   
-        public Placeable(string name, bool allowsEdgePlacing, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport)
+        public Placeable(string name, bool allowsXZSnapping, bool allowsYSnapping, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport)
         {
             this.name = name;
             this.isTrigger = isTrigger;
@@ -60,7 +61,8 @@ namespace RaftTest
             this.name = name;
 
             this.block = prefab;
-            this.allowsEdgePlacing = allowsEdgePlacing;
+            this.allowsXZSnapping = allowsXZSnapping;
+            this.allowsYSnapping = allowsYSnapping;
             if (block != null)
                 renderer = block.GetComponent<MeshRenderer>();
             this.blockThickness = blockThickness;
@@ -110,10 +112,10 @@ namespace RaftTest
                 Vector3 blockPlacingPosition = World.GetIntegerCoords(hit.point);
 
                 // allow block to sticks to 1 of 4 side of a cell
-                if (this.allowsEdgePlacing)
-                {
-                    sideSnapping = World.GetClosestSide(lookingPosition, blockPlacingPosition);
 
+                if (allowsXZSnapping && allowsYSnapping)
+                {
+                    sideSnapping = World.GetClosestSideXYZ(lookingPosition, blockPlacingPosition);
                     if (sideSnapping == Side.East)
                         blockPlacingPosition.x += (0.5f - this.blockThickness / 2f);
                     else if (sideSnapping == Side.West)
@@ -122,20 +124,75 @@ namespace RaftTest
                         blockPlacingPosition.z += (0.5f - this.blockThickness / 2f);
                     else if (sideSnapping == Side.South)
                         blockPlacingPosition.z -= (0.5f - this.blockThickness / 2f);
-
-
-                    if (sideSnapping == Side.West || sideSnapping == Side.East) // rotate block at Y axis depending on what side is closer: west, north, etc.
-                        this.block.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                    else
-                        this.block.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-
+                    else if (sideSnapping == Side.Top)
+                        blockPlacingPosition.y += (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.Bottom)
+                        blockPlacingPosition.y -= (0.5f - this.blockThickness / 2f);
                 }
+                else if (allowsXZSnapping)
+                {
+                    sideSnapping = World.GetClosestSideXZ(lookingPosition, blockPlacingPosition);
+                    if (sideSnapping == Side.East)
+                        blockPlacingPosition.x += (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.West)
+                        blockPlacingPosition.x -= (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.North)
+                        blockPlacingPosition.z += (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.South)
+                        blockPlacingPosition.z -= (0.5f - this.blockThickness / 2f);
+                }
+                else if (allowsYSnapping)
+                {
+                    sideSnapping = World.GetClosestSideY(lookingPosition, blockPlacingPosition);
+                    if (sideSnapping == Side.Top)
+                        blockPlacingPosition.y += (0.5f - this.blockThickness / 2f);
+                    else if (sideSnapping == Side.Bottom)
+                        blockPlacingPosition.y -= (0.5f - this.blockThickness / 2f);
+                }
+
+                if (sideSnapping == Side.North || sideSnapping == Side.South) // rotate block at Y axis depending on what side is closer
+                    this.block.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+                if (sideSnapping == Side.East || sideSnapping == Side.West) // rotate block at Y axis depending on what side is closer
+                    this.block.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+                if (sideSnapping == Side.Top || sideSnapping == Side.Bottom) // rotate block at Z axis depending on what side is closer
+                    this.block.transform.rotation = Quaternion.Euler(0f, 0f, 90f);
+
                 this.block.transform.position = blockPlacingPosition;
                 Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
                 //if (EventSystem.current.IsPointerOverGameObject())
                 //    return null;// -3; //hovering over UI
                 // updates holding block color 
                 this.UpdateMaterial();
+            }
+        }
+        protected bool HasVerticalSupport(World world)
+        {
+            var bottomBlockCoords = World.GetIntegerCoords(this.block.transform.position) + Vector3Int.down;
+            if (IsFullBlock)
+            {
+                if (world.HasAnyNonAirBlockExcept(bottomBlockCoords, Placeable.Side.Bottom))
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                var blockBelowThatHalfBlock = world.GetBlock(bottomBlockCoords, sideSnapping);
+                if (blockBelowThatHalfBlock == null)
+                    return false; // no such index
+                if (//(blockBelowThatHalfBlock.IsFullBlock //full block below
+                    //&& blockBelowThatHalfBlock != World.AirBlock) // there is half block below in right position        
+                    //||
+                   blockBelowThatHalfBlock != World.AirBlock
+                   || world.GetBlock(bottomBlockCoords, Side.Top) != World.AirBlock
+                   || world.GetBlock(GetIntegerCoords(), Side.Bottom) != World.AirBlock
+                   || sideSnapping == Side.Bottom && world.HasAnyNonAirBlockExcept(bottomBlockCoords, Side.Bottom)
+                   )
+                    return true;
+                else
+                    return false;
             }
         }
         protected bool CanBePlaced(World world)
@@ -156,23 +213,19 @@ namespace RaftTest
 
                     if (canBePlacedAtZeroLevelWithoutFoundation && blockPlacementCoords.y == 0)
                         return true;
-
-                    var bottomBlockCoords = blockPlacementCoords + Vector3Int.down;
-
+                                        
                     // checks for neighbor cells
                     if (this.IsFullBlock)
                     {
-                        if (!world.HasAnyNonAirBlock(blockPlacementCoords)// any block below, no any blocks here                        
-                            && (world.HasAnyNonAirBlock(bottomBlockCoords) || HasHorizontalSupport()))
+                        if (!world.HasAnyNonAirBlock(blockPlacementCoords)//no any blocks here                        
+                            && (HasVerticalSupport(world) || HasHorizontalSupport()))
                             return true;
                         else
                             return false;
                     }
                     else // not full block //can be center part or one of 4 edge parts
                     {
-                        var blockBelowThatHalfBlock = world.GetBlock(bottomBlockCoords, sideSnapping);
-                        if (blockBelowThatHalfBlock != null && blockBelowThatHalfBlock.IsFullBlock //full block below
-                           || blockBelowThatHalfBlock != null && blockBelowThatHalfBlock != World.AirBlock) // there is half block below in right position        
+                        if (HasVerticalSupport(world) || HasHorizontalSupport())
                             return true;
                         else
                             return false;
@@ -185,17 +238,20 @@ namespace RaftTest
 
         protected bool HasHorizontalSupport()
         {
-            // scan neighbor cells for support
-            var pos = World.GetIntegerCoords(block.transform.position);
-            int xStart = pos.x - maxLengthWithoutSupport;
-            int xEnd = pos.x + maxLengthWithoutSupport;
-            int zStart = pos.z - maxLengthWithoutSupport;
-            int zEnd = pos.z + maxLengthWithoutSupport;
-            int level = pos.y - 1; // search in lower level
-            for (int i = xStart; i <= xEnd; i++)
-                for (int j = zStart; j <= zEnd; j++)
-                    if (World.Get.HasAnyNonAirBlock(i, level, j))
-                        return true;
+            if (maxLengthWithoutSupport > 0)
+            {
+                // scan neighbor cells for support
+                var pos = World.GetIntegerCoords(block.transform.position);
+                int xStart = pos.x - maxLengthWithoutSupport;
+                int xEnd = pos.x + maxLengthWithoutSupport;
+                int zStart = pos.z - maxLengthWithoutSupport;
+                int zEnd = pos.z + maxLengthWithoutSupport;
+                int level = pos.y - 1; // search in lower level
+                for (int i = xStart; i <= xEnd; i++)
+                    for (int j = zStart; j <= zEnd; j++)
+                        if (World.Get.HasAnyNonAirBlock(i, level, j))
+                            return true;
+            }
             return false;
         }
 
