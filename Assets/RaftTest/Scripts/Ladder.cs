@@ -11,7 +11,7 @@ namespace RaftTest
     public class Ladder : MonoBehaviour
     {
         [SerializeField] private float climbSpeed;
-        void OnTriggerStay(Collider other)
+        protected void OnTriggerStay(Collider other)
         {
             if (other.tag == "Player")
             {
