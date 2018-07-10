@@ -81,6 +81,46 @@ public class TestPlaceable
         LogAssert.ignoreFailingMessages = false;
         Assert.IsTrue(world.GetBlock(testBlock.GetIntegerCoords(), side) == World.AirBlock);// should be empty after deletion
     }
+    /// <summary>
+    /// Test placing of all types ob blocks
+    /// </summary>    
+    [Test]
+    public void TestBlockReplacing(
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side blockForDeletingSide,
+        [Values(true, false)] bool blockForDeletingAllowsXZSnapping,
+        [Values(true, false)] bool blockForDeletingAllowsYSnapping,
+        [Values(true, false)]bool blockForDeletingIsFullBlock,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side testBlockSide,
+        [Values(true, false)] bool testBlockAllowsXZSnapping,
+        [Values(true, false)] bool testBlockAllowsYSnapping,
+        [Values(true, false)]bool testBlockIsFullBlock
+
+        )
+    {
+
+        var gameObject = new GameObject("Mono holder");
+        var world = gameObject.AddComponent<MockWorld>();
+        world.SetUp();
+
+        // placed at 0,0,0
+        var blockForDeleting = new MockPlaceable("blockForDeleting", blockForDeletingAllowsXZSnapping, blockForDeletingAllowsYSnapping, null, 0.2f, false, true,
+            true, blockForDeletingIsFullBlock, null, 0, blockForDeletingSide);
+        blockForDeleting.SetPosition(new Vector3(0f, 0f, 0f));
+
+
+        var placedBlock = blockForDeleting.Place(world);
+
+        LogAssert.ignoreFailingMessages = true;
+        world.Remove(placedBlock);
+        LogAssert.ignoreFailingMessages = false;
+
+        var testBlock = new MockPlaceable("TestBlock", testBlockAllowsXZSnapping, testBlockAllowsYSnapping, null, 0.2f, false, true,
+            true, testBlockIsFullBlock, null, 0, testBlockSide);
+        testBlock.SetPosition(new Vector3(0f, 0f, 0f));
+        testBlock.Place(world);
+
+        Assert.AreSame(testBlock, world.GetBlock(testBlock.GetIntegerCoords(), testBlockSide));// should be empty after deletion
+    }
 
     /// <summary>
     /// Tries  to put testBlock on bottomBlock
@@ -126,12 +166,12 @@ public class TestPlaceable
         )
     {
         var res = TestCanBePlaced(bottomBlockSide, false, testBlockSide, false, maxLengthWithoutSupport);
-        if (bottomBlockSide == testBlockSide || bottomBlockSide== Placeable.Side.Top || testBlockSide == Placeable.Side.Bottom)
+        if (bottomBlockSide == testBlockSide || bottomBlockSide == Placeable.Side.Top || testBlockSide == Placeable.Side.Bottom)
             Assert.IsTrue(res);
         else
             Assert.IsFalse(res);
     }
-    
+
 
     public bool TestCanBePlaced(
        Placeable.Side bottomBlockSide,

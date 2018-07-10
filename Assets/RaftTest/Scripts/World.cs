@@ -80,15 +80,7 @@ namespace RaftTest
                 return null;
         }
 
-        public virtual void Remove(PlacedBlock selectedObject)
-        {
-            var coords = GetIntegerCoords(selectedObject.transform.position);
-            if (IsCellExists(coords.x, coords.y, coords.z))
-            {
-                map[coords.x, coords.y, coords.z].Remove(selectedObject.SideSnapping);
-                Destroy(selectedObject.gameObject);
-            }
-        }
+
 
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
@@ -191,7 +183,7 @@ namespace RaftTest
         {
             var coords = placeable.GetIntegerCoords();
 
-            if (placeable.IsFullBlock) // fill all places
+            if (placeable.IsFullBlock) // fill all sides
             {
                 foreach (Placeable.Side eachSide in Enum.GetValues(typeof(Placeable.Side)))
                 {
@@ -201,6 +193,29 @@ namespace RaftTest
             else // fill specific part
                 map[coords.x, coords.y, coords.z].Place(placeable, sideSnapping);
         }
+
+        public virtual void Remove(PlacedBlock selectedObject)
+        {
+            var coords = GetIntegerCoords(selectedObject.transform.position);
+            if (IsCellExists(coords.x, coords.y, coords.z))
+            {
+                if (selectedObject.Placeable.IsFullBlock)// fill all sides
+                {
+                    foreach (Placeable.Side eachSide in Enum.GetValues(typeof(Placeable.Side)))
+                    {
+                        map[coords.x, coords.y, coords.z].Remove(eachSide);
+
+                    }
+                }
+                else
+                {
+                    map[coords.x, coords.y, coords.z].Remove(selectedObject.SideSnapping);
+
+                }
+                Destroy(selectedObject.gameObject);
+            }
+        }
+
         /// <summary>
         /// Allowing faster app reloading
         /// </summary>
