@@ -26,7 +26,7 @@ namespace RaftTest
         // Use this for initialization
         protected void Start()
         {
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
             availableAnimation = GetComponent<Animation>();
         }
         public virtual void Hide()
@@ -42,7 +42,7 @@ namespace RaftTest
         }
 
         public virtual void Show()
-        {
+        {           
             gameObject.SetActive(true);
             EventHandler<EventArgs> handler = Shown;
             if (handler != null)
@@ -81,7 +81,7 @@ namespace RaftTest
         {
             Material[] rt = new Material[2];
             rt[0] = renderer.material;
-            rt[1] = GManager.Get.BuildingDeniedMaterial;
+            rt[1] = GManager.Get.SelectedByToolMaterial;
             renderer.materials = rt;
         }
 

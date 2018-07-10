@@ -32,12 +32,14 @@ namespace RaftTest
         [Tooltip("Should be about same as gameObject thickness")]
         [SerializeField] private float blockThickness;
 
-        [SerializeField] protected MeshRenderer renderer;
+        protected MeshRenderer renderer;
 
-        [SerializeField] protected GameObject block;
+        protected GameObject block;
+
+        [SerializeField] protected GameObject prefab;
 
         /// <summary> Original material    
-        [SerializeField] private Material material;
+        private Material originalMaterial;
 
         /// <summary> which side of map it is closer - north, south, west, east. default is center
         protected Side sideSnapping;
@@ -57,7 +59,7 @@ namespace RaftTest
             this.requiresSomeFoundation = requiresSomeFoundation;
             this.canBePlacedAtZeroLevelWithoutFoundation = canBePlacedAtZeroLevelWithoutFoundation;
             this.isFullBlock = isFullBlock;
-            this.material = material;
+            this.originalMaterial = material;
             this.name = name;
 
             this.block = prefab;
@@ -78,24 +80,17 @@ namespace RaftTest
 
 
             return new Vector3Int(x, y, z);
-        }
-        /// <summary>
-        /// Restores original material, instead of green "allowing" material
-        /// </summary>
-        protected void SetOriginalMaterial()
-        {
-            renderer.material = material;
-        }
+        }       
 
         protected void UpdateMaterial()
         {
             if (CanBePlaced(World.Get))
             {
-                this.renderer.material = GManager.Get.BuildingAlowedMaterial;
+                SetMaterial( GManager.Get.BuildingAlowedMaterial);
             }
             else
             {
-                this.renderer.material = GManager.Get.BuildingDeniedMaterial;
+                SetMaterial(GManager.Get.BuildingDeniedMaterial);
             }
         }
 
@@ -258,9 +253,11 @@ namespace RaftTest
         /// <summary>
         /// Creates copy of this object ready to put in a world
         /// </summary>    
-        protected GameObject Instantiate()
+        protected GameObject InstantiateCopy()
         {
-            SetOriginalMaterial();
+            // Restores original material, instead of green "allowing" material
+            SetMaterial(originalMaterial);
+
             var newBlock = UnityEngine.Object.Instantiate(this.block);
             newBlock.layer = 0; // placed block wouldn't be ignored by raycast           
 
@@ -270,9 +267,37 @@ namespace RaftTest
                 newBlock.GetComponent<Collider>().isTrigger = false;
             return newBlock;
         }
-
+        protected void SetMaterial(Material newMaterial)
+        {
+            if (renderer == null)// if objects hasn't renderer look for it in children
+            {
+                var children =block. GetComponentsInChildren<MeshRenderer>();
+                foreach (var item in children)
+                {
+                    item.material = newMaterial;
+                }
+            }
+            else
+                renderer.material = newMaterial;
+        }
         public virtual void Show()
         {
+            if (block == null) // if it's first call to show instantiate block from prefabs
+            {
+                block = UnityEngine.Object.Instantiate(prefab);
+
+                block.transform.parent = GManager.Get.PlayersHands.transform;
+                renderer = block.GetComponent<MeshRenderer>();
+                if (renderer == null) // if objects hasn't renderer look for it in children
+                {
+                    var children = block.GetComponentsInChildren<MeshRenderer>();
+                    originalMaterial = children[0].material;
+                }
+                else
+                    originalMaterial = renderer.material;
+            }
+
+
             block.SetActive(true);
             EventHandler<EventArgs> handler = Shown;
             if (handler != null)
@@ -298,7 +323,7 @@ namespace RaftTest
         {
             if (this.CanBePlaced(world))
             {
-                var newBlockObject = this.Instantiate();
+                var newBlockObject = this.InstantiateCopy();
                 newBlockObject.transform.parent = world.transform;
 
                 var placedBlock = PlacedBlock.Add(newBlockObject, this, sideSnapping);

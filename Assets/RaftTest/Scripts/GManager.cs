@@ -14,6 +14,12 @@ namespace RaftTest
         [SerializeField] private Material buildingAlowedMaterial;
         public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }
 
+        [SerializeField] private Material selectedByToolMaterial;
+        public Material SelectedByToolMaterial { get { return selectedByToolMaterial; } }
+
+        [SerializeField] private GameObject playersHands;
+        public GameObject PlayersHands { get { return playersHands; } }
+
         [SerializeField] private Placeable[] allBlocks;
         public IEnumerable<Placeable> AllBlocks()
         {
