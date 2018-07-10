@@ -16,13 +16,13 @@ namespace RaftTest
 
         [SerializeField] private GameObject debugCube;
 
-        public void TakeInHand(IHoldable placeable)//todo refactor with prefabs?
+        public virtual void TakeInHand(IHoldable holdable)//todo refactor with prefabs?
         {
             if (Holds != null) // hides previous object in hands
             {
                 Holds.Hide();
             }
-            Holds = placeable;
+            Holds = holdable;
             if (Holds != null) // shows new object in hands
             {
                 Holds.Show();
@@ -30,7 +30,7 @@ namespace RaftTest
         }
 
         // Update is called once per frame
-        void Update()
+        protected void Update()
         {
             if (Holds != null)
                 Holds.UpdateBlock();

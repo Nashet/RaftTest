@@ -24,9 +24,7 @@ namespace RaftTest
     /// Also may rise event "Hidden" or "Shown"
     /// </summary>
     public abstract class Hideable : MonoBehaviour, IHideable
-    {
-
-        //declare event of type delegate
+    {       
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
 
