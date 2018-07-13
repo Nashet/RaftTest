@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23690641843650740}
   - component: {fileID: 65566931691570406}
   m_Layer: 2
-  m_Name: transparentWal
+  m_Name: GlassWal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace RaftTest
 {
@@ -13,7 +14,7 @@ namespace RaftTest
     {
         [Tooltip("Turn on if you want to turn of physics for that block and/or include manual collision detection")]
         [SerializeField] private bool isTrigger;
-                
+
         [SerializeField] private int maxLengthWithoutSupport;
 
         [SerializeField] private bool canBePlacedAtZeroLevelWithoutFoundation;
@@ -70,6 +71,18 @@ namespace RaftTest
             this.blockThickness = blockThickness;
         }
 
+        /// <summary>
+        /// Used for manual positioning. Alternatively block can be self positioned in UpdateBlock()
+        /// </summary>        
+        public void SetPosition(Vector3 position, Side side)
+        {
+            sideSnapping = side;
+            position = AdjustSnappingXZ(position);
+            position = AdjustSnappingY(position);
+            AdjustSnappingRotation();
+            block.transform.position = position;
+        }
+
         public Vector3Int GetIntegerCoords()
         {
             Vector3 adjustedCoords = World.AdjustCoords(block.transform.position);
@@ -80,13 +93,13 @@ namespace RaftTest
 
 
             return new Vector3Int(x, y, z);
-        }       
+        }
 
         protected void UpdateMaterial()
         {
             if (CanBePlaced(World.Get))
             {
-                SetMaterial( GManager.Get.BuildingAlowedMaterial);
+                SetMaterial(GManager.Get.BuildingAlowedMaterial);
             }
             else
             {
@@ -107,52 +120,26 @@ namespace RaftTest
                 Vector3 blockPlacingPosition = World.GetIntegerCoords(hit.point);
 
                 // allow block to sticks to 1 of 4 side of a cell
-
                 if (allowsXZSnapping && allowsYSnapping)
                 {
                     sideSnapping = World.GetClosestSideXYZ(lookingPosition, blockPlacingPosition);
-                    if (sideSnapping == Side.East)
-                        blockPlacingPosition.x += (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.West)
-                        blockPlacingPosition.x -= (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.North)
-                        blockPlacingPosition.z += (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.South)
-                        blockPlacingPosition.z -= (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.Top)
-                        blockPlacingPosition.y += (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.Bottom)
-                        blockPlacingPosition.y -= (0.5f - this.blockThickness / 2f);
+                    blockPlacingPosition = AdjustSnappingXZ(blockPlacingPosition);
+                    blockPlacingPosition = AdjustSnappingY(blockPlacingPosition);
                 }
                 else if (allowsXZSnapping)
                 {
                     sideSnapping = World.GetClosestSideXZ(lookingPosition, blockPlacingPosition);
-                    if (sideSnapping == Side.East)
-                        blockPlacingPosition.x += (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.West)
-                        blockPlacingPosition.x -= (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.North)
-                        blockPlacingPosition.z += (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.South)
-                        blockPlacingPosition.z -= (0.5f - this.blockThickness / 2f);
+                    blockPlacingPosition = AdjustSnappingXZ(blockPlacingPosition);
                 }
                 else if (allowsYSnapping)
                 {
                     sideSnapping = World.GetClosestSideY(lookingPosition, blockPlacingPosition);
-                    if (sideSnapping == Side.Top)
-                        blockPlacingPosition.y += (0.5f - this.blockThickness / 2f);
-                    else if (sideSnapping == Side.Bottom)
-                        blockPlacingPosition.y -= (0.5f - this.blockThickness / 2f);
+                    blockPlacingPosition = AdjustSnappingY(blockPlacingPosition);
                 }
 
-                if (sideSnapping == Side.North || sideSnapping == Side.South) // rotate block at Y axis depending on what side is closer
-                    this.block.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
-                if (sideSnapping == Side.East || sideSnapping == Side.West) // rotate block at Y axis depending on what side is closer
-                    this.block.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                AdjustSnappingRotation();
 
-                if (sideSnapping == Side.Top || sideSnapping == Side.Bottom) // rotate block at Z axis depending on what side is closer
-                    this.block.transform.rotation = Quaternion.Euler(0f, 0f, 90f);
 
                 this.block.transform.position = blockPlacingPosition;
                 Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
@@ -161,6 +148,37 @@ namespace RaftTest
                 // updates holding block color 
                 this.UpdateMaterial();
             }
+        }
+        protected Vector3 AdjustSnappingY(Vector3 blockPlacingPosition)
+        {
+            if (sideSnapping == Side.Top)
+                blockPlacingPosition.y += (0.5f - this.blockThickness / 2f);
+            else if (sideSnapping == Side.Bottom)
+                blockPlacingPosition.y -= (0.5f - this.blockThickness / 2f);
+            return blockPlacingPosition;
+        }
+        protected Vector3 AdjustSnappingXZ(Vector3 blockPlacingPosition)
+        {
+            if (sideSnapping == Side.East)
+                blockPlacingPosition.x += (0.5f - this.blockThickness / 2f);
+            else if (sideSnapping == Side.West)
+                blockPlacingPosition.x -= (0.5f - this.blockThickness / 2f);
+            else if (sideSnapping == Side.North)
+                blockPlacingPosition.z += (0.5f - this.blockThickness / 2f);
+            else if (sideSnapping == Side.South)
+                blockPlacingPosition.z -= (0.5f - this.blockThickness / 2f);
+            return blockPlacingPosition;
+        }
+        protected void AdjustSnappingRotation()
+        {
+            if (sideSnapping == Side.North || sideSnapping == Side.South) // rotate block at Y axis depending on what side is closer
+                this.block.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+            if (sideSnapping == Side.East || sideSnapping == Side.West) // rotate block at Y axis depending on what side is closer
+                this.block.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+            if (sideSnapping == Side.Top || sideSnapping == Side.Bottom) // rotate block at Z axis depending on what side is closer
+                this.block.transform.rotation = Quaternion.Euler(0f, 0f, 90f);
         }
         protected bool HasVerticalSupport(World world)
         {
@@ -208,7 +226,7 @@ namespace RaftTest
 
                     if (canBePlacedAtZeroLevelWithoutFoundation && blockPlacementCoords.y == 0)
                         return true;
-                                        
+
                     // checks for neighbor cells
                     if (this.IsFullBlock)
                     {
@@ -235,17 +253,11 @@ namespace RaftTest
         {
             if (maxLengthWithoutSupport > 0)
             {
-                // scan neighbor cells for support
                 var pos = World.GetIntegerCoords(block.transform.position);
-                int xStart = pos.x - maxLengthWithoutSupport;
-                int xEnd = pos.x + maxLengthWithoutSupport;
-                int zStart = pos.z - maxLengthWithoutSupport;
-                int zEnd = pos.z + maxLengthWithoutSupport;
-                int level = pos.y - 1; // search in lower level
-                for (int i = xStart; i <= xEnd; i++)
-                    for (int j = zStart; j <= zEnd; j++)
-                        if (World.Get.HasAnyNonAirBlock(i, level, j))
-                            return true;
+                // scan neighbor cells for support
+                var supportArea = World.Get.GetMapElementsWithRadius(pos.x, pos.y - 1, pos.z, maxLengthWithoutSupport);
+                if (supportArea.Any(x => x.HasAnyNonAirBlock()))
+                    return true;
             }
             return false;
         }
@@ -271,7 +283,7 @@ namespace RaftTest
         {
             if (renderer == null)// if objects hasn't renderer look for it in children
             {
-                var children =block. GetComponentsInChildren<MeshRenderer>();
+                var children = block.GetComponentsInChildren<MeshRenderer>();
                 foreach (var item in children)
                 {
                     item.material = newMaterial;

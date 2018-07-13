@@ -20,14 +20,14 @@ public class TestCell
         [Values(-1, 0, 1, 2)]int maxLengthWithoutSupport)
     {
 
-        var testable = new Cell();
+        var testableCell = new Cell();
 
-        testable.Init(World.AirBlock);
+        testableCell.Init(World.AirBlock);
         // placed at 0,0,0
         var randomBlock = new MockPlaceable("dsntmatter", allowsXZSnapping,  allowsYSnapping, null, blockThickness, isTrigger, requiresSomeFoundation,
-            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, null, maxLengthWithoutSupport, side);
+            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, null, maxLengthWithoutSupport);
 
-        testable.Place(randomBlock, side);
-        Assert.AreSame(randomBlock, testable.Get(side));
+        testableCell.Place(randomBlock, side);
+        Assert.AreSame(randomBlock, testableCell.Get(side));
     }
 }
