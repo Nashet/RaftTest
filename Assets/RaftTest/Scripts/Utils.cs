@@ -87,6 +87,7 @@ namespace RaftTest
     {
         void TakeInHand(IHoldable placeable);
         IHoldable Holds { get; }
+        void Act();
     }
     public static class ArrayExtensions
     {

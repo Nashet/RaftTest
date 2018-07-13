@@ -34,12 +34,12 @@ namespace RaftTest
             container[(int)side] = block;
         }
 
-        internal void Remove(Placeable.Side side)
+        public void Remove(Placeable.Side side)
         {
             container[(int)side] = World.AirBlock;
-        }
+        }              
 
-        internal bool HasAnyNonAirBlock()
+        public bool HasAnyNonAirBlock()
         {
             foreach (Placeable.Side eachSide in Enum.GetValues(typeof(Placeable.Side)))
             {

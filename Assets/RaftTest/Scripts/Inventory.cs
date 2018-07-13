@@ -20,6 +20,7 @@ namespace RaftTest
             player = GetComponent<Builder>();            
             if (player == null)
                 Debug.Log("Missing Builder component");
+            player.TakeInHand(GManager.Get.AllBlocks().ElementAt(1));
         }
 
         // Update is called once per frame
@@ -49,18 +50,7 @@ namespace RaftTest
             else if (Input.GetKeyUp(KeyCode.F8))
                 player.TakeInHand(GManager.Get.Hammer);
 
-            if (player.Holds != null && Input.GetMouseButtonUp(0)) // place block in a world
-            {
-                var isPlaceable = player.Holds as Placeable;
-                if (isPlaceable != null)
-                    isPlaceable.Place(World.Get);
-                else
-                {
-                    var isTool = player.Holds as AbstractTool;
-                    if (isTool != null)
-                        isTool.Act();
-                }
-            }
+            
         }        
     }
 }

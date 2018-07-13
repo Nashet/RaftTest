@@ -32,7 +32,7 @@ namespace RaftTest
         public static World Get { get; private set; }
 
         // Use this for initialization
-        protected void Awake()
+        public void Awake()
         {
             SetUpLogic();
             GameObject plane = new GameObject("Plane");
@@ -60,7 +60,7 @@ namespace RaftTest
 
             AirBlock = new Placeable("Empty air", true, true, null, 1f, false, false, true,
                 isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
-            Fill(AirBlock);            
+            Fill(AirBlock);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace RaftTest
             int zeroLevel = 0;
             var blockToPLace = GManager.Get.AllBlocks().ElementAt(5);
             blockToPLace.Show();
-            
+
             foreach (var validCoord in map.GetCoordsWithRadius(x, z, 2))
             {
                 blockToPLace.SetPosition(new Vector3(validCoord.x, zeroLevel, validCoord.y), Placeable.Side.Top);
@@ -397,12 +397,22 @@ namespace RaftTest
         }
 
         /// <summary>
-        /// Just transfers call to map[,,]GetMapElementsWithRadius 
+        /// Just transfers call to map[,,].GetMapElementsWithRadius 
         /// </summary>        
         public IEnumerable<Cell> GetMapElementsWithRadius(int x, int y, int z, int radius)
         {
             // scan neighbor cells for support            
             return map.GetElementsWithRadius(x, y, z, radius);
+        }
+       
+        public virtual void Restart()
+        {
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+            Awake();          
+            //GenerateMap();
         }
     }
 }
