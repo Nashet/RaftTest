@@ -114,7 +114,7 @@ namespace RaftTest
         {
             RaycastHit hit;
 
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit))
             {
                 Vector3 lookingPosition = World.AdjustCoords(hit.point);
                 Vector3 blockPlacingPosition = World.GetIntegerCoords(hit.point);
