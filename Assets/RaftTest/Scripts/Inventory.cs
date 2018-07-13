@@ -13,8 +13,7 @@ namespace RaftTest
     [RequireComponent(typeof(Builder))]
     public class Inventory : MonoBehaviour
     {
-        private ICharacter player;
-        [SerializeField] private GameObject toolObject;
+        private ICharacter player;        
         
         protected void Start()
         {

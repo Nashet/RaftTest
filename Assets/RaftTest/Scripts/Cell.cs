@@ -38,5 +38,15 @@ namespace RaftTest
         {
             container[(int)side] = World.AirBlock;
         }
+
+        internal bool HasAnyNonAirBlock()
+        {
+            foreach (Placeable.Side eachSide in Enum.GetValues(typeof(Placeable.Side)))
+            {
+                if (Get(eachSide) != World.AirBlock)
+                    return true;
+            }
+            return false;
+        }
     }
 }

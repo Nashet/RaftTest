@@ -8,7 +8,7 @@ MonoImporter:
   - prefab2: {instanceID: 0}
   - originalMat1: {instanceID: 0}
   - originalMat2: {instanceID: 0}
-  executionOrder: 0
+  executionOrder: 100
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 

@@ -1074,7 +1074,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036d359a7aa150442a6ed56f4bc59793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toolObject: {fileID: 0}
+--- !u!114 &2019566256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2019566253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e183acd01aa9e454497b2ad17d746076, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountOfAttemptsToFindProperSpawn: 100
 --- !u!1 &2108499493
 GameObject:
   m_ObjectHideFlags: 0
