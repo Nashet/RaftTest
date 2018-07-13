@@ -35,11 +35,14 @@ namespace RaftTest
             if (Holds != null)
                 Holds.UpdateBlock();
 
-            // places small cube at looking position, for debugging
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+            if (debugCube != null)            // places small cube at looking position, for debugging
             {
-                debugCube.transform.position = hit.point;
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                {
+
+                    debugCube.transform.position = hit.point;
+                }
             }
         }
     }
