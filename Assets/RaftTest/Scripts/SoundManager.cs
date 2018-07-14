@@ -24,6 +24,7 @@ namespace RaftTest
                 Debug.Log("Missing AudioSource component");
             Placeable.Placed += OnBlockPlaced;
             AbstractTool.Used += OnToolUsed;
+            AbstractHandWeapon.Used += OnToolUsed;
         }
 
         private void OnBlockPlaced(object sender, EventArgs e)

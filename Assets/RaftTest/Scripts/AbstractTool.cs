@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RaftTest.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,10 +13,8 @@ namespace RaftTest
     /// Can't be instantiated
     /// </summary>
     [Serializable]
-    abstract public class AbstractTool : MonoBehaviour, ITool
-    {
-        public event EventHandler<EventArgs> Hidden;
-        public event EventHandler<EventArgs> Shown;
+    abstract public class AbstractTool : Hideable, ITool
+    {        
         public static event EventHandler<EventArgs> Used;
 
         protected PlacedBlock selectedObject;
@@ -31,27 +30,12 @@ namespace RaftTest
             //gameObject.SetActive(false);
             availableAnimation = GetComponent<Animation>();
         }
-        public virtual void Hide()
-        {
-            gameObject.SetActive(false);
+        public override void Hide()
+        {            
+            base.Hide();
             if (selectedObject != null)
                 RemoveSelection(selectedObject.gameObject);
-            EventHandler<EventArgs> handler = Hidden;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
-
-        public virtual void Show()
-        {
-            gameObject.SetActive(true);
-            EventHandler<EventArgs> handler = Shown;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
+        }        
 
         protected void RemoveMaterial(MeshRenderer renderer)
         {

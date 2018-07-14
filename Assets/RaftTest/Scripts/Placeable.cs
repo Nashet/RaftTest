@@ -351,6 +351,9 @@ namespace RaftTest
             }
             return null;
         }
-
+        public virtual void Act()
+        {
+            Place(World.Get);
+        }
     }
 }

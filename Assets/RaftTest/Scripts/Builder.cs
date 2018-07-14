@@ -32,16 +32,8 @@ namespace RaftTest
         public virtual void Act()
         {
             if (Holds != null)
-            {
-                var isPlaceable = Holds as IPlaceable;
-                if (isPlaceable != null)
-                    isPlaceable.Place(World.Get);
-                else
-                {
-                    var isTool = Holds as AbstractTool;
-                    if (isTool != null)
-                        isTool.Act();
-                }
+            {                
+                Holds.Act();
             }
         }
         // Update is called once per frame

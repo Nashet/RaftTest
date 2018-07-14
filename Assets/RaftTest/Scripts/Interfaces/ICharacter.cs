@@ -8,10 +8,10 @@ namespace RaftTest
     /// <summary>
     /// Represents objects with basic humanoid behavior
     /// </summary>
-    public interface ICharacter
+    public interface ICharacter: IActable
     {
         void TakeInHand(IHoldable placeable);
         IHoldable Holds { get; }
-        void Act();
+        
     }
 }

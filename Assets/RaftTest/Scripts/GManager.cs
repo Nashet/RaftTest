@@ -22,6 +22,7 @@ namespace RaftTest
 
         [SerializeField] private Placeable[] allBlocks;
         [SerializeField] private AbstractTool[] allTools;
+        [SerializeField] private AbstractHandWeapon[] allHoldableWeapons;
 
         public IEnumerable<IPlaceable> AllPlaceable()
         {
@@ -32,6 +33,7 @@ namespace RaftTest
         {
             foreach (var item in AllPlaceable()) yield return item;
             foreach(var item in allTools) yield return item;
+            foreach (var item in allHoldableWeapons) yield return item;
         }
 
 
