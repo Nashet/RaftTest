@@ -9,7 +9,7 @@ public class TestCell
     /// Test placing of all types ob blocks
     /// </summary> 
     public void TestPlacing(
-        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center)]Placeable.Side side,
+        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center)]BlockType.Side side,
         [Values(true, false)] bool allowsXZSnapping,
         [Values(true, false)] bool allowsYSnapping,
         [Values(1f)]float blockThickness,

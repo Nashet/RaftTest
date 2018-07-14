@@ -21,7 +21,7 @@ public class MockWorld : World
 /// <summary>
 /// Makes class usable in editor mode
 /// </summary>
-public class MockPlaceable : Placeable
+public class MockPlaceable : BlockType
 {
 
     public MockPlaceable(string name, bool allowsXZSnapping, bool allowsYSnapping, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport)

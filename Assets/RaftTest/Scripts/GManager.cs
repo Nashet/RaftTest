@@ -20,10 +20,10 @@ namespace RaftTest
         [SerializeField] private GameObject playersHands;
         public GameObject PlayersHands { get { return playersHands; } }
 
-        [SerializeField] private Placeable[] allBlocks;
+        [SerializeField] private BlockType[] allBlocks;
         [SerializeField] private AbstractTool[] allTools;
 
-        public IEnumerable<IPlaceable> AllPlaceable()
+        public IEnumerable<BlockType> AllPlaceable()
         {
             foreach (var item in allBlocks) yield return item;
         }
