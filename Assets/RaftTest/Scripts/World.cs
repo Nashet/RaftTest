@@ -26,7 +26,7 @@ namespace RaftTest
         /// <summary>
         /// Empty block
         /// </summary>
-        public static Placeable AirBlock { get; private set; }
+        public static IPlaceable AirBlock { get; private set; }
 
         // allows static access
         public static World Get { get; private set; }
@@ -82,7 +82,7 @@ namespace RaftTest
             return default(Vector3Int);
         }
 
-        protected void Fill(Placeable block)
+        protected void Fill(IPlaceable block)
         {
             for (int x = 0; x < xSize; x++)
                 for (int y = 0; y < ySize; y++)
@@ -114,7 +114,7 @@ namespace RaftTest
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public virtual Placeable GetBlock(int x, int y, int z, Placeable.Side side)
+        public virtual IPlaceable GetBlock(int x, int y, int z, Placeable.Side side)
         {
             if (IsCellExists(x, y, z))
                 return map[x, y, z].Get(side);
@@ -127,7 +127,7 @@ namespace RaftTest
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public virtual Placeable GetBlock(Vector3Int position, Placeable.Side side)
+        public virtual IPlaceable GetBlock(Vector3Int position, Placeable.Side side)
         {
             return GetBlock(position.x, position.y, position.z, side);
         }
@@ -221,7 +221,7 @@ namespace RaftTest
         /// <summary>
         /// Coordinates check should be outside
         /// </summary>    
-        public virtual void Add(Placeable placeable, Placeable.Side sideSnapping)
+        public virtual void Add(IPlaceable placeable, Placeable.Side sideSnapping)
         {
             var coords = placeable.GetIntegerCoords();
 

@@ -33,7 +33,7 @@ namespace RaftTest
         {
             if (Holds != null)
             {
-                var isPlaceable = Holds as Placeable;
+                var isPlaceable = Holds as IPlaceable;
                 if (isPlaceable != null)
                     isPlaceable.Place(World.Get);
                 else

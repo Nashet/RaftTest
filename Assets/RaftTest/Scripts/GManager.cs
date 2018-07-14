@@ -23,7 +23,7 @@ namespace RaftTest
         [SerializeField] private Placeable[] allBlocks;
         [SerializeField] private AbstractTool[] allTools;
 
-        public IEnumerable<Placeable> AllPlaceable()
+        public IEnumerable<IPlaceable> AllPlaceable()
         {
             foreach (var item in allBlocks) yield return item;
         }
