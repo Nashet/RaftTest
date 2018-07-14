@@ -22,7 +22,7 @@ namespace RaftTest
             audioSource = GetComponent<AudioSource>();
             if (audioSource == null)
                 Debug.Log("Missing AudioSource component");
-            BlockType.Placed += OnBlockPlaced;
+            Placeable.Placed += OnBlockPlaced;
             AbstractTool.Used += OnToolUsed;
         }
 

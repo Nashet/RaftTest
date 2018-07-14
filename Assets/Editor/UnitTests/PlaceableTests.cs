@@ -18,7 +18,7 @@ public class TestPlaceable
     /// </summary>    
     [Test]
     public void TestBlockPlacing(
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center)]BlockType.Side side,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center)]Placeable.Side side,
         [Values(true, false)] bool allowsXZSnapping,
         [Values(true, false)] bool allowsYSnapping,
         //[Values(0f, 1f, 0.1f, -0.2f)]float blockThickness,
@@ -53,7 +53,7 @@ public class TestPlaceable
     /// </summary>    
     [Test]
     public void TestBlockDeleting(
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side side,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side side,
         [Values(true, false)] bool allowsXZSnapping,
         [Values(true, false)] bool allowsYSnapping,
         //[Values(0f, 1f, 0.1f, -0.2f)]float blockThickness,
@@ -89,11 +89,11 @@ public class TestPlaceable
     /// </summary>    
     [Test]
     public void TestBlockReplacing(
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side blockForDeletingSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side blockForDeletingSide,
         [Values(true, false)] bool blockForDeletingAllowsXZSnapping,
         [Values(true, false)] bool blockForDeletingAllowsYSnapping,
         [Values(true, false)]bool blockForDeletingIsFullBlock,
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side testBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side testBlockSide,
         [Values(true, false)] bool testBlockAllowsXZSnapping,
         [Values(true, false)] bool testBlockAllowsYSnapping,
         [Values(true, false)]bool testBlockIsFullBlock
@@ -132,9 +132,9 @@ public class TestPlaceable
 
     [Test]
     public void CanFullBlockBePlacedOnFullBlock(
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side bottomBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side bottomBlockSide,
 
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side testBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side testBlockSide,
         [Values(true, false)]bool isTestBlockIsFullBlock,
         [Values(0)]int maxLengthWithoutSupport
         )
@@ -143,8 +143,8 @@ public class TestPlaceable
     }
     [Test]
     public void CanFullBlockBePlacedOnHalfBlockExceptBottomBlock(
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top)]BlockType.Side bottomBlockSide,
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side testBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top)]Placeable.Side bottomBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side testBlockSide,
 
         [Values(0)]int maxLengthWithoutSupport
         )
@@ -155,22 +155,22 @@ public class TestPlaceable
     [Test]
     public void CanFullBlockBePlacedOnHalfBlockBottom(
 
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side testBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side testBlockSide,
 
         [Values(0)]int maxLengthWithoutSupport
         )
     {
-        Assert.IsFalse(TestCanBePlaced(BlockType.Side.Bottom, false, testBlockSide, true, maxLengthWithoutSupport));
+        Assert.IsFalse(TestCanBePlaced(Placeable.Side.Bottom, false, testBlockSide, true, maxLengthWithoutSupport));
     }
     [Test]
     public void CanHalfBlockBePlacedhalfBlock(
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side bottomBlockSide,
-        [Values(BlockType.Side.North, BlockType.Side.East, BlockType.Side.West, BlockType.Side.South, BlockType.Side.Center, BlockType.Side.Top, BlockType.Side.Bottom)]BlockType.Side testBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side bottomBlockSide,
+        [Values(Placeable.Side.North, Placeable.Side.East, Placeable.Side.West, Placeable.Side.South, Placeable.Side.Center, Placeable.Side.Top, Placeable.Side.Bottom)]Placeable.Side testBlockSide,
         [Values(0)]int maxLengthWithoutSupport
         )
     {
         var res = TestCanBePlaced(bottomBlockSide, false, testBlockSide, false, maxLengthWithoutSupport);
-        if (bottomBlockSide == testBlockSide || bottomBlockSide == BlockType.Side.Top || testBlockSide == BlockType.Side.Bottom)
+        if (bottomBlockSide == testBlockSide || bottomBlockSide == Placeable.Side.Top || testBlockSide == Placeable.Side.Bottom)
             Assert.IsTrue(res);
         else
             Assert.IsFalse(res);
@@ -178,10 +178,10 @@ public class TestPlaceable
 
 
     public bool TestCanBePlaced(
-       BlockType.Side bottomBlockSide,
+       Placeable.Side bottomBlockSide,
        bool isBottomBlockIsFullBlock,
 
-       BlockType.Side testBlockSide,
+       Placeable.Side testBlockSide,
        bool isTestBlockIsFullBlock,
        int maxLengthWithoutSupport
        )

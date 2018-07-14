@@ -9,39 +9,39 @@ namespace RaftTest
     /// </summary>
     public struct Cell
     {        
-        private static int subBlocksCount = Enum.GetValues(typeof(BlockType.Side)).Length;
-        private BlockType[] container;
+        private static int subBlocksCount = Enum.GetValues(typeof(Placeable.Side)).Length;
+        private IPlaceable[] container;
 
         /// <summary>
         /// Necessary to call
         /// </summary>
-        public void Init(BlockType block)
+        public void Init(IPlaceable block)
         {
-            container = new BlockType[subBlocksCount];
+            container = new IPlaceable[subBlocksCount];
             for (int i = 0; i < subBlocksCount; i++)
             {
                 container[i] = block;
             }
         }
 
-        public BlockType Get(BlockType.Side side)
+        public IPlaceable Get(Placeable.Side side)
         {
             return container[(int)side];
         }
 
-        public void Place(BlockType block, BlockType.Side side)
+        public void Place(IPlaceable block, Placeable.Side side)
         {
             container[(int)side] = block;
         }
 
-        public void Remove(BlockType.Side side)
+        public void Remove(Placeable.Side side)
         {
             container[(int)side] = World.AirBlock;
         }              
 
         public bool HasAnyNonAirBlock()
         {
-            foreach (BlockType.Side eachSide in Enum.GetValues(typeof(BlockType.Side)))
+            foreach (Placeable.Side eachSide in Enum.GetValues(typeof(Placeable.Side)))
             {
                 if (Get(eachSide) != World.AirBlock)
                     return true;

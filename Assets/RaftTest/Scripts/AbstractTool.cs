@@ -18,7 +18,7 @@ namespace RaftTest
         public event EventHandler<EventArgs> Shown;
         public static event EventHandler<EventArgs> Used;
 
-        protected Block selectedObject;
+        protected PlacedBlock selectedObject;
 
         /// <summary>
         /// Plays animation on act, if presents
@@ -116,7 +116,7 @@ namespace RaftTest
                 {
 
                     var lookingAt = hit.collider.gameObject;
-                    var placed = lookingAt.GetComponent<Block>();
+                    var placed = lookingAt.GetComponent<PlacedBlock>();
                     if (placed == null)
                     {
                         if (selectedObject != null)
