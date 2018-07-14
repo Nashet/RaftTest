@@ -143,8 +143,7 @@ namespace RaftTest
 
                 this.block.transform.position = blockPlacingPosition;
                 Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
-                //if (EventSystem.current.IsPointerOverGameObject())
-                //    return null;// -3; //hovering over UI
+               
                 // updates holding block color 
                 this.UpdateMaterial();
             }

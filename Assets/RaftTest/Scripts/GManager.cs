@@ -21,13 +21,19 @@ namespace RaftTest
         public GameObject PlayersHands { get { return playersHands; } }
 
         [SerializeField] private Placeable[] allBlocks;
-        public IEnumerable<Placeable> AllBlocks()
+        [SerializeField] private AbstractTool[] allTools;
+
+        public IEnumerable<Placeable> AllPlaceable()
         {
             foreach (var item in allBlocks) yield return item;
         }
 
-        [SerializeField] private Hammer hammer;
-        public Hammer Hammer { get { return hammer; } }
+        public IEnumerable<IHoldable> AllHoldable()
+        {
+            foreach (var item in AllPlaceable()) yield return item;
+            foreach(var item in allTools) yield return item;
+        }
+
 
         static GManager thisObject;
         // allows static access

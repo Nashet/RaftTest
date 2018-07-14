@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityStandardAssets.Characters.FirstPerson;
 namespace RaftTest
 {
@@ -16,7 +17,7 @@ namespace RaftTest
 
         [SerializeField] private GameObject debugCube;
 
-        public virtual void TakeInHand(IHoldable holdable)//todo refactor with prefabs?
+        public virtual void TakeInHand(IHoldable holdable)
         {
             if (Holds != null) // hides previous object in hands
             {
@@ -49,7 +50,8 @@ namespace RaftTest
             if (Holds != null)
                 Holds.UpdateBlock();
 #if !MOBILE_INPUT
-            if (Input.GetMouseButtonUp(0)) // place block in a world
+            if (Input.GetMouseButtonUp(0)
+            && !EventSystem.current.IsPointerOverGameObject())//hovering over UI) 
             {
                 Act();
             }

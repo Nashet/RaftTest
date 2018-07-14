@@ -100,7 +100,7 @@ namespace RaftTest
             var x = xSize / 2;
             var z = zSize / 2;
             int zeroLevel = 0;
-            var blockToPLace = GManager.Get.AllBlocks().ElementAt(5);
+            var blockToPLace = GManager.Get.AllPlaceable().ElementAt(5);
             blockToPLace.Show();
 
             foreach (var validCoord in map.GetCoordsWithRadius(x, z, 2))

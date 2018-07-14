@@ -90,6 +90,7 @@ namespace UnityStandardAssets.CrossPlatformInput
             {
                 t.gameObject.SetActive(enabled);
             }
+            gameObject.SetActive(enabled);
         }
 
 #if UNITY_EDITOR

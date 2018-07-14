@@ -69,9 +69,10 @@ namespace RaftTest
         }
     }
 
+    
     /// <summary>
     /// Represents objects which can be hold in players hands
-    /// </summary>
+    /// </summary>    
     public interface IHoldable : IHideable
     {
         /// <summary>
@@ -83,7 +84,7 @@ namespace RaftTest
     /// <summary>
     /// Represents objects with basic humanoid behavior
     /// </summary>
-    interface ICharacter
+    public interface ICharacter
     {
         void TakeInHand(IHoldable placeable);
         IHoldable Holds { get; }
