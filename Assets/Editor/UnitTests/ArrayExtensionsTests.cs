@@ -4,7 +4,7 @@ using UnityEngine;
 using NUnit.Framework;
 using RaftTest;
 using System.Linq;
-
+using RaftTest.Utils;
 
 public class ArrayExtensionsTests
 {

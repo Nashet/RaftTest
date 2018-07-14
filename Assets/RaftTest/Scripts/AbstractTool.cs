@@ -12,7 +12,7 @@ namespace RaftTest
     /// Can't be instantiated
     /// </summary>
     [Serializable]
-    abstract public class AbstractTool : MonoBehaviour, IHoldable // Placeable
+    abstract public class AbstractTool : MonoBehaviour, ITool
     {
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
