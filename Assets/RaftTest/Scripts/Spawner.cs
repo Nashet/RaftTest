@@ -14,7 +14,12 @@ namespace RaftTest
         // Use this for initialization
         void Start()
         {
+            TryToSpawn();
+        }
+        public void TryToSpawn()
+        {
             gameObject.transform.position = World.Get.GetRandomSpawnPoint(amountOfAttemptsToFindProperSpawn) + Vector3Int.up * 4;
         }
+
     }
 }

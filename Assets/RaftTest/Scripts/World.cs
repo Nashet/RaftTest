@@ -26,13 +26,13 @@ namespace RaftTest
         /// <summary>
         /// Empty block
         /// </summary>
-        public static Placeable AirBlock { get; private set; }
+        public static IPlaceable AirBlock { get; private set; }
 
         // allows static access
         public static World Get { get; private set; }
 
         // Use this for initialization
-        protected void Awake()
+        public void Awake()
         {
             SetUpLogic();
             GameObject plane = new GameObject("Plane");
@@ -60,7 +60,7 @@ namespace RaftTest
 
             AirBlock = new Placeable("Empty air", true, true, null, 1f, false, false, true,
                 isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
-            Fill(AirBlock);            
+            Fill(AirBlock);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace RaftTest
             return default(Vector3Int);
         }
 
-        protected void Fill(Placeable block)
+        protected void Fill(IPlaceable block)
         {
             for (int x = 0; x < xSize; x++)
                 for (int y = 0; y < ySize; y++)
@@ -100,9 +100,9 @@ namespace RaftTest
             var x = xSize / 2;
             var z = zSize / 2;
             int zeroLevel = 0;
-            var blockToPLace = GManager.Get.AllBlocks().ElementAt(5);
+            var blockToPLace = GManager.Get.AllPlaceable().ElementAt(5);
             blockToPLace.Show();
-            
+
             foreach (var validCoord in map.GetCoordsWithRadius(x, z, 2))
             {
                 blockToPLace.SetPosition(new Vector3(validCoord.x, zeroLevel, validCoord.y), Placeable.Side.Top);
@@ -114,7 +114,7 @@ namespace RaftTest
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public virtual Placeable GetBlock(int x, int y, int z, Placeable.Side side)
+        public virtual IPlaceable GetBlock(int x, int y, int z, Placeable.Side side)
         {
             if (IsCellExists(x, y, z))
                 return map[x, y, z].Get(side);
@@ -127,7 +127,7 @@ namespace RaftTest
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public virtual Placeable GetBlock(Vector3Int position, Placeable.Side side)
+        public virtual IPlaceable GetBlock(Vector3Int position, Placeable.Side side)
         {
             return GetBlock(position.x, position.y, position.z, side);
         }
@@ -221,7 +221,7 @@ namespace RaftTest
         /// <summary>
         /// Coordinates check should be outside
         /// </summary>    
-        public virtual void Add(Placeable placeable, Placeable.Side sideSnapping)
+        public virtual void Add(IPlaceable placeable, Placeable.Side sideSnapping)
         {
             var coords = placeable.GetIntegerCoords();
 
@@ -397,12 +397,22 @@ namespace RaftTest
         }
 
         /// <summary>
-        /// Just transfers call to map[,,]GetMapElementsWithRadius 
+        /// Just transfers call to map[,,].GetMapElementsWithRadius 
         /// </summary>        
         public IEnumerable<Cell> GetMapElementsWithRadius(int x, int y, int z, int radius)
         {
             // scan neighbor cells for support            
             return map.GetElementsWithRadius(x, y, z, radius);
+        }
+       
+        public virtual void Restart()
+        {
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+            Awake();          
+            //GenerateMap();
         }
     }
 }

@@ -69,9 +69,10 @@ namespace RaftTest
         }
     }
 
+
     /// <summary>
     /// Represents objects which can be hold in players hands
-    /// </summary>
+    /// </summary>    
     public interface IHoldable : IHideable
     {
         /// <summary>
@@ -80,13 +81,24 @@ namespace RaftTest
         void UpdateBlock();
     }
 
+    public interface IPlaceable : IHideable, IHoldable
+    {
+        bool IsFullBlock { get; }
+        bool OnlyCenterPlacing { get; }
+
+        Vector3Int GetIntegerCoords();
+        PlacedBlock Place(World world);
+        void SetPosition(Vector3 position, Placeable.Side side);
+    }
+
     /// <summary>
     /// Represents objects with basic humanoid behavior
     /// </summary>
-    interface ICharacter
+    public interface ICharacter
     {
         void TakeInHand(IHoldable placeable);
         IHoldable Holds { get; }
+        void Act();
     }
     public static class ArrayExtensions
     {
@@ -121,7 +133,7 @@ namespace RaftTest
         /// </summary>        
         public static IEnumerable<T> GetElementsWithRadius<T>(this T[,,] array, int x, int y, int z, int radius)
         {
-            foreach (var validCoords in array.GetCoordsWithRadius( x, z, radius))
+            foreach (var validCoords in array.GetCoordsWithRadius(x, z, radius))
             {
                 yield return array[validCoords.x, y, validCoords.y];
             }
