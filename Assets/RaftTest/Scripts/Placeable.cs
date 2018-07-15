@@ -10,7 +10,7 @@ namespace RaftTest
     /// Represents block which can be placed in world and can be hold in hands    
     /// </summary>
     [Serializable]
-    public class Placeable : Nameable, IHideable, IHoldable
+    public class Placeable : Nameable, IPlaceable
     {
         [Tooltip("Turn on if you want to turn of physics for that block and/or include manual collision detection")]
         [SerializeField] private bool isTrigger;
