@@ -8,8 +8,8 @@ using UnityEngine.EventSystems;
 namespace RaftTest
 {
     /// <summary>
-    /// Represent player belt where player can select object can select object to use (player.Holdable)
-    ///Can have any amount of slots as child. Slot should have Button and EventTrigger components
+    /// Represents player belt where player can select object to use (player.Holdable)
+    /// Can have any amount of slots as children. Slots should have Button and EventTrigger components
     /// </summary>
     [RequireComponent(typeof(ICharacter))]
     public class Belt : MonoBehaviour

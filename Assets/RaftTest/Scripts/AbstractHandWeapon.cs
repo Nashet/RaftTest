@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 namespace RaftTest
 {
     [Serializable]
-    public abstract class AbstractHandWeapon : Hideable, IHandWeapon
+    public abstract class AbstractHandWeapon : Hideable, IHandWeapon, ICanSelect
     {
         private Animation _animation;
 
@@ -53,7 +53,7 @@ namespace RaftTest
 
                     var isMonoBehavior = aimAt as MonoBehaviour;
                     if (isMonoBehavior != null)
-                        AddSelection(isMonoBehavior.gameObject);
+                        Select(isMonoBehavior.gameObject);
 
                 }
 
@@ -75,7 +75,7 @@ namespace RaftTest
             renderer.materials = newArray;
         }
 
-        protected void RemoveSelection(GameObject someObject)
+        public void Deselect(GameObject someObject)
         {
             var renderer = someObject.GetComponent<MeshRenderer>();
             if (renderer == null)
@@ -102,7 +102,7 @@ namespace RaftTest
             renderer.materials = rt;
         }
 
-        protected void AddSelection(GameObject someObject)
+        public void Select(GameObject someObject)
         {
             recentHit.Enqueue(someObject);
             var renderer = someObject.GetComponent<MeshRenderer>();
@@ -135,7 +135,7 @@ namespace RaftTest
                 {
                     var _object = recentHit.Dequeue();
                     if (_object != null)
-                        RemoveSelection(_object);
+                        Deselect(_object);
                 }
                 yield return new WaitForSeconds(selectionTime);
             }
