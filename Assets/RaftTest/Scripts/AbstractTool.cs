@@ -97,10 +97,8 @@ namespace RaftTest
             {
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
-                {
-
-                    var lookingAt = hit.collider.gameObject;
-                    var placed = lookingAt.GetComponent<PlacedBlock>();
+                {                    
+                    var placed = hit.collider.gameObject.GetComponent<PlacedBlock>();
                     if (placed == null)
                     {
                         if (selectedObject != null)

@@ -5,8 +5,8 @@ using System.Text;
 
 namespace RaftTest
 {
-    public interface IWeapon: IActable, IDamageSource
+    public interface IDamageSource
     {
-         float DamageDistance { get; }
+        int Damage { get; }
     }
 }
