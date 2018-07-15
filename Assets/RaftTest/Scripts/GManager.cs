@@ -12,10 +12,7 @@ namespace RaftTest
         public Material BuildingDeniedMaterial { get { return buildingDeniedMaterial; } }
 
         [SerializeField] private Material buildingAlowedMaterial;
-        public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }
-
-        [SerializeField] private Material selectedByToolMaterial;
-        public Material SelectedByToolMaterial { get { return selectedByToolMaterial; } }
+        public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }              
 
         [SerializeField] private GameObject playersHands;
         public GameObject PlayersHands { get { return playersHands; } }
@@ -60,6 +57,17 @@ namespace RaftTest
         {
             if (thisObject == null)
                 Awake();
+        }
+
+        public static T CheckComponentAvailability<T>(MonoBehaviour that)// where T : Component
+        {
+            foreach (var item in that.GetComponents<T>())
+            {
+                if (item as Component != that) // avoid self returning
+                    return item;
+            }
+            Debug.LogError("Missing " + typeof(T).Name + " component");
+            return default(T);
         }
     }
 }

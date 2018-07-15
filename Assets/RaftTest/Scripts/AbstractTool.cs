@@ -13,12 +13,13 @@ namespace RaftTest
     /// Can't be instantiated
     /// </summary>
     [Serializable]
-    abstract public class AbstractTool : Hideable, ITool
+    abstract public class AbstractTool : Hideable, ITool, ISelector
     {        
         public static event EventHandler<EventArgs> Used;
 
         protected PlacedBlock selectedObject;
 
+        protected ISelector selectorComponent;
         /// <summary>
         /// Plays animation on act, if presents
         /// </summary>
@@ -29,66 +30,17 @@ namespace RaftTest
         {
             //gameObject.SetActive(false);
             availableAnimation = GetComponent<Animation>();
+            selectorComponent = GManager.CheckComponentAvailability<ISelector>(this);
+            Hide();
         }
         public override void Hide()
         {            
             base.Hide();
             if (selectedObject != null)
-                RemoveSelection(selectedObject.gameObject);
+                Deselect(selectedObject.gameObject);
         }        
 
-        protected void RemoveMaterial(MeshRenderer renderer)
-        {
-            Material[] newArray = new Material[1];
-            newArray[0] = renderer.material;
-            renderer.materials = newArray;
-        }
-
-        protected void RemoveSelection(GameObject someObject)
-        {
-            var renderer = someObject.GetComponent<MeshRenderer>();
-            if (renderer == null)
-            //if there is no render in selected object, find one in childes
-            {
-                var children = someObject.GetComponentsInChildren<MeshRenderer>();
-                foreach (var item in children)
-                {
-                    RemoveMaterial(item);
-                }
-            }
-            else
-            {
-                RemoveMaterial(renderer);
-            }
-
-        }
-
-        protected void AddMaterial(MeshRenderer renderer)
-        {
-            Material[] rt = new Material[2];
-            rt[0] = renderer.material;
-            rt[1] = GManager.Get.SelectedByToolMaterial;
-            renderer.materials = rt;
-        }
-
-        protected void AddSelection(GameObject someObject)
-        {
-            var renderer = someObject.GetComponent<MeshRenderer>();
-            if (renderer == null)
-            //if there is no render in selected object, find one in childes
-            {
-                var children = someObject.GetComponentsInChildren<MeshRenderer>();
-                foreach (var item in children)
-                {
-                    AddMaterial(item);
-                }
-            }
-            else
-            {
-                AddMaterial(renderer);
-            }
-
-        }
+        
         public virtual void UpdateBlock()
         {
 #if MOBILE_INPUT // ignore touches over UI on mobile devices
@@ -103,7 +55,7 @@ namespace RaftTest
                     {
                         if (selectedObject != null)
                         {
-                            RemoveSelection(selectedObject.gameObject);
+                            Deselect(selectedObject.gameObject);
                         }
                         selectedObject = null;
 
@@ -113,11 +65,11 @@ namespace RaftTest
                         //removing added material from previously selected object
                         if (selectedObject != null)
                         {
-                            RemoveSelection(selectedObject.gameObject);
+                            Deselect(selectedObject.gameObject);
                         }
                         selectedObject = placed;
 
-                        AddSelection(selectedObject.gameObject);
+                        Select(selectedObject.gameObject);
                     }
                 }
             }
@@ -143,6 +95,16 @@ namespace RaftTest
         public override string ToString()
         {
             return name;
+        }
+
+        public void Select(GameObject someObject)
+        {
+            selectorComponent.Select(someObject);
+        }
+
+        public void Deselect(GameObject someObject)
+        {
+            selectorComponent.Deselect(someObject);
         }
     }
 }

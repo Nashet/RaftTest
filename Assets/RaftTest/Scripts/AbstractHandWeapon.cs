@@ -9,12 +9,14 @@ using UnityEngine.EventSystems;
 
 namespace RaftTest
 {
+    
     [Serializable]
-    public abstract class AbstractHandWeapon : Hideable, IHandWeapon, ICanSelect
+    [RequireComponent(typeof(ISelector))]
+    public abstract class AbstractHandWeapon : Hideable, IHandWeapon
     {
         private Animation _animation;
 
-        protected Queue<GameObject> recentHit = new Queue<GameObject>();
+        protected ISelector selectorComponent;
 
         [SerializeField] protected int damage;
         public int Damage { get { return damage; } }
@@ -22,16 +24,13 @@ namespace RaftTest
         [SerializeField] protected float damageDistance;
         public float DamageDistance { get { return damageDistance; } }
 
-        [Tooltip("In seconds")]
-        [SerializeField]protected float selectionTime ;
-
-
         public static event EventHandler<EventArgs> Used;
 
         protected void Start()
         {
             _animation = GetComponent<Animation>();
-            StartCoroutine(CheckSelectionQueue());
+            selectorComponent = GManager.CheckComponentAvailability<ISelector>(this);
+            Hide();
         }
 
 
@@ -53,7 +52,7 @@ namespace RaftTest
 
                     var isMonoBehavior = aimAt as MonoBehaviour;
                     if (isMonoBehavior != null)
-                        Select(isMonoBehavior.gameObject);
+                        selectorComponent.Select(isMonoBehavior.gameObject);
 
                 }
 
@@ -67,78 +66,10 @@ namespace RaftTest
             return name;
         }
 
-
-        protected void RemoveMaterial(MeshRenderer renderer)
-        {
-            Material[] newArray = new Material[1];
-            newArray[0] = renderer.material;
-            renderer.materials = newArray;
-        }
-
-        public void Deselect(GameObject someObject)
-        {
-            var renderer = someObject.GetComponent<MeshRenderer>();
-            if (renderer == null)
-            //if there is no render in selected object, find one in childes
-            {
-                var children = someObject.GetComponentsInChildren<MeshRenderer>();
-                foreach (var item in children)
-                {
-                    RemoveMaterial(item);
-                }
-            }
-            else
-            {
-                RemoveMaterial(renderer);
-            }
-
-        }
-
-        protected void AddMaterial(MeshRenderer renderer)
-        {
-            Material[] rt = new Material[2];
-            rt[0] = renderer.material;
-            rt[1] = GManager.Get.SelectedByToolMaterial;
-            renderer.materials = rt;
-        }
-
-        public void Select(GameObject someObject)
-        {
-            recentHit.Enqueue(someObject);
-            var renderer = someObject.GetComponent<MeshRenderer>();
-            if (renderer == null)
-            //if there is no render in selected object, find one in childes
-            {
-                var children = someObject.GetComponentsInChildren<MeshRenderer>();
-                foreach (var item in children)
-                {
-                    AddMaterial(item);
-                }
-            }
-            else
-            {
-                AddMaterial(renderer);
-            }
-
-        }
-
         public void UpdateBlock()
         {
             if (Input.touchCount > 0)
                 Act();
-        }
-        protected IEnumerator CheckSelectionQueue()
-        {
-            while (true)
-            {
-                if (recentHit.Count > 0)
-                {
-                    var _object = recentHit.Dequeue();
-                    if (_object != null)
-                        Deselect(_object);
-                }
-                yield return new WaitForSeconds(selectionTime);
-            }
         }
     }
 }

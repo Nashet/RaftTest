@@ -3,19 +3,23 @@
   <Class Name="RaftTest.AbstractHandWeapon" Collapsed="true">
     <Position X="4" Y="9.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>kAAAAACAACAAgABsgAAAAAAAgAAAAAAAAAAAAAgABEA=</HashCode>
+      <HashCode>gAAAAACAACAAgAAEgAAAAAAAgAAAAAEAAAAAAAAABEA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\AbstractHandWeapon.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="selectorComponent" />
+    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="RaftTest.AbstractTool" Collapsed="true">
     <Position X="1.75" Y="9.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAAAAAACAAAABkEAAQAAAAAAAAAAAAAAAAAAgABEA=</HashCode>
+      <HashCode>AAIAAAAAAKAAAAAEEAAQAAAAAAAAAAEAAAAAQAAABEA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\AbstractTool.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="selectedObject" />
+      <Field Name="selectorComponent" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
@@ -41,16 +45,11 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="RaftTest.GManager" Collapsed="true">
-    <Position X="6.75" Y="11.75" Width="1.5" />
+    <Position X="19.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABQAAAAABgAAwARAIgiAAAAAgAAAAAIAAAACAAAQAEA=</HashCode>
+      <HashCode>ABQAAAEABgAAwARAIggAAAAAAAAAAAIAAAACAAAQAEA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\GManager.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="allBlocks" />
-      <Field Name="allTools" />
-      <Field Name="allHoldableWeapons" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="RaftTest.Hammer" Collapsed="true">
     <Position X="1.75" Y="11.25" Width="1.5" />
@@ -60,7 +59,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="RaftTest.Ladder" Collapsed="true">
-    <Position X="17.5" Y="0.5" Width="1.5" />
+    <Position X="15.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
       <FileName>Assets\RaftTest\Scripts\Ladder.cs</FileName>
@@ -85,21 +84,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="RaftTest.SoundManager" Collapsed="true">
-    <Position X="15.75" Y="1.5" Width="1.5" />
+    <Position X="17.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gAAAAQAAICCAAAAAAAAACAAAAAgBEAAAEAAAAAAAAAA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\SoundManager.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RaftTest.Spawner" Collapsed="true">
-    <Position X="17.5" Y="1.5" Width="1.5" />
+    <Position X="19.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAAAAAAAAAACAAAAAAAQAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\Spawner.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RaftTest.World" Collapsed="true">
-    <Position X="3.5" Y="6.25" Width="1.5" />
+    <Position X="0.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>kAYAEAAASCAAAEhACAAABAABIAgACQAGIAEAABAQAFQ=</HashCode>
       <FileName>Assets\RaftTest\Scripts\World.cs</FileName>
@@ -137,8 +136,24 @@
       <FileName>Assets\RaftTest\Scripts\Club.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="RaftTest.Breakable" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAABAAEIAAIAAIA=</HashCode>
+      <FileName>Assets\RaftTest\Scripts\Breakable.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RaftTest.TimedSelectorWithMaterial" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAKAAAABIAAAAAAAABAAAAAAAAAAAQAgAAAA=</HashCode>
+      <FileName>Assets\RaftTest\Scripts\Utils\TimedSelectorWithMaterial.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
   <Struct Name="RaftTest.Cell" Collapsed="true">
-    <Position X="15.75" Y="2.75" Width="1.5" />
+    <Position X="15.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAAAAAAAAAAAABAAAAABAAAAAAAAAACAEACAAAEAAA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\Cell.cs</FileName>
@@ -201,7 +216,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="RaftTest.IBreakable" Collapsed="true">
-    <Position X="15.75" Y="4" Width="1.5" />
+    <Position X="15.75" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\Interfaces\IBreakable.cs</FileName>
@@ -212,6 +227,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\RaftTest\Scripts\Interfaces\IDamageSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RaftTest.ISelector" Collapsed="true">
+    <Position X="3" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Assets\RaftTest\Scripts\Interfaces\ISelector.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />
