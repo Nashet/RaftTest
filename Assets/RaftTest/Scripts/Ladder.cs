@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace RaftTest
 {
+    [RequireComponent(typeof(Collider))]
     /// <summary>
-    /// Object with that script works as ladder. Object should have collider with IsTrigger on
-    /// Climbing object should have RigidBody component
-    /// </summary>
+    /// Object with that script works as ladder. This object should have collider with IsTrigger on    
+    /// </summary>    
     public class Ladder : MonoBehaviour
     {
         [SerializeField] private float climbSpeed;

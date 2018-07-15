@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RaftTest
@@ -25,13 +26,13 @@ namespace RaftTest
         /// <summary>
         /// Empty block
         /// </summary>
-        public static Placeable AirBlock { get; private set; }
+        public static IPlaceable AirBlock { get; private set; }
 
         // allows static access
         public static World Get { get; private set; }
 
         // Use this for initialization
-        protected void Start()
+        public void Awake()
         {
             SetUpLogic();
             GameObject plane = new GameObject("Plane");
@@ -46,7 +47,10 @@ namespace RaftTest
             renderer.material = planeMaterial;
             MeshCollider collider = plane.AddComponent<MeshCollider>();
             collider.sharedMesh = meshFilter.mesh;
+
+            GenerateMap();
         }
+
         protected void SetUpLogic()
         {
             Get = this;
@@ -58,9 +62,28 @@ namespace RaftTest
                 isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
             Fill(AirBlock);
         }
-        protected void Fill(Placeable block)
-        {
 
+        /// <summary>
+        /// Get highest block in random x,z point
+        /// </summary>        
+        public Vector3Int GetRandomSpawnPoint(int AmountOfTries)
+        {
+            var random = new System.Random();
+
+            for (int attemp = 0; attemp < AmountOfTries; attemp++)
+            {
+                int x = random.Next(xSize);
+                int z = random.Next(zSize);
+
+                for (int y = ySize - 1; y >= 0; y--)
+                    if (HasAnyNonAirBlock(x, y, z))
+                        return new Vector3Int(x, y, z);
+            }
+            return default(Vector3Int);
+        }
+
+        protected void Fill(IPlaceable block)
+        {
             for (int x = 0; x < xSize; x++)
                 for (int y = 0; y < ySize; y++)
                     for (int z = 0; z < zSize; z++)
@@ -70,9 +93,28 @@ namespace RaftTest
         }
 
         /// <summary>
+        /// Just places several foundation blocks
+        /// </summary>
+        protected void GenerateMap()
+        {
+            var x = xSize / 2;
+            var z = zSize / 2;
+            int zeroLevel = 0;
+            var blockToPLace = GManager.Get.AllPlaceable().ElementAt(5);
+            blockToPLace.Show();
+
+            foreach (var validCoord in map.GetCoordsWithRadius(x, z, 2))
+            {
+                blockToPLace.SetPosition(new Vector3(validCoord.x, zeroLevel, validCoord.y), Placeable.Side.Top);
+                blockToPLace.Place(this);
+            }
+            blockToPLace.Hide();
+        }
+
+        /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public virtual Placeable GetBlock(int x, int y, int z, Placeable.Side side)
+        public virtual IPlaceable GetBlock(int x, int y, int z, Placeable.Side side)
         {
             if (IsCellExists(x, y, z))
                 return map[x, y, z].Get(side);
@@ -85,7 +127,7 @@ namespace RaftTest
         /// <summary>
         /// null means that cell doesn't exist (wrong index)
         /// </summary>    
-        public virtual Placeable GetBlock(Vector3Int position, Placeable.Side side)
+        public virtual IPlaceable GetBlock(Vector3Int position, Placeable.Side side)
         {
             return GetBlock(position.x, position.y, position.z, side);
         }
@@ -179,7 +221,7 @@ namespace RaftTest
         /// <summary>
         /// Coordinates check should be outside
         /// </summary>    
-        public virtual void Add(Placeable placeable, Placeable.Side sideSnapping)
+        public virtual void Add(IPlaceable placeable, Placeable.Side sideSnapping)
         {
             var coords = placeable.GetIntegerCoords();
 
@@ -223,7 +265,7 @@ namespace RaftTest
         {
 
             if (Get == null)
-                Start();
+                Awake();
         }
 
         public static Vector3Int GetIntegerCoords(Vector3 position)
@@ -352,6 +394,25 @@ namespace RaftTest
             else //if (distToNorth == Mathf.Min(Mathf.Min(Mathf.Min(distToWest, distToEast), distToNorth), distToSouth))
                  // default
                 return Placeable.Side.North;
+        }
+
+        /// <summary>
+        /// Just transfers call to map[,,].GetMapElementsWithRadius 
+        /// </summary>        
+        public IEnumerable<Cell> GetMapElementsWithRadius(int x, int y, int z, int radius)
+        {
+            // scan neighbor cells for support            
+            return map.GetElementsWithRadius(x, y, z, radius);
+        }
+       
+        public virtual void Restart()
+        {
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+            Awake();          
+            //GenerateMap();
         }
     }
 }

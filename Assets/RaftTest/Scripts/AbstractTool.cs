@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 namespace RaftTest
 {
     /// <summary>
@@ -15,7 +17,7 @@ namespace RaftTest
         public event EventHandler<EventArgs> Hidden;
         public event EventHandler<EventArgs> Shown;
         public static event EventHandler<EventArgs> Used;
-    
+
         protected PlacedBlock selectedObject;
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace RaftTest
         }
 
         public virtual void Show()
-        {           
+        {
             gameObject.SetActive(true);
             EventHandler<EventArgs> handler = Shown;
             if (handler != null)
@@ -105,26 +107,36 @@ namespace RaftTest
         }
         public virtual void UpdateBlock()
         {
-            RaycastHit hit;
-
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+#if MOBILE_INPUT // ignore touches over UI on mobile devices
+            if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+#endif
             {
-                var lookingAt = hit.collider.gameObject;
-                var placed = lookingAt.GetComponent<PlacedBlock>();
-                if (placed != null)
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                 {
-                    //removing added material from previously selected object
-                    if (selectedObject != null)
-                    {
-                        RemoveSelection(selectedObject.gameObject);
-                    }
-                    selectedObject = placed;
 
-                    AddSelection(selectedObject.gameObject);
-                }
-                else if (selectedObject != null)
-                {
-                    RemoveSelection(selectedObject.gameObject);
+                    var lookingAt = hit.collider.gameObject;
+                    var placed = lookingAt.GetComponent<PlacedBlock>();
+                    if (placed == null)
+                    {
+                        if (selectedObject != null)
+                        {
+                            RemoveSelection(selectedObject.gameObject);
+                        }
+                        selectedObject = null;
+
+                    }
+                    else
+                    {
+                        //removing added material from previously selected object
+                        if (selectedObject != null)
+                        {
+                            RemoveSelection(selectedObject.gameObject);
+                        }
+                        selectedObject = placed;
+
+                        AddSelection(selectedObject.gameObject);
+                    }
                 }
             }
         }
@@ -136,7 +148,7 @@ namespace RaftTest
         public virtual void Act()
         {
             if (selectedObject != null)
-            {             
+            {
                 EventHandler<EventArgs> handler = Used;
                 if (handler != null)
                 {
@@ -145,6 +157,10 @@ namespace RaftTest
             }
             if (availableAnimation != null)
                 availableAnimation.Play();
+        }
+        public override string ToString()
+        {
+            return name;
         }
     }
 }

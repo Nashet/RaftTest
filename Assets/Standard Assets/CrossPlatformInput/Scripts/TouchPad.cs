@@ -61,6 +61,10 @@ namespace UnityStandardAssets.CrossPlatformInput
 #if !UNITY_EDITOR
             m_Image = GetComponent<Image>();
             m_Center = m_Image.transform.position;
+#else
+            var image = GetComponent<Image>();
+            if (image != null)
+                image.raycastTarget = false; // to avoid raycast blocking in PLaceable.UpdateBlock() 
 #endif
         }
 
