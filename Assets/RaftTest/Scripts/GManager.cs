@@ -12,16 +12,14 @@ namespace RaftTest
         public Material BuildingDeniedMaterial { get { return buildingDeniedMaterial; } }
 
         [SerializeField] private Material buildingAlowedMaterial;
-        public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }
-
-        [SerializeField] private Material selectedByToolMaterial;
-        public Material SelectedByToolMaterial { get { return selectedByToolMaterial; } }
+        public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }              
 
         [SerializeField] private GameObject playersHands;
         public GameObject PlayersHands { get { return playersHands; } }
 
         [SerializeField] private Placeable[] allBlocks;
         [SerializeField] private AbstractTool[] allTools;
+        [SerializeField] private AbstractHandWeapon[] allHoldableWeapons;
 
         public IEnumerable<IPlaceable> AllPlaceable()
         {
@@ -32,6 +30,7 @@ namespace RaftTest
         {
             foreach (var item in AllPlaceable()) yield return item;
             foreach(var item in allTools) yield return item;
+            foreach (var item in allHoldableWeapons) yield return item;
         }
 
 
@@ -58,6 +57,17 @@ namespace RaftTest
         {
             if (thisObject == null)
                 Awake();
+        }
+
+        public static T CheckComponentAvailability<T>(MonoBehaviour that)// where T : Component
+        {
+            foreach (var item in that.GetComponents<T>())
+            {
+                if (item as Component != that) // avoid self returning
+                    return item;
+            }
+            Debug.LogError("Missing " + typeof(T).Name + " component");
+            return default(T);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace RaftTest
 {
-    public interface IPlaceable : IHideable, IHoldable
+    public interface IPlaceable : IHoldable
     {
         bool IsFullBlock { get; }
         bool OnlyCenterPlacing { get; }

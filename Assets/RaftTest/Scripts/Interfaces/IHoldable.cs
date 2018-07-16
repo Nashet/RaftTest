@@ -8,11 +8,13 @@ namespace RaftTest
     /// <summary>
     /// Represents objects which can be hold in players hands
     /// </summary>    
-    public interface IHoldable : IHideable
+    public interface IHoldable : IHideable, IActable
     {
         /// <summary>
         /// updates block held by player 
         /// </summary>
         void UpdateBlock();
+
+       
     }
 }

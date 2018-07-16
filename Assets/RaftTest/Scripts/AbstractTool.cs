@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RaftTest.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,14 +13,13 @@ namespace RaftTest
     /// Can't be instantiated
     /// </summary>
     [Serializable]
-    abstract public class AbstractTool : MonoBehaviour, ITool
-    {
-        public event EventHandler<EventArgs> Hidden;
-        public event EventHandler<EventArgs> Shown;
+    abstract public class AbstractTool : Hideable, ITool, ISelector
+    {        
         public static event EventHandler<EventArgs> Used;
 
         protected PlacedBlock selectedObject;
 
+        protected ISelector selectorComponent;
         /// <summary>
         /// Plays animation on act, if presents
         /// </summary>
@@ -30,81 +30,17 @@ namespace RaftTest
         {
             //gameObject.SetActive(false);
             availableAnimation = GetComponent<Animation>();
+            selectorComponent = GManager.CheckComponentAvailability<ISelector>(this);
+            Hide();
         }
-        public virtual void Hide()
-        {
-            gameObject.SetActive(false);
+        public override void Hide()
+        {            
+            base.Hide();
             if (selectedObject != null)
-                RemoveSelection(selectedObject.gameObject);
-            EventHandler<EventArgs> handler = Hidden;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
+                Deselect(selectedObject.gameObject);
+        }        
 
-        public virtual void Show()
-        {
-            gameObject.SetActive(true);
-            EventHandler<EventArgs> handler = Shown;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
-
-        protected void RemoveMaterial(MeshRenderer renderer)
-        {
-            Material[] newArray = new Material[1];
-            newArray[0] = renderer.material;
-            renderer.materials = newArray;
-        }
-
-        protected void RemoveSelection(GameObject someObject)
-        {
-            var renderer = someObject.GetComponent<MeshRenderer>();
-            if (renderer == null)
-            //if there is no render in selected object, find one in childes
-            {
-                var children = someObject.GetComponentsInChildren<MeshRenderer>();
-                foreach (var item in children)
-                {
-                    RemoveMaterial(item);
-                }
-            }
-            else
-            {
-                RemoveMaterial(renderer);
-            }
-
-        }
-
-        protected void AddMaterial(MeshRenderer renderer)
-        {
-            Material[] rt = new Material[2];
-            rt[0] = renderer.material;
-            rt[1] = GManager.Get.SelectedByToolMaterial;
-            renderer.materials = rt;
-        }
-
-        protected void AddSelection(GameObject someObject)
-        {
-            var renderer = someObject.GetComponent<MeshRenderer>();
-            if (renderer == null)
-            //if there is no render in selected object, find one in childes
-            {
-                var children = someObject.GetComponentsInChildren<MeshRenderer>();
-                foreach (var item in children)
-                {
-                    AddMaterial(item);
-                }
-            }
-            else
-            {
-                AddMaterial(renderer);
-            }
-
-        }
+        
         public virtual void UpdateBlock()
         {
 #if MOBILE_INPUT // ignore touches over UI on mobile devices
@@ -113,15 +49,13 @@ namespace RaftTest
             {
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
-                {
-
-                    var lookingAt = hit.collider.gameObject;
-                    var placed = lookingAt.GetComponent<PlacedBlock>();
+                {                    
+                    var placed = hit.collider.gameObject.GetComponent<PlacedBlock>();
                     if (placed == null)
                     {
                         if (selectedObject != null)
                         {
-                            RemoveSelection(selectedObject.gameObject);
+                            Deselect(selectedObject.gameObject);
                         }
                         selectedObject = null;
 
@@ -131,11 +65,11 @@ namespace RaftTest
                         //removing added material from previously selected object
                         if (selectedObject != null)
                         {
-                            RemoveSelection(selectedObject.gameObject);
+                            Deselect(selectedObject.gameObject);
                         }
                         selectedObject = placed;
 
-                        AddSelection(selectedObject.gameObject);
+                        Select(selectedObject.gameObject);
                     }
                 }
             }
@@ -161,6 +95,16 @@ namespace RaftTest
         public override string ToString()
         {
             return name;
+        }
+
+        public void Select(GameObject someObject)
+        {
+            selectorComponent.Select(someObject);
+        }
+
+        public void Deselect(GameObject someObject)
+        {
+            selectorComponent.Deselect(someObject);
         }
     }
 }
