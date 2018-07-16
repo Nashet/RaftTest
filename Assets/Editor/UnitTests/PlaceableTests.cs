@@ -9,7 +9,7 @@ public class TestPlaceable
     [Test]
     public void TestConstructor()
     {
-        var placeable = new MockPlaceable("Empty air", true, true, null, 1f, false, false, true, isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
+        var placeable = new MockPlaceable("Empty air", true, true, null, 1f, false, false, true, isFullBlock: false, maxLengthWithoutSupport: 0);
         Assert.True(!placeable.IsFullBlock);
     }
 
@@ -38,7 +38,7 @@ public class TestPlaceable
 
 
         var testBlock = new MockPlaceable("TestBlock", allowsXZSnapping, allowsYSnapping, null, blockThickness, isTrigger, requiresSomeFoundation,
-            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, null, maxLengthWithoutSupport);
+            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, maxLengthWithoutSupport);
 
         // placed at 0,0,0
         testBlock.SetPosition(Vector3.zero, side);
@@ -72,7 +72,7 @@ public class TestPlaceable
 
 
         var testBlock = new MockPlaceable("TestBlock", allowsXZSnapping, allowsYSnapping, null, blockThickness, isTrigger, requiresSomeFoundation,
-            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, null, maxLengthWithoutSupport);
+            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, maxLengthWithoutSupport);
 
         // placed at 0,0,0
         testBlock.SetPosition(Vector3.zero, side);
@@ -107,7 +107,7 @@ public class TestPlaceable
 
 
         var blockForDeleting = new MockPlaceable("blockForDeleting", blockForDeletingAllowsXZSnapping, blockForDeletingAllowsYSnapping, null, 0.2f, false, true,
-            true, blockForDeletingIsFullBlock, null, 0);
+            true, blockForDeletingIsFullBlock, 0);
 
         blockForDeleting.SetPosition(new Vector3(0f, 0f, 0f), blockForDeletingSide);
 
@@ -119,7 +119,7 @@ public class TestPlaceable
         LogAssert.ignoreFailingMessages = false;
 
         var testBlock = new MockPlaceable("TestBlock", testBlockAllowsXZSnapping, testBlockAllowsYSnapping, null, 0.2f, false, true,
-            true, testBlockIsFullBlock, null, 0 );
+            true, testBlockIsFullBlock, 0);
         testBlock.SetPosition(new Vector3(0f, 0f, 0f), testBlockSide);
         testBlock.Place(world);
 
@@ -189,9 +189,9 @@ public class TestPlaceable
         var gameObject = new GameObject("Mono holder");
         var world = gameObject.AddComponent<MockWorld>();
         world.SetUp();
-        
+
         var bottomBlock = new MockPlaceable("TestBlock", true, true, null, 0.2f, false, true,
-            true, isBottomBlockIsFullBlock, null, maxLengthWithoutSupport); // sets bottom block
+            true, isBottomBlockIsFullBlock, maxLengthWithoutSupport); // sets bottom block
 
 
         bottomBlock.SetPosition(Vector3.zero, bottomBlockSide);
@@ -199,7 +199,7 @@ public class TestPlaceable
         bottomBlock.Place(world);
 
         var testBlock = new MockPlaceable("TestBlock", true, true, null, 0.2f, false, true,
-            true, isTestBlockIsFullBlock, null, maxLengthWithoutSupport);
+            true, isTestBlockIsFullBlock, maxLengthWithoutSupport);
 
         testBlock.SetPosition(new Vector3(0f, 1f, 0f), testBlockSide);
 

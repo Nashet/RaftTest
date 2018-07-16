@@ -30,18 +30,15 @@ namespace RaftTest
         [SerializeField] private bool allowsYSnapping;
         public bool OnlyCenterPlacing { get { return !allowsXZSnapping && !allowsYSnapping; } }
 
-
         [Tooltip("Should be about same as gameObject thickness")]
         [SerializeField] private float blockThickness;
 
-        protected MeshRenderer renderer;
+        protected ISelector placingAllowedSelector;
+        protected ISelector placingDeniedSelector;
 
         protected GameObject block;
 
         [SerializeField] protected GameObject prefab;
-
-        /// <summary> Original material    
-        private Material originalMaterial;
 
         /// <summary> which side of map it is closer - north, south, west, east. default is center
         protected Side sideSnapping;
@@ -51,25 +48,26 @@ namespace RaftTest
         public static event EventHandler<EventArgs> Placed;
 
         public enum Side { Center, West, East, North, South, Top, Bottom }
+
         /// <summary>
         /// Constructor. Instead, you can set values in inspector
         /// </summary>   
-        public Placeable(string name, bool allowsXZSnapping, bool allowsYSnapping, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport)
+        public Placeable(string name, bool allowsXZSnapping, bool allowsYSnapping, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, int maxLengthWithoutSupport)
         {
             this.name = name;
             this.isTrigger = isTrigger;
             this.requiresSomeFoundation = requiresSomeFoundation;
             this.canBePlacedAtZeroLevelWithoutFoundation = canBePlacedAtZeroLevelWithoutFoundation;
             this.isFullBlock = isFullBlock;
-            this.originalMaterial = material;
+
             this.name = name;
 
             this.block = prefab;
             this.allowsXZSnapping = allowsXZSnapping;
             this.allowsYSnapping = allowsYSnapping;
-            if (block != null)
-                renderer = block.GetComponent<MeshRenderer>();
+
             this.blockThickness = blockThickness;
+            Hide();
         }
 
         /// <summary>
@@ -94,18 +92,6 @@ namespace RaftTest
 
 
             return new Vector3Int(x, y, z);
-        }
-
-        protected void UpdateMaterial()
-        {
-            if (CanBePlaced(World.Get))
-            {
-                SetMaterial(GManager.Get.BuildingAlowedMaterial);
-            }
-            else
-            {
-                SetMaterial(GManager.Get.BuildingDeniedMaterial);
-            }
         }
 
         /// <summary>
@@ -138,15 +124,20 @@ namespace RaftTest
                     blockPlacingPosition = AdjustSnappingY(blockPlacingPosition);
                 }
 
-
                 AdjustSnappingRotation();
-
 
                 this.block.transform.position = blockPlacingPosition;
                 Debug.Log("Looking at (x,y,z)" + lookingPosition + " side is " + sideSnapping);
-               
+
                 // updates holding block color 
-                this.UpdateMaterial();
+                if (CanBePlaced(World.Get))
+                {
+                    placingAllowedSelector.Select(block);
+                }
+                else
+                {
+                    placingDeniedSelector.Select(block);
+                }
             }
         }
         protected Vector3 AdjustSnappingY(Vector3 blockPlacingPosition)
@@ -267,8 +258,9 @@ namespace RaftTest
         /// </summary>    
         protected GameObject InstantiateCopy()
         {
-            // Restores original material, instead of green "allowing" material
-            SetMaterial(originalMaterial);
+            // Restores original material, instead of green "allowing" material            
+            placingDeniedSelector.Deselect(block);
+            placingDeniedSelector.Deselect(block);
 
             var newBlock = UnityEngine.Object.Instantiate(this.block);
             newBlock.layer = 0; // placed block wouldn't be ignored by raycast           
@@ -279,19 +271,7 @@ namespace RaftTest
                 newBlock.GetComponent<Collider>().isTrigger = false;
             return newBlock;
         }
-        protected void SetMaterial(Material newMaterial)
-        {
-            if (renderer == null)// if objects hasn't renderer look for it in children
-            {
-                var children = block.GetComponentsInChildren<MeshRenderer>();
-                foreach (var item in children)
-                {
-                    item.material = newMaterial;
-                }
-            }
-            else
-                renderer.material = newMaterial;
-        }
+
         public virtual void Show()
         {
             if (block == null) // if it's first call to show instantiate block from prefabs
@@ -299,14 +279,9 @@ namespace RaftTest
                 block = UnityEngine.Object.Instantiate(prefab);
 
                 block.transform.parent = GManager.Get.PlayersHands.transform;
-                renderer = block.GetComponent<MeshRenderer>();
-                if (renderer == null) // if objects hasn't renderer look for it in children
-                {
-                    var children = block.GetComponentsInChildren<MeshRenderer>();
-                    originalMaterial = children[0].material;
-                }
-                else
-                    originalMaterial = renderer.material;
+
+                placingAllowedSelector = TimedSelectorWithMaterial.AddTo(block, GManager.Get.BuildingAlowedMaterial, 0f);
+                placingDeniedSelector = TimedSelectorWithMaterial.AddTo(block, GManager.Get.BuildingDeniedMaterial, 0f);
             }
 
 
@@ -320,14 +295,18 @@ namespace RaftTest
 
         public virtual void Hide()
         {
-            block.SetActive(false);
-            // Make a temporary copy of the event to avoid possibility of
-            // a race condition if the last subscriber unsubscribes
-            // immediately after the null check and before the event is raised.
-            EventHandler<EventArgs> handler = Hidden;
-            if (handler != null)
+            if (block != null)
+                block.SetActive(false);
+            else
             {
-                handler(this, EventArgs.Empty);
+                // Make a temporary copy of the event to avoid possibility of
+                // a race condition if the last subscriber unsubscribes
+                // immediately after the null check and before the event is raised.
+                EventHandler<EventArgs> handler = Hidden;
+                if (handler != null)
+                {
+                    handler(this, EventArgs.Empty);
+                }
             }
         }
 

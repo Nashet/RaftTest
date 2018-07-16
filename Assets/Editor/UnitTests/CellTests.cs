@@ -25,7 +25,7 @@ public class TestCell
         testableCell.Init(World.AirBlock);
         // placed at 0,0,0
         var randomBlock = new MockPlaceable("dsntmatter", allowsXZSnapping,  allowsYSnapping, null, blockThickness, isTrigger, requiresSomeFoundation,
-            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, null, maxLengthWithoutSupport);
+            canBePlacedAtZeroLevelWithoutFoundation, isFullBlock,  maxLengthWithoutSupport);
 
         testableCell.Place(randomBlock, side);
         Assert.AreSame(randomBlock, testableCell.Get(side));

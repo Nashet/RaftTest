@@ -60,7 +60,7 @@ namespace RaftTest
             map = new Cell[xSize, ySize, zSize];
 
             AirBlock = new Placeable("Empty air", true, true, null, 1f, false, false, true,
-                isFullBlock: false, material: null, maxLengthWithoutSupport: 0);
+                isFullBlock: false, maxLengthWithoutSupport: 0);
             Fill(AirBlock);
         }
 
@@ -405,14 +405,14 @@ namespace RaftTest
             // scan neighbor cells for support            
             return map.GetElementsWithRadius(x, y, z, radius);
         }
-       
+
         public virtual void Restart()
         {
             foreach (Transform child in transform)
             {
                 Destroy(child.gameObject);
             }
-            Awake();          
+            Awake();
             //GenerateMap();
         }
     }

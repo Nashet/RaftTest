@@ -24,14 +24,14 @@ public class MockWorld : World
 public class MockPlaceable : Placeable
 {
 
-    public MockPlaceable(string name, bool allowsXZSnapping, bool allowsYSnapping, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, Material material, int maxLengthWithoutSupport)
-    : base(name, allowsXZSnapping,  allowsYSnapping, prefab, blockThickness, isTrigger, requiresSomeFoundation, canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, material, maxLengthWithoutSupport)
+    public MockPlaceable(string name, bool allowsXZSnapping, bool allowsYSnapping, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, int maxLengthWithoutSupport)
+    : base(name, allowsXZSnapping, allowsYSnapping, prefab, blockThickness, isTrigger, requiresSomeFoundation, canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, maxLengthWithoutSupport)
     {
         block = new GameObject();
-        block.AddComponent<BoxCollider>();        
-        renderer = block.AddComponent<MeshRenderer>();
+        block.AddComponent<BoxCollider>();
+        //renderer = block.AddComponent<MeshRenderer>();
     }
-    
+
     /// <summary>
     /// gives access
     /// </summary>    

@@ -12,13 +12,32 @@ namespace RaftTest
     /// </summary>
     public class TimedSelectorWithMaterial : MonoBehaviour, ISelector
     {        
-        protected Queue<GameObject> recentHit = new Queue<GameObject>();
+        protected Queue<GameObject> recentlySelected = new Queue<GameObject>();
 
         [Header("Gives ability to select & deselect some GameObject with additional material")]
         [SerializeField] protected Material selectionMaterial;
 
         [Tooltip("In seconds, zero mean no time limit")]
         [SerializeField] protected float selectionTime;
+
+        /// <summary>
+        /// Is forbidden since it's MonoBehaviour
+        /// </summary>        
+        private TimedSelectorWithMaterial()
+        {            
+            
+        }
+
+        /// <summary>
+        /// Use this instead
+        /// </summary>        
+        public static TimedSelectorWithMaterial AddTo(GameObject toWhom, Material selectionMaterial, float selectionTime)
+        {
+            var added = toWhom.AddComponent<TimedSelectorWithMaterial>();
+            added.selectionMaterial = selectionMaterial;
+            added.selectionTime = selectionTime;
+            return added;
+        }
 
         protected void Start()
         {
@@ -47,7 +66,7 @@ namespace RaftTest
         public void Select(GameObject someObject)
         {
             if (selectionTime != 0f)
-                recentHit.Enqueue(someObject);
+                recentlySelected.Enqueue(someObject);
             var renderer = someObject.GetComponent<MeshRenderer>();
             if (renderer == null)
             //if there is no render in selected object, find one in childes
@@ -80,9 +99,9 @@ namespace RaftTest
         {
             while (true)
             {
-                if (recentHit.Count > 0)
+                if (recentlySelected.Count > 0)
                 {
-                    var _object = recentHit.Dequeue();
+                    var _object = recentlySelected.Dequeue();
                     if (_object != null)
                         Deselect(_object);
                 }
