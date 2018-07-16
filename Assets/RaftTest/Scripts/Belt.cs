@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.EventSystems;
+using RaftTest.Utils;
 
 namespace RaftTest
 {
@@ -14,7 +15,9 @@ namespace RaftTest
     [RequireComponent(typeof(ICharacter))]
     public class Belt : MonoBehaviour
     {
-       protected ICharacter player;
+        protected ICharacter player;
+        
+        protected ISelector slotSelector;
 
         /// <summary>
         /// Some child of a canvas
@@ -26,21 +29,30 @@ namespace RaftTest
         {
             player = GetComponent<ICharacter>();
             FiilFromGameManager();
+            slotSelector = GManager.CheckComponentAvailability<ISelector>(this);
+        }
+        protected IEnumerable<Button> AllSlots
+        {
+            get
+            {
+                foreach (Transform child in slotHolder.transform)
+                {
+                    var slot = child.GetComponent<Button>();
+
+                    if (slot != null)
+                        yield return slot;
+                }
+            }
         }
 
         protected void FiilFromGameManager()
         {
             int count = 0;
-            foreach (Transform child in slotHolder.transform)
+            foreach (var item in AllSlots)
             {
-                var slot = child.GetComponent<Button>();
-
-                if (slot != null)
-                {
-                    var holdable = GManager.Get.AllHoldable().ElementAtOrDefault(count);
-                    PutInSlot(slot, holdable);
-                    count++;
-                }
+                var holdable = GManager.Get.AllHoldable().ElementAtOrDefault(count);
+                PutInSlot(item, holdable);
+                count++;
             }
         }
 
@@ -54,6 +66,9 @@ namespace RaftTest
                 entry.callback.AddListener((data) =>
                 {
                     player.TakeInHand(holdable);
+                    foreach (var item in AllSlots)slotSelector.Deselect(item.gameObject);
+                    
+                    slotSelector.Select(data.selectedObject);
                 });
                 trigger.triggers.Add(entry);
 
