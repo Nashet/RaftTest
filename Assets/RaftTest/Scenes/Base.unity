@@ -1469,6 +1469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionMaterial: {fileID: 2100000, guid: d186fe028b4a81f4bbe96c5e340dcb5a, type: 2}
+  defaultMaterial: {fileID: 0}
   selectionTime: 0
 --- !u!1 &488517502
 GameObject:
@@ -4745,8 +4746,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e447c8bea7f39e24f8f9a4d01c6a6644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectionMaterial: {fileID: 2100000, guid: d186fe028b4a81f4bbe96c5e340dcb5a, type: 2}
-  selectionTime: 1
+  selectionMaterial: {fileID: 2100000, guid: 74aceaa260cf03c47b195161846769d2, type: 2}
+  defaultMaterial: {fileID: 0}
+  selectionTime: 0.1
 --- !u!1 &1970803538
 GameObject:
   m_ObjectHideFlags: 0
@@ -4905,12 +4907,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2019566253}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a037bc5c095a2c458b94887b6f3cfd4, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ea05f97656fd8c479f27da87dccf8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   selectionMaterial: {fileID: 2100000, guid: 19dc5c33ad3af7b409edb3f373008df7, type: 2}
   defaultMaterial: {fileID: 2100000, guid: f2e7110dff28fc44eb962a7f09b01e04, type: 2}
-  selectionTime: 0
 --- !u!1 &2108499493
 GameObject:
   m_ObjectHideFlags: 0

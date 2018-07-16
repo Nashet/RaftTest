@@ -8,22 +8,16 @@ namespace RaftTest.Utils
     /// <summary>
     /// As component it gives ability to select & deselect some UI element with a selectionMaterial
     /// </summary>
-    public class TimedSelectorForUI : MonoBehaviour, ISelector
+    public class UISelector : MonoBehaviour, ISelector
     {
-        protected Queue<GameObject> recentlySelected = new Queue<GameObject>();
-
-        [Header("Gives ability to select & deselect some GameObject with additional material")]
+        [Header("Gives ability to select & deselect some Object with material")]
         [SerializeField] protected Material selectionMaterial;
-
         [SerializeField] protected Material defaultMaterial;
-
-        [Tooltip("In seconds, zero mean no time limit")]
-        [SerializeField] protected float selectionTime;
 
         /// <summary>
         /// Is forbidden since it's MonoBehaviour
         /// </summary>        
-        protected TimedSelectorForUI()
+        protected UISelector() : base()
         {
 
         }
@@ -31,22 +25,16 @@ namespace RaftTest.Utils
         /// <summary>
         /// Use this instead
         /// </summary>        
-        public static TimedSelectorForUI AddTo(GameObject toWhom, Material selectionMaterial, Material defaultMaterial, float selectionTime)
+        public static UISelector AddTo(GameObject toWhom, Material selectionMaterial, Material defaultMaterial)
         {
-            var added = toWhom.AddComponent<TimedSelectorForUI>();
+            var added = toWhom.AddComponent<UISelector>();
             added.selectionMaterial = selectionMaterial;
-            added.selectionTime = selectionTime;
             added.defaultMaterial = defaultMaterial;
             return added;
         }
 
-        protected void Start()
-        {
-            if (selectionTime != 0f)
-                StartCoroutine(CheckSelectionQueue());
-        }
 
-        public void Deselect(GameObject someObject)
+        public virtual void Deselect(GameObject someObject)
         {
             var image = someObject.GetComponent<Image>();
             if (image == null)
@@ -64,10 +52,8 @@ namespace RaftTest.Utils
             }
         }
 
-        public void Select(GameObject someObject)
+        public virtual void Select(GameObject someObject)
         {
-            if (selectionTime != 0f)
-                recentlySelected.Enqueue(someObject);
             var image = someObject.GetComponent<Image>();
             if (image == null)
             //if there is no render in selected object, find one in childes
@@ -81,20 +67,6 @@ namespace RaftTest.Utils
             else
             {
                 image.material = selectionMaterial;
-            }
-        }
-        
-        protected IEnumerator CheckSelectionQueue()
-        {
-            while (true)
-            {
-                if (recentlySelected.Count > 0)
-                {
-                    var _object = recentlySelected.Dequeue();
-                    if (_object != null)
-                        Deselect(_object);
-                }
-                yield return new WaitForSeconds(selectionTime);
             }
         }
     }
