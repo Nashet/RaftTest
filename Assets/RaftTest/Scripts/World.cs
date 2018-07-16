@@ -59,8 +59,9 @@ namespace RaftTest
             // fill map with empty blocks
             map = new Cell[xSize, ySize, zSize];
 
-            AirBlock = new Placeable("Empty air", true, true, null, 1f, false, false, true,
-                isFullBlock: false, maxLengthWithoutSupport: 0);
+            AirBlock = new Placeable("Empty air", allowsXZSnapping: true, allowsYSnapping: true,
+                prefab: null, blockThickness: 1f, isTrigger: false, requiresSomeFoundation: false,
+                canBePlacedAtZeroLevelWithoutFoundation: true, isFullBlock: false, maxLengthWithoutSupport: 0);
             Fill(AirBlock);
         }
 

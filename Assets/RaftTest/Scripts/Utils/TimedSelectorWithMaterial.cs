@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace RaftTest
+namespace RaftTest.Utils
 {
     /// <summary>
     /// As component it gives ability to select & deselect some GameObject with additional material
@@ -23,7 +23,7 @@ namespace RaftTest
         /// <summary>
         /// Is forbidden since it's MonoBehaviour
         /// </summary>        
-        private TimedSelectorWithMaterial()
+        protected TimedSelectorWithMaterial()
         {            
             
         }
@@ -105,7 +105,7 @@ namespace RaftTest
                     if (_object != null)
                         Deselect(_object);
                 }
-                yield return new WaitForSeconds(selectionTime);
+                yield return new WaitForSeconds(selectionTime);                
             }
         }
     }

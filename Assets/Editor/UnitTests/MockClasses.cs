@@ -1,4 +1,5 @@
 ﻿using RaftTest;
+using RaftTest.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,12 +25,13 @@ public class MockWorld : World
 public class MockPlaceable : Placeable
 {
 
-    public MockPlaceable(string name, bool allowsXZSnapping, bool allowsYSnapping, GameObject prefab, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, int maxLengthWithoutSupport)
+    public MockPlaceable(string name, bool allowsXZSnapping, bool allowsYSnapping, float blockThickness, bool isTrigger, bool requiresSomeFoundation, bool canBePlacedAtZeroLevelWithoutFoundation, bool isFullBlock, int maxLengthWithoutSupport, GameObject prefab)
     : base(name, allowsXZSnapping, allowsYSnapping, prefab, blockThickness, isTrigger, requiresSomeFoundation, canBePlacedAtZeroLevelWithoutFoundation, isFullBlock, maxLengthWithoutSupport)
     {
         block = new GameObject();
         block.AddComponent<BoxCollider>();
-        //renderer = block.AddComponent<MeshRenderer>();
+        placingAllowedSelector = TimedSelectorWithMaterial.AddTo(block, null, 0f);
+        placingDeniedSelector = TimedSelectorWithMaterial.AddTo(block, null, 0f);
     }
 
     /// <summary>
