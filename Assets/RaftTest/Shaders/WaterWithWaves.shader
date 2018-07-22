@@ -77,7 +77,7 @@
 		float foamLine = 1 - saturate(_FoamFactor * (waterDepth));
 
 
-		o.Albedo = col + tex2D(_MainTex, IN.uv_MainTex) / 4 +foamLine * _FoamColor;
+		o.Albedo = col + tex2D(_MainTex, IN.uv_MainTex) / 4;// +foamLine * _FoamColor;
 
 
 

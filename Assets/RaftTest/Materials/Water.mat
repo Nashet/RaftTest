@@ -64,7 +64,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _FlareScale: 1
-    - _FoamFactor: 6000
+    - _FoamFactor: 6000000
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

@@ -36,18 +36,18 @@ namespace RaftTest
         public void Awake()
         {
             SetUpLogic();
-            GameObject plane = new GameObject("Plane");
-            plane.transform.parent = this.transform;
+            //GameObject plane = new GameObject("Plane");
+            //plane.transform.parent = this.transform;
 
-            // move plane away from 0,0
-            plane.transform.position = new Vector3(xSize / 2f - blockSize / 2f, 0f, zSize / 2f - blockSize / 2f);
+            //// move plane away from 0,0
+            //plane.transform.position = new Vector3(xSize / 2f - blockSize / 2f, 0f, zSize / 2f - blockSize / 2f);
 
-            MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
-            meshFilter.mesh = CreatePlaneMesh(xSize, zSize);
-            MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-            renderer.material = planeMaterial;
-            MeshCollider collider = plane.AddComponent<MeshCollider>();
-            collider.sharedMesh = meshFilter.mesh;
+            //MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
+            //meshFilter.mesh = CreatePlaneMesh(xSize, zSize);
+            //MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+            //renderer.material = planeMaterial;
+            //MeshCollider collider = plane.AddComponent<MeshCollider>();
+            //collider.sharedMesh = meshFilter.mesh;
 
             GenerateMap();
         }

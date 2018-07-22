@@ -158,13 +158,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
             }
 
-            if (m_IsGrounded)
+            //if (m_IsGrounded)
             {
-                m_RigidBody.drag = 5f;
+                m_RigidBody.drag = 1f;//5f
 
                 if (m_Jump)
                 {
-                    m_RigidBody.drag = 0f;
+                    //m_RigidBody.drag = 0f;
                     m_RigidBody.velocity = new Vector3(m_RigidBody.velocity.x, 0f, m_RigidBody.velocity.z);
                     m_RigidBody.AddForce(new Vector3(0f, movementSettings.JumpForce, 0f), ForceMode.Impulse);
                     m_Jumping = true;
@@ -175,14 +175,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     m_RigidBody.Sleep();
                 }
             }
-            else
-            {
-                m_RigidBody.drag = 0f;
-                if (m_PreviouslyGrounded && !m_Jumping)
-                {
-                    StickToGroundHelper();
-                }
-            }
+            //else
+            //{
+            //    //m_RigidBody.drag = 0f;
+            //    if (m_PreviouslyGrounded && !m_Jumping)
+            //    {
+            //        StickToGroundHelper();
+            //    }
+            //}
             m_Jump = false;
         }
 
