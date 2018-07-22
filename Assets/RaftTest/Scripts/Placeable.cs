@@ -259,8 +259,9 @@ namespace RaftTest
         protected GameObject InstantiateCopy()
         {
             // Restores original material, instead of green "allowing" material            
+            placingAllowedSelector.Deselect(block);
             placingDeniedSelector.Deselect(block);
-            placingDeniedSelector.Deselect(block);
+
 
             var newBlock = UnityEngine.Object.Instantiate(this.block);
             newBlock.layer = 0; // placed block wouldn't be ignored by raycast           
@@ -318,6 +319,12 @@ namespace RaftTest
                 newBlockObject.transform.parent = world.transform;
 
                 var placedBlock = PlacedBlock.Add(newBlockObject, this, sideSnapping);
+                foreach (var item in placedBlock.GetComponents<ISelector>())
+                {
+                    var isComponent = item as MonoBehaviour;
+                    if (isComponent != null)
+                        MonoBehaviour.Destroy(isComponent);
+                }
 
                 world.Add(this, sideSnapping);
 
