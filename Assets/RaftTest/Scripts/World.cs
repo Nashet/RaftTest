@@ -13,8 +13,7 @@ namespace RaftTest
     public class World : MonoBehaviour
     {
         [SerializeField] protected int xSize, ySize, zSize; // y is a height
-
-        [SerializeField] protected Material planeMaterial;
+        
 
         /// <summary> Minimal block size, default is 1, in Unity units, doesn't work if not 1</summary>
         protected const int blockSize = 1;
@@ -36,18 +35,7 @@ namespace RaftTest
         public void Awake()
         {
             SetUpLogic();
-            //GameObject plane = new GameObject("Plane");
-            //plane.transform.parent = this.transform;
-
-            //// move plane away from 0,0
-            //plane.transform.position = new Vector3(xSize / 2f - blockSize / 2f, 0f, zSize / 2f - blockSize / 2f);
-
-            //MeshFilter meshFilter = (MeshFilter)plane.AddComponent(typeof(MeshFilter));
-            //meshFilter.mesh = CreatePlaneMesh(xSize, zSize);
-            //MeshRenderer renderer = plane.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-            //renderer.material = planeMaterial;
-            //MeshCollider collider = plane.AddComponent<MeshCollider>();
-            //collider.sharedMesh = meshFilter.mesh;
+           
 
             GenerateMap();
         }

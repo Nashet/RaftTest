@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 
 namespace RaftTest
-{ 
+{
     /// <summary>
-    /// Represents objects with basic humanoid behavior
+    /// Represents objects which can hold IHoldable
     /// </summary>
-    public interface ICharacter: IActable
+    public interface IHolder : IActable
     {
         void TakeInHand(IHoldable placeable);
         IHoldable Holds { get; }
-        
+
     }
 }

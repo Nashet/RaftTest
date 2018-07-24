@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace InterativeErosionProject
+namespace RaftTest
 {
     public class WriteToDepth : MonoBehaviour
     {

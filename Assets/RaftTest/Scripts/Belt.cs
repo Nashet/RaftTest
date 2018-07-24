@@ -12,10 +12,10 @@ namespace RaftTest
     /// Represents player belt where player can select object to use (player.Holdable)
     /// Can have any amount of slots as children. Slots should have Button and EventTrigger components
     /// </summary>
-    [RequireComponent(typeof(ICharacter))]
+    [RequireComponent(typeof(IHolder))]
     public class Belt : MonoBehaviour
     {
-        protected ICharacter player;
+        protected IHolder player;
         
         protected ISelector slotSelector;
 
@@ -27,7 +27,7 @@ namespace RaftTest
         // Use this for initialization
         void Start()
         {
-            player = GetComponent<ICharacter>();
+            player = GetComponent<IHolder>();
             FiilFromGameManager();
             slotSelector = GManager.CheckComponentAvailability<ISelector>(this);
         }

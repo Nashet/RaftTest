@@ -8,7 +8,7 @@ namespace RaftTest
     /// <summary>
     /// Allows FPS camera to build blocks
     /// </summary>
-    public class Builder : MonoBehaviour, ICharacter
+    public class Builder : MonoBehaviour, IHolder
     {
         /// <summary>
         /// Whatever players holds in hands

@@ -12,7 +12,7 @@ namespace RaftTest
         public Material BuildingDeniedMaterial { get { return buildingDeniedMaterial; } }
 
         [SerializeField] private Material buildingAlowedMaterial;
-        public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }              
+        public Material BuildingAlowedMaterial { get { return buildingAlowedMaterial; } }
 
         [SerializeField] private GameObject playersHands;
         public GameObject PlayersHands { get { return playersHands; } }
@@ -29,7 +29,7 @@ namespace RaftTest
         public IEnumerable<IHoldable> AllHoldable()
         {
             foreach (var item in AllPlaceable()) yield return item;
-            foreach(var item in allTools) yield return item;
+            foreach (var item in allTools) yield return item;
             foreach (var item in allHoldableWeapons) yield return item;
         }
 
@@ -40,6 +40,15 @@ namespace RaftTest
         {
             get { return thisObject; }
         }
+
+        [SerializeField] protected GameObject interactableCanvas;
+        public GameObject InteractableCanvas { get { return interactableCanvas; } }
+
+        [SerializeField] protected GameObject player;
+        public GameObject Player { get { return player; } }
+
+        [SerializeField] protected Water water;
+        public Water Water { get { return water; } }
 
 
 
