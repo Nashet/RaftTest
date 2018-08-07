@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Water
   m_Shader: {fileID: 4800000, guid: d48f9e0e7524e2b4b9185b8aa41d11ac, type: 3}
@@ -85,4 +85,4 @@ Material:
     - _FoamColor: {r: 0.62473303, g: 0.9072249, b: 0.9528302, a: 1}
     - _SkyColor: {r: 0.06, g: 0.19, b: 0.86, a: 1}
     - _SunColor: {r: 0.26, g: 0.19, b: 0.16, a: 1}
-    - _WaterAbsorption: {r: 0.259, g: 0.113, b: 0.113, a: 3000}
+    - _WaterAbsorption: {r: 0.259, g: 0.113, b: 0.113, a: 1300}

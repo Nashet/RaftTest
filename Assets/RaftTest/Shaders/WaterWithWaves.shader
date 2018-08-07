@@ -50,7 +50,7 @@
 		float4 pos = UnityObjectToClipPos(v.vertex);
 		o.grabUV = ComputeGrabScreenPos(pos);
 		o.projPos = ComputeScreenPos(pos);
-		o.depth = pos.z / pos.w;
+		o.depth = pos.z;// / pos.w;
 		// apply wave animation
 		float noiseSample = tex2Dlod(_NoiseTex, float4(v.texcoord.xy, 0, 0));
 		v.vertex.y += sin((_Time.z + v.vertex.x + v.vertex.z) *_WaveFrequency*noiseSample)/_WaveAmplitude;
@@ -59,9 +59,6 @@
 
 	void surf(Input IN, inout SurfaceOutput o)
 	{
-
-
-
 		float cameraDepth = Linear01Depth(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)).r);
 		float fragmentsDepth = Linear01Depth(IN.depth);
 
@@ -79,7 +76,7 @@
 
 		o.Albedo = col + tex2D(_MainTex, IN.uv_MainTex) / 4;// +foamLine * _FoamColor;
 
-
+		//o.Albedo = IN.depth*8;// float4(0, 0, 1, 0);
 
 	}
 	ENDCG
