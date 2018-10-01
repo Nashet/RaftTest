@@ -28,7 +28,7 @@ namespace RaftTest
         void Start()
         {
             player = GetComponent<ICharacter>();
-            FiilFromGameManager();
+            FillFromGameManager();
             slotSelector = GManager.CheckComponentAvailability<ISelector>(this);
         }
         protected IEnumerable<Button> AllSlots
@@ -45,7 +45,7 @@ namespace RaftTest
             }
         }
 
-        protected void FiilFromGameManager()
+        protected void FillFromGameManager()
         {
             int count = 0;
             foreach (var item in AllSlots)
