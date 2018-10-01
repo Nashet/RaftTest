@@ -13,6 +13,8 @@ namespace RaftTest
     {   
         [SerializeField] private AudioClip blockPlacedSound;
         [SerializeField] private AudioClip toolUsedSound;
+        [SerializeField] private AudioClip entityDamaged;
+        [SerializeField] private AudioClip entityDead;
         private AudioSource audioSource;
         
 
@@ -24,6 +26,20 @@ namespace RaftTest
                 Debug.Log("Missing AudioSource component");
             Placeable.Placed += OnBlockPlaced;
             AbstractTool.Used += OnToolUsed;
+            AbstractHandWeapon.Used += OnToolUsed;
+            Breakable.Damaged += OnEntityDamaged;
+            Breakable.Destroyed += OnEntityDestroyed;
+        }
+
+        private void OnEntityDamaged(object sender, EventArgs e)
+        {
+            audioSource.clip = entityDamaged;
+            audioSource.Play();
+        }
+        private void OnEntityDestroyed(object sender, EventArgs e)
+        {
+            audioSource.clip = entityDead;
+            audioSource.Play();
         }
 
         private void OnBlockPlaced(object sender, EventArgs e)

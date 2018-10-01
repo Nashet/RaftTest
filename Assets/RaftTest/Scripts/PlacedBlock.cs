@@ -12,7 +12,7 @@ namespace RaftTest
         [SerializeField] public Placeable Placeable { get; private set; }
         [SerializeField] public Placeable.Side SideSnapping { get; private set; }
         public static PlacedBlock Add(GameObject go, Placeable placeable, Placeable.Side side)
-        {
+        {            
             var placed = go.AddComponent<PlacedBlock>();
             placed.Placeable = placeable;
             placed.SideSnapping = side;
